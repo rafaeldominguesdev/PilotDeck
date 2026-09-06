@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>07 · Quanto custa um card · Aprenda PilotDeck</title>
+<meta name="description" content="Token é fato, dólar é conta: a tabela de preços por modelo, os rótulos que um custo carrega e as perguntas que a página de Insights responde.">
+<meta property="og:title" content="Quanto custa um card · Aprenda PilotDeck">
+<meta property="og:description" content="Calculado, reportado pelo agente ou estimado: leia custo por card, por missão e por modelo sem se enganar.">
+<meta property="og:locale" content="pt_BR">
+<link rel="alternate" hreflang="en" href="../../learn/07-cost.html">
+<link rel="alternate" hreflang="pt-BR" href="07-custo.html">
+<link rel="alternate" hreflang="x-default" href="../../learn/07-cost.html">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23D1D9EB' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23D1D9EB'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../learn/learn.css">
+</head>
+<body>
+
+<div class="atmo" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-mist" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-grain" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-vignette" aria-hidden="true"></div>
+
+<nav class="nav">
+  <a class="wordmark" href="../index.html">over<span>click</span></a>
+  <div class="links">
+    <a href="../index.html#loop">O loop</a>
+    <a href="../index.html#features">Recursos</a>
+    <a href="index.html" class="on">Aprender</a>
+  </div>
+  <div class="spacer"></div>
+  <div class="lang" aria-label="Idioma">
+    <a href="../../learn/07-cost.html" hreflang="en" lang="en">EN</a>
+    <span aria-hidden="true">·</span>
+    <a href="07-custo.html" class="on" hreflang="pt-BR" lang="pt-BR" aria-current="true">PT</a>
+  </div>
+  <a class="btn btn-ghost btn-sm" href="https://github.com/rafaeldominguesdev/pilotdeck" rel="noopener">GitHub</a>
+</nav>
+
+<header class="course-head wrap">
+  <div class="col-read">
+    <p class="eyebrow">capítulo 07 de 08 · <b>custo por card</b></p>
+    <h1>Token é fato, dólar é conta</h1>
+    <p class="lede">
+      Um agente sabe quantos tokens queimou. Ele normalmente não sabe o preço de hoje. Por isso o board mantém uma <b>tabela de preços por modelo</b> e faz a multiplicação sozinho, e todo número na tela diz de onde veio.
+    </p>
+  </div>
+</header>
+
+<main class="chapter wrap">
+  <div class="col-read">
+
+    <section>
+      <div class="sec-index">01 · de onde vêm os números</div>
+      <h2>O uso chega com a entrega</h2>
+      <p>
+        O <code>task_deliver</code> carrega um bloco de uso: tokens de entrada, de saída, de
+        cache, duração, turns e, opcionalmente, um custo. Números exatos quando o harness
+        expõe; caso contrário uma estimativa marcada com <code>estimated: true</code>.
+      </p>
+      <p>
+        Um número não depende de boa vontade nenhuma: o servidor mede a duração sozinho, do
+        claim até a entrega. Um card entregue por um agente que não reporta nada ainda mostra
+        tempo real.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">02 · a tabela de preços</div>
+      <h2>Configurações › Preços por modelo</h2>
+      <p>
+        Uma linha por modelo: <b>preço de entrada, saída e cache por milhão de tokens</b>. A
+        tabela vem preenchida com os preços públicos de lista e cada linha semeada é carimbada
+        com a data em que esses preços foram lidos, para ninguém ter que adivinhar a idade de
+        um número. Todo valor é editável, porque o seu contrato não é necessariamente o preço
+        de lista.
+      </p>
+      <p>
+        Modelos que o board já viu rodar mas não consegue precificar aparecem ali, esperando
+        um número. Um modelo sem preço nunca é inventado: ele é contado à parte, para que um
+        total não finja estar completo.
+      </p>
+      <div class="note">
+        <b>Coluna de cache.</b> Ela precifica o contador <code>tokens_cache</code> do contrato
+        de uso e vem preenchida com a tarifa de leitura de cache, que é do que uma sessão
+        longa de agente é feita. Se o seu provedor cobra diferente, é essa linha que muda.
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-index">03 · três rótulos</div>
+      <h2>Todo número diz de onde veio</h2>
+      <table class="table">
+        <thead>
+          <tr><th>Rótulo</th><th>Significado</th><th>Confiança</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>calculado</b></td>
+            <td>O board multiplicou os tokens reportados pela sua tabela de preços.</td>
+            <td>Tão bom quanto o preço que você digitou. É o padrão sempre que há tokens.</td>
+          </tr>
+          <tr>
+            <td><b>reportado pelo agente</b></td>
+            <td>O agente mandou um valor em dólar e o board não tinha preço para aquele modelo.</td>
+            <td>Depende da CLI conhecer os preços atuais. Adicione o modelo à tabela para promover o número.</td>
+          </tr>
+          <tr>
+            <td><b>estimado</b></td>
+            <td>Igual ao anterior, e o agente marcou os próprios números como chute.</td>
+            <td>Serve de direção. Bom para tendência, errado para orçamento.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Os rótulos viajam com o número por toda parte: rodapé do card, totais, tabela por card
+        e resposta do MCP. Um total misto diz que é misto em vez de pegar emprestado o rótulo
+        mais bonito.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">04 · insights</div>
+      <h2>As quatro perguntas que a página responde</h2>
+      <ul>
+        <li><b>Quanto custou este projeto?</b> Totais por projeto, com tokens e tempo ao lado dos dólares.</li>
+        <li><b>Quanto custou esta missão?</b> O mesmo, agrupado por missão, que é como um esforço do tamanho de uma feature ganha preço.</li>
+        <li><b>Qual modelo está comendo o orçamento?</b> Agrupado por modelo. Junte com a próxima pergunta antes de reagir.</li>
+        <li><b>Qual modelo é mais reaberto?</b> A taxa de reabertura por modelo: entregas que um humano devolveu. Um modelo barato reaberto metade das vezes não é barato.</li>
+      </ul>
+      <p>
+        Só tentativas finalizadas contam, cards de exemplo ficam de fora para dados de demo
+        nunca inflarem custo real, e um card que ninguém conseguiu precificar guarda um nulo em
+        vez de um zero falso. A nota de honestidade acima dos totais diz quantas tentativas
+        foram estimadas e quantas não reportaram nada.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">05 · pelo agente</div>
+      <h2>Os mesmos números via MCP</h2>
+      <p>
+        O <code>insights_query</code> roda os mesmos loaders e a mesma agregação da página,
+        então a resposta do agente e a sua tela não podem discordar. Agrupe por projeto,
+        missão, modelo ou card, e estreite com <code>since</code> e <code>until</code>.
+      </p>
+      <div class="say">
+        <span class="who">fale isso para o seu agente</span>
+        consulta os insights agrupados por modelo nas últimas duas semanas e me diz qual
+        modelo tem a pior taxa de reabertura
+      </div>
+      <p>
+        A tabela de preços também é legível, pelo <code>harness_list</code>. É isso que permite
+        a um orquestrador raciocinar sobre custo <b>antes</b> de escolher o harness, em vez de
+        descobrir a conta depois.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">06 · agir</div>
+      <h2>Transforme um número numa mudança de política</h2>
+      <p>
+        Dado de custo só vale a coleta se move uma decisão. Os dois movimentos que pagam:
+      </p>
+      <ul>
+        <li><b>Rebaixe o que não precisa de julgamento.</b> Trabalho mecânico em modelo top é o vazamento mais comum. Uma linha de política resolve para todo card futuro.</li>
+        <li><b>Promova o que vive voltando.</b> Um tipo com taxa alta de reabertura paga duas vezes: uma pela execução, outra pela sua revisão. O modelo mais barato não era mais barato.</li>
+      </ul>
+    </section>
+
+    <div class="checklist">
+      <h2>Checklist do capítulo</h2>
+      <ul>
+        <li>Todo modelo que o seu time roda tem linha na tabela de preços</li>
+        <li>Você sabe quando os preços semeados foram capturados e já atualizou os que mudaram</li>
+        <li>Os cards mostram custo com rótulo calculado, reportado pelo agente ou estimado</li>
+        <li>Você sabe dizer qual foi a missão mais cara do mês</li>
+        <li>Você já olhou a taxa de reabertura por modelo, não só o custo</li>
+        <li>Pelo menos uma linha de política mudou por causa de um número que você viu</li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a href="06-terminal.html">
+        <span class="dir">← anterior</span>
+        <span class="title">06 · Trabalhando com agentes no terminal</span>
+      </a>
+      <a class="next" href="08-padroes-de-time.html">
+        <span class="dir">próximo →</span>
+        <span class="title">08 · Padrões de time</span>
+      </a>
+    </div>
+
+  </div>
+</main>
+
+
+<footer>
+  <div class="wrap foot-grid">
+    <span class="wordmark">over<span>click</span></span>
+    <div class="foot-links">
+      <a href="../index.html">Início</a>
+      <a href="index.html">Índice do curso</a>
+      <a href="../../learn/07-cost.html" hreflang="en" lang="en">English</a>
+      <a href="https://github.com/rafaeldominguesdev/pilotdeck" rel="noopener">GitHub</a>
+      <a href="https://github.com/rafaeldominguesdev/pilotdeck/blob/main/LICENSE" rel="noopener">Licença MIT</a>
+    </div>
+    <div class="spacer"></div>
+    <span class="foot-moto">seu board · seu servidor · seus dados</span>
+  </div>
+</footer>
+
+<script src="../../learn/learn.js"></script>
+</body>
+</html>

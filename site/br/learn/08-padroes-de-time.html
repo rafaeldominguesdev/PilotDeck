@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>08 · Padrões de time · Aprenda PilotDeck</title>
+<meta name="description" content="Três papéis por card, uma fila de revisão que não apodrece, missões que carregam contexto e RFCs cuja aprovação cria os cards de execução.">
+<meta property="og:title" content="Padrões de time · Aprenda PilotDeck">
+<meta property="og:description" content="Quem pediu, quem executou, quem revisa. Mais missões, RFCs e uma fila que não vira cemitério.">
+<meta property="og:locale" content="pt_BR">
+<link rel="alternate" hreflang="en" href="../../learn/08-team-patterns.html">
+<link rel="alternate" hreflang="pt-BR" href="08-padroes-de-time.html">
+<link rel="alternate" hreflang="x-default" href="../../learn/08-team-patterns.html">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23D1D9EB' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23D1D9EB'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../learn/learn.css">
+</head>
+<body>
+
+<div class="atmo" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-mist" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-grain" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-vignette" aria-hidden="true"></div>
+
+<nav class="nav">
+  <a class="wordmark" href="../index.html">over<span>click</span></a>
+  <div class="links">
+    <a href="../index.html#loop">O loop</a>
+    <a href="../index.html#features">Recursos</a>
+    <a href="index.html" class="on">Aprender</a>
+  </div>
+  <div class="spacer"></div>
+  <div class="lang" aria-label="Idioma">
+    <a href="../../learn/08-team-patterns.html" hreflang="en" lang="en">EN</a>
+    <span aria-hidden="true">·</span>
+    <a href="08-padroes-de-time.html" class="on" hreflang="pt-BR" lang="pt-BR" aria-current="true">PT</a>
+  </div>
+  <a class="btn btn-ghost btn-sm" href="https://github.com/rafaeldominguesdev/pilotdeck" rel="noopener">GitHub</a>
+</nav>
+
+<header class="course-head wrap">
+  <div class="col-read">
+    <p class="eyebrow">capítulo 08 de 08 · <b>padrões de time</b></p>
+    <h1>Três papéis, uma fila, nenhum órfão</h1>
+    <p class="lede">
+      Um card sabe <b>quem pediu</b>, <b>quem executou</b> e <b>para quem ele volta</b>. Esses três raramente são a mesma pessoa, e manter os papéis separados é o que permite um time misto de humanos e agentes rodar sem daily.
+    </p>
+  </div>
+</header>
+
+<main class="chapter wrap">
+  <div class="col-read">
+
+    <section>
+      <div class="sec-index">01 · papéis</div>
+      <h2>Quem pediu, quem rodou, quem confere</h2>
+      <table class="table">
+        <thead>
+          <tr><th>Papel</th><th>Quem costuma ser</th><th>O que muda</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Origem</b></td>
+            <td>O humano que escreveu o card, ou o agente que abriu durante outro trabalho.</td>
+            <td>Diz de quem é a intenção quando o contrato se revela ambíguo.</td>
+          </tr>
+          <tr>
+            <td><b>Executor</b></td>
+            <td>A CLI e o modelo que pegaram o card, gravados no claim.</td>
+            <td>Explica o resultado. Uma troca em relação ao harness planejado fica no card.</td>
+          </tr>
+          <tr>
+            <td><b>Volta para</b></td>
+            <td>Um humano com nome, outro agente, ou a fila do workspace.</td>
+            <td>Decide onde o card cai quando é entregue, para nada ficar esperando ninguém.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Quem delega nem sempre é quem confere. Escolha o <b>volta para</b> de propósito: o
+        revisor deve ser quem consegue rodar os passos de Como confirmo, que muitas vezes é
+        quem sentiu a dor original.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">02 · a fila</div>
+      <h2>Uma fila de revisão que fica curta</h2>
+      <ul>
+        <li><b>Filtre por aguardando minha revisão</b> e trabalhe diariamente. Fila revisada uma vez por semana deixa de ser fila e vira pilha.</li>
+        <li><b>Limite o trabalho em andamento.</b> Mais cards em execução do que revisores é como um time termina com uma coluna Feito em que ninguém confia.</li>
+        <li><b>Mande para a fila do workspace quando ninguém é óbvio.</b> É melhor do que atribuir um revisor que não vai olhar, e qualquer um pode pegar.</li>
+        <li><b>Reabra em vez de consertar você mesmo.</b> Corrigir a entrega do agente na mão esconde a falha dos números; a taxa de reabertura é um sinal que vale manter limpo.</li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="sec-index">03 · missões</div>
+      <h2>Missões carregam o contexto que o card não carrega</h2>
+      <p>
+        Uma missão é um grupo de cards com objetivo e contexto escritos uma vez. Todo briefing
+        de card daquela missão leva esse contexto junto, então um agente que pega o card nove
+        sabe para que serviam os outros oito sem você repetir.
+      </p>
+      <p>
+        A missão também é a unidade que mais merece um preço. "Quanto custou esta feature?" se
+        responde agrupando os insights por missão, e esse número é muito mais útil que um
+        total mensal.
+      </p>
+      <div class="say">
+        <span class="who">fale isso para o seu agente</span>
+        cria uma missão para o trabalho de preços com um objetivo curto, e depois arquiva
+        estes três cards dentro dela
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-index">04 · rfcs</div>
+      <h2>Decida como card, depois execute como cards</h2>
+      <p>
+        Trabalho que você ainda não consegue especificar não é card de feature. Faça um card
+        <b>rfc</b> cujo entregável é um documento: as opções, os tradeoffs, a recomendação. O
+        Como confirmo dele é sobre o documento, não sobre código, por exemplo "a RFC nomeia
+        pelo menos duas opções recusadas e por quê".
+      </p>
+      <p>
+        Ao validar a RFC, os cards de execução que ela propõe são criados e levam a decisão
+        junto. Do desenho à execução a trilha continua, e o modelo caro que escreveu a RFC não
+        é o modelo que precisa fazer cada renomeação depois.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">05 · agentes em paralelo</div>
+      <h2>Vários agentes, um board</h2>
+      <ul>
+        <li><b>Um token por agente e por máquina.</b> Revogáveis individualmente, com último uso visível, então um agente que se comporta mal é um clique.</li>
+        <li><b>Claims são atômicos.</b> Um segundo claim no mesmo card volta como já pego, então dois agentes não fazem o mesmo trabalho em silêncio.</li>
+        <li><b>Uma branch por card.</b> O id do card na branch, no commit e no título do PR é o que impede o trabalho paralelo de colidir.</li>
+        <li><b>Modo time para card com fatias.</b> Um card pode ter sub-tasks quando o trabalho realmente se divide, e o board mostra o progresso entre elas.</li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="sec-index">06 · o loop, de novo</div>
+      <h2>Onde o curso chega</h2>
+      <p>
+        Crie um contrato. Deixe um agente pegar e prestar contas com evidência e custo. Revise
+        com o roteiro que você escreveu antes do trabalho existir. Mude a política quando os
+        números mandarem. Esse é o loop inteiro, e cada capítulo aqui foi uma de suas peças.
+      </p>
+      <div class="note">
+        <b>Para ir além:</b> a superfície MCP, os erros tipados e a flag de manage estão
+        documentados em
+        <a href="https://github.com/rafaeldominguesdev/pilotdeck/blob/main/docs/mcp.md" rel="noopener">docs/mcp.md</a>,
+        e o roadmap vive no nosso próprio board do PilotDeck. Sim: os agentes constroem este
+        board através deste board.
+      </div>
+    </section>
+
+    <div class="checklist">
+      <h2>Checklist do capítulo</h2>
+      <ul>
+        <li>Todo card tem um volta para escolhido de propósito, não o padrão</li>
+        <li>A fila de revisão é trabalhada diariamente e fica curta</li>
+        <li>Cards relacionados vivem sob uma missão com contexto de verdade</li>
+        <li>Trabalho indeciso passa por um card rfc antes de virar cards de execução</li>
+        <li>Cada agente tem o próprio token revogável</li>
+        <li>O id do card aparece nas branches, nos commits e nos títulos de PR</li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a href="07-custo.html">
+        <span class="dir">← anterior</span>
+        <span class="title">07 · Quanto custa um card</span>
+      </a>
+      <a class="next" href="index.html">
+        <span class="dir">fim →</span>
+        <span class="title">Voltar ao índice do curso</span>
+      </a>
+    </div>
+
+  </div>
+</main>
+
+
+<footer>
+  <div class="wrap foot-grid">
+    <span class="wordmark">over<span>click</span></span>
+    <div class="foot-links">
+      <a href="../index.html">Início</a>
+      <a href="index.html">Índice do curso</a>
+      <a href="../../learn/08-team-patterns.html" hreflang="en" lang="en">English</a>
+      <a href="https://github.com/rafaeldominguesdev/pilotdeck" rel="noopener">GitHub</a>
+      <a href="https://github.com/rafaeldominguesdev/pilotdeck/blob/main/LICENSE" rel="noopener">Licença MIT</a>
+    </div>
+    <div class="spacer"></div>
+    <span class="foot-moto">seu board · seu servidor · seus dados</span>
+  </div>
+</footer>
+
+<script src="../../learn/learn.js"></script>
+</body>
+</html>

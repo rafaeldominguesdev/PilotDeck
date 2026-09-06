@@ -1,0 +1,246 @@
+/* ============================================================
+   THEME — overclock (the board wearing the product's own palette)
+
+   OCL-56. Values extracted from the Overclock app, not invented here.
+
+   SOURCE OF EVERY VALUE BELOW (read 2026-08-19):
+     A. overclock-app/packages/shell/src/renderer/styles/globals.css
+        — the app's live `:root`, which is what the product actually draws
+          with, and which itself declares: "Design tokens — FONTE:
+          docs/design-system/ (bundle overclock-design)".
+     B. overclock-app/docs/design-system/ui_kits/marketing-site/tokens.css
+        — the canonical bundle A cites. Header: "Brutalist/industrial. Pure
+          black base. Red brand. Mono only."
+
+   The mapping, token by token (left = ours, right = theirs):
+     --oc-bg              ← --color-bg        #000000  "pure black, never near-black"
+     --oc-surface-deep    ← --color-deep      #050505  "near-black for nested cards"
+     --oc-surface-2/-3    ← --surface-os / --surface-pane   rgba(8,8,10,0.65 / 0.45)
+     --oc-accent          ← --color-brand     #ef4444  "red-500: THE accent"
+     --oc-accent hover    ← --color-brand-2   #dc2626
+     --oc-text-1          ← --foreground      #ededed  (app near-white; bundle ink is #fff)
+     --oc-text-2          ← --color-muted-2   #9ca3af
+     --oc-text-3          ← --color-muted     #6b7280
+     --oc-border          ← --color-faintest  #1f2937  "hairlines, borders"
+     --oc-border-hover    ← --color-faint     #4b5563
+     --oc-border-strong   ← --border-brand-2  rgba(239,68,68,0.40)
+     --oc-ok              ← --status-online   #22c55e
+     --oc-danger-rgb      ← promoted from --oc-danger-deep-rgb 127 29 29
+                            (was --status-error #ef4444; U1 requires accent ≠ danger)
+     --oc-warn            ← --status-warn     #facc15
+     --oc-warn-pip        ← --status-busy     #eab308
+     --oc-star-far        ← --status-idle     #6b7280
+     --oc-info            ← --info            #06b6d4
+     --oc-tag-feature-fg  ← --agent-scout     #22D3EE   (agent spectrum, C-107 r6)
+     --oc-tag-rfc-fg      ← --agent-reviewer  #8B5CF6
+     --oc-font-ui         ← @theme --font-sans  "Geist Variable", "Geist", …
+     --oc-font-data       ← @theme --font-mono  "Geist Mono Variable", …
+     --oc-font-label      ← the app sets `body { font-family: var(--font-mono) }`,
+                            and the bundle header says "Mono only" — so labels
+                            speak the data face here, as they do in the product.
+     --oc-radius-*        ← --r-sm 4 / --r-md 6 / --r-lg 8 / --r-xl 12 / --r-pill 999
+     --oc-focus-ring      ← --focus-ring      rgba(239,68,68,0.65)
+     --oc-shadow-panel    ← --shadow-os       0 24px 60px -10px rgba(0,0,0,0.70)
+                            + --inner-hair    inset 0 0 0 1px rgba(255,255,255,0.06)
+     --oc-glass-blur      ← --blur-os         blur(12px)
+     --oc-plan-glow       ← --glow-red-sm     0 0 12px rgba(239,68,68,0.15), read as
+                            the same red haze in radial form
+     atmosphere off       ← the app has no nebula layer: flat pure black.
+
+   Like every theme file this one declares values only: no selector, no size
+   that moves a box (checklist item 14).
+   ============================================================ */
+
+/*
+   EXEMPTIONS — Tier-2 divergences declared per A2 (OCL-88, docs/design/amendments.md).
+   These values are intentionally not the xai reference implementation;
+   they are the product identity of the Overclock app.
+   - --oc-radius-pill: 999px
+        → Tier-2 rule: radius family including pills
+        → source: overclock-app --r-pill
+   - --oc-font-label: var(--oc-font-data)
+        → Tier-2 rule: label face (mono as the UI voice)
+        → source: overclock-app body { font-family: var(--font-mono) };
+          bundle header says "Mono only"
+   - --oc-tag-feature-fg: #22d3ee
+        → Tier-2 rule: tag foreground colours
+        → source: overclock-app --agent-scout
+   - --oc-tag-rfc-fg: #8b5cf6
+        → Tier-2 rule: tag foreground colours
+        → source: overclock-app --agent-reviewer
+   - --oc-plan-glow: red atmospheric haze
+        → Tier-2 rule: decorative glow
+        → source: overclock-app --glow-red-sm
+   - --oc-warn: #facc15
+        → Tier-2 rule: extra semantic colours
+        → source: overclock-app --status-warn
+   - --oc-info: #06b6d4
+        → Tier-2 rule: extra semantic colours
+        → source: overclock-app --info
+   - gray ladder carries blue-slate hue (#1f2937, #4b5563, #6b7280, #9ca3af)
+        → Tier-2 rule: hue of the gray ladder
+        → source: overclock-app slate grays
+*/
+
+[data-theme="overclock"] {
+  /* ---------- colour families ---------- */
+  --oc-black-rgb: 0 0 0;
+  --oc-white-rgb: 255 255 255;
+  --oc-accent-rgb: 239 68 68;
+  --oc-ok-rgb: 34 197 94;
+  --oc-danger-rgb: 127 29 29;
+  --oc-danger-deep-rgb: 127 29 29;
+  --oc-info-rgb: 6 182 212;
+  /* OCL-138: warm orange, distinct from --oc-danger's deep red and from
+     --oc-accent's brand red */
+  --oc-todo-rgb: 249 115 22;
+  --oc-warn-rgb: 250 204 21;
+  --oc-warn-2-rgb: 234 179 8;
+  --oc-warn-3-rgb: 234 179 8;
+  --oc-mist-rgb: 107 114 128;
+  --oc-mist-deep-rgb: 75 85 99;
+  --oc-haze-rgb: 239 68 68;
+  --oc-scrim-rgb: 5 5 5;
+  --oc-surface-2-rgb: 8 8 10;
+  --oc-surface-3-rgb: 8 8 10;
+  --oc-surface-deep-rgb: 5 5 5;
+  --oc-surface-tile-rgb: 5 5 5;
+  --oc-surface-btn-rgb: 8 8 10;
+
+  /* ---------- canvas and surfaces ---------- */
+  --oc-bg: rgb(var(--oc-black-rgb));
+  --oc-surface: transparent;
+  --oc-surface-2: rgb(var(--oc-surface-2-rgb) / 0.65);
+  --oc-surface-3: rgb(var(--oc-surface-3-rgb) / 0.45);
+  --oc-surface-deep: rgb(var(--oc-surface-deep-rgb));
+  --oc-surface-tile: rgb(var(--oc-surface-tile-rgb));
+  --oc-surface-subtle: rgb(var(--oc-white-rgb) / 0.03);
+  --oc-surface-input: rgb(var(--oc-white-rgb) / 0.04);
+  --oc-surface-hover: rgb(var(--oc-white-rgb) / 0.06);
+  --oc-surface-on: rgb(var(--oc-accent-rgb) / 0.1);
+  /* a panel covers what it sits on: the app's own surface, at the opacity
+     that stops the board bleeding through the text */
+  --oc-panel-bg: rgb(var(--oc-surface-2-rgb) / 0.96);
+  --oc-modal-bg: rgb(var(--oc-surface-2-rgb) / 0.94);
+  --oc-overlay-bg: rgb(var(--oc-black-rgb) / 0.72);
+
+  /* ---------- borders ---------- */
+  --oc-border: #1f2937;
+  --oc-border-hover: #4b5563;
+  --oc-border-strong: #4b5563;
+  --oc-border-dashed: #1f2937;
+  --oc-divider: rgb(var(--oc-white-rgb) / 0.05);
+
+  /* ---------- text ---------- */
+  --oc-text-1: #ededed;
+  --oc-text-2: #9ca3af;
+  --oc-text-3: #6b7280;
+  --oc-text-glow: rgb(var(--oc-accent-rgb) / 0.15);
+  --oc-icon: #6b7280;
+
+  /* ---------- the ladder ---------- */
+  --oc-mist-deep: #4b5563;
+  --oc-mist: #6b7280;
+  --oc-mist-light: #9ca3af;
+  --oc-accent: #ef4444;
+  --oc-accent-contrast: #000000;
+  --oc-dust-edge: #6b7280;
+  --oc-dust-core: #ffffff;
+  --oc-star: #9ca3af;
+  --oc-star-far: #6b7280;
+
+  /* ---------- status ---------- */
+  --oc-ok: #22c55e;
+  --oc-danger: rgb(var(--oc-danger-rgb));
+  --oc-info: #06b6d4;
+  --oc-todo: rgb(var(--oc-todo-rgb));
+  --oc-warn: #facc15;
+  --oc-warn-pip: #eab308;
+  --oc-warn-deep: #eab308;
+
+  /* ---------- type badges, from the app's agent spectrum ---------- */
+  --oc-tag-bug-fg: var(--oc-danger);
+  --oc-tag-bug-border: rgb(var(--oc-danger-rgb) / 0.3);
+  --oc-tag-rfc-fg: #8b5cf6;
+  --oc-tag-rfc-border: rgb(139 92 246 / 0.3);
+  --oc-tag-feature-fg: #22d3ee;
+  --oc-tag-feature-border: rgb(34 211 238 / 0.3);
+  --oc-badge-fg: var(--oc-accent);
+  --oc-chip-review-fg: var(--oc-warn);
+  --oc-chip-review-bg: rgb(var(--oc-warn-rgb) / 0.07);
+  --oc-chip-review-border: rgb(var(--oc-warn-rgb) / 0.28);
+
+  /* ---------- typography ---------- */
+  --oc-font-ui: "Geist Variable", "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --oc-font-data: "Geist Mono Variable", "Geist Mono", "JetBrains Mono", "Fira Code", ui-monospace, Menlo, Monaco, Consolas, monospace;
+  --oc-font-label: var(--oc-font-data);
+
+  /* ---------- radii ---------- */
+  --oc-radius-tick: 4px;
+  --oc-radius-control-sm: 4px;
+  --oc-radius-chip: 6px;
+  --oc-radius-badge: 6px;
+  --oc-radius-control: 8px;
+  --oc-radius-note: 8px;
+  --oc-radius-box: 8px;
+  --oc-radius-card: 12px;
+  --oc-radius-tile: 12px;
+  --oc-radius-panel: 12px;
+  --oc-radius-sheet: 12px;
+  --oc-radius-plan: 12px;
+  --oc-radius-pill: 999px;
+  --oc-radius-circle: 50%;
+
+  /* ---------- depth ---------- */
+  --oc-glass-bg: var(--oc-surface-2);
+  --oc-glass-border: var(--oc-border);
+  --oc-glass-highlight: inset 0 0 0 1px rgb(var(--oc-white-rgb) / 0.06);
+  --oc-glass-blur: 12px;
+  --oc-shadow-panel: 0 24px 60px -10px rgb(var(--oc-black-rgb) / 0.7), var(--oc-glass-highlight);
+  --oc-shadow-card-hover: 0 24px 60px -10px rgb(var(--oc-black-rgb) / 0.7), var(--oc-glass-highlight);
+  --oc-glow-text: 0 0 20px rgb(var(--oc-accent-rgb) / 0.25);
+  --oc-glow-dot-ok: 0 0 12px rgb(var(--oc-ok-rgb) / 0.5);
+  --oc-glow-dot-exec: 0 0 12px rgb(var(--oc-info-rgb) / 0.5);
+  --oc-glow-dot-exec-dim: 0 0 2px rgb(var(--oc-info-rgb) / 0.3);
+  --oc-glow-pip: 0 0 12px rgb(var(--oc-warn-rgb) / 0.5);
+  --oc-glow-accent: 0 0 20px rgb(var(--oc-accent-rgb) / 0.25);
+  --oc-glow-ok: 0 0 20px rgb(var(--oc-ok-rgb) / 0.25);
+
+  /* ---------- atmosphere: off (the app is flat pure black) ---------- */
+  --oc-grain-opacity: 0;
+  --oc-vignette: none;
+  --oc-atmo-mist: none;
+  --oc-atmo-veil: none;
+  --oc-atmo-opacity: 0;
+  --oc-alpha-mist: 0;
+  --oc-alpha-dust: 0;
+  --oc-alpha-star: 0.6;
+
+  /* ---------- corners ---------- */
+  --oc-corner-color: rgb(var(--oc-accent-rgb) / 0.35);
+
+  /* ---------- plan card / banner / account button ---------- */
+  --oc-plan-bg: var(--oc-surface-deep);
+  --oc-plan-border: var(--oc-border);
+  --oc-plan-glow: radial-gradient(
+    ellipse 90% 45% at 68% -12%,
+    rgb(var(--oc-accent-rgb) / 0.15),
+    transparent 70%
+  );
+  --oc-banner-bg: var(--oc-surface-deep);
+  --oc-banner-border: var(--oc-border);
+  --oc-btn-light-bg: var(--oc-accent);
+  --oc-btn-light-text: #ffffff;
+  --oc-btn-account-bg: rgb(var(--oc-surface-btn-rgb) / 0.65);
+  --oc-btn-account-border: var(--oc-border);
+  --oc-btn-account-blur: 12px;
+
+  /* ---------- touch ---------- */
+  --oc-tap: 44px;
+  --oc-tap-min: 24px;
+
+  /* ---------- focus ---------- */
+  --oc-focus-ring: 0 0 0 2px rgb(209 217 235 / 0.55);
+  --oc-focus-ring-offset: 0 0 0 4px rgb(var(--oc-black-rgb) / 0.55), var(--oc-focus-ring);
+  --oc-focus-ring-inset: inset 0 0 0 2px rgb(209 217 235 / 0.55);
+}

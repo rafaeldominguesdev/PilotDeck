@@ -1,0 +1,2 @@
+{"timestamp":"2026-08-18T10:00:00.000Z","type":"session_meta","payload":{"id":"fixture-no-model","session_id":"fixture-no-model","cwd":"/tmp/fixture","cli_version":"0.148.0"}}
+{"timestamp":"2026-08-18T10:00:01.000Z","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":75,"cached_input_tokens":25,"output_tokens":10,"cache_write_input_tokens":0},"last_token_usage":{"input_tokens":75,"cached_input_tokens":25,"output_tokens":10,"cache_write_input_tokens":0}}}}

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>03 · Escreva o card como um contrato · Aprenda PilotDeck</title>
+<meta name="description" content="O quê, Por quê e Como confirmo: como escrever um card que um agente executa e um humano revisa, com exemplos bons e ruins lado a lado.">
+<meta property="og:title" content="Escreva o card como um contrato · Aprenda PilotDeck">
+<meta property="og:description" content="Como confirmo é o roteiro de teste que você escreve antes do trabalho existir. Cards bons e ruins, lado a lado.">
+<meta property="og:locale" content="pt_BR">
+<link rel="alternate" hreflang="en" href="../../learn/03-card-as-contract.html">
+<link rel="alternate" hreflang="pt-BR" href="03-card-como-contrato.html">
+<link rel="alternate" hreflang="x-default" href="../../learn/03-card-as-contract.html">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23D1D9EB' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23D1D9EB'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../learn/learn.css">
+</head>
+<body>
+
+<div class="atmo" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-mist" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-grain" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-vignette" aria-hidden="true"></div>
+
+<nav class="nav">
+  <a class="wordmark" href="../index.html">over<span>click</span></a>
+  <div class="links">
+    <a href="../index.html#loop">O loop</a>
+    <a href="../index.html#features">Recursos</a>
+    <a href="index.html" class="on">Aprender</a>
+  </div>
+  <div class="spacer"></div>
+  <div class="lang" aria-label="Idioma">
+    <a href="../../learn/03-card-as-contract.html" hreflang="en" lang="en">EN</a>
+    <span aria-hidden="true">·</span>
+    <a href="03-card-como-contrato.html" class="on" hreflang="pt-BR" lang="pt-BR" aria-current="true">PT</a>
+  </div>
+  <a class="btn btn-ghost btn-sm" href="https://github.com/rafaeldominguesdev/pilotdeck" rel="noopener">GitHub</a>
+</nav>
+
+<header class="course-head wrap">
+  <div class="col-read">
+    <p class="eyebrow">capítulo 03 de 08 · <b>o card é o contrato</b></p>
+    <h1>Escreva o teste antes do trabalho</h1>
+    <p class="lede">
+      Um card tem três campos por um motivo. <b>O quê</b> é a mudança, <b>Por quê</b> é o julgamento que o agente precisa quando a realidade não bate com o plano, e <b>Como confirmo</b> é o roteiro que você vai rodar na revisão. Escreva o terceiro primeiro e os outros dois ficam mais afiados.
+    </p>
+  </div>
+</header>
+
+<main class="chapter wrap">
+  <div class="col-read">
+
+    <section>
+      <div class="sec-index">01 · os três campos</div>
+      <h2>Para que cada campo serve de verdade</h2>
+      <table class="table">
+        <thead>
+          <tr><th>Campo</th><th>Função</th><th>O que quebra quando está fraco</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>O quê</b></td>
+            <td>A mudança observável. Telas, comportamentos, endpoints, o formato da saída.</td>
+            <td>O agente inventa o escopo. Você recebe um refactor que não pediu.</td>
+          </tr>
+          <tr>
+            <td><b>Por quê</b></td>
+            <td>A razão da mudança importar, para o executor decidir as miudezas sozinho.</td>
+            <td>Toda ambiguidade vira pergunta, ou pior, um palpite silencioso.</td>
+          </tr>
+          <tr>
+            <td><b>Como confirmo</b></td>
+            <td>Passos em linguagem simples com resultado esperado. É o roteiro da revisão.</td>
+            <td>A revisão vira sensação. Ninguém consegue dizer se está pronto.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        O briefing que o agente recebe é exatamente esse contrato mais o harness, o contexto
+        da missão e a convenção de branch. Nada além disso é enviado, então o que você deixar
+        de fora está de fato faltando.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">02 · lado a lado</div>
+      <h2>O mesmo pedido, duas vezes</h2>
+      <div class="compare">
+        <div class="pane bad">
+          <div class="label">card fraco</div>
+          <span class="field">o quê</span>
+          <p>Corrigir o bug do login.</p>
+          <span class="field">por quê</span>
+          <p>Os usuários estão reclamando.</p>
+          <span class="field">como confirmo</span>
+          <p>O login funciona.</p>
+        </div>
+        <div class="pane good">
+          <div class="label">card que executa</div>
+          <span class="field">o quê</span>
+          <p>O login falha para e-mails com acento (josé@dominio.com.br). Normalize o endereço antes da consulta e mantenha o valor gravado como está.</p>
+          <span class="field">por quê</span>
+          <p>Cerca de um quinto dos nossos usuários brasileiros tem acento no endereço. Eles simplesmente não entram, e o suporte não tem contorno para oferecer.</p>
+          <span class="field">como confirmo</span>
+          <p>1. Criar um usuário com josé@dominio.com.br → conta criada.<br>
+             2. Entrar com o mesmo endereço → sessão inicia.<br>
+             3. Entrar com JOSÉ@dominio.com.br → sessão inicia.<br>
+             4. Contas antigas sem acento continuam entrando → sem mudança.</p>
+        </div>
+      </div>
+      <p>
+        O card bom não é longo por esporte. Cada frase a mais tira uma decisão que o agente
+        tomaria sozinho, e o passo 4 é o que impede a correção de quebrar todo mundo.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">03 · como confirmo</div>
+      <h2>Passos que outra pessoa consegue rodar</h2>
+      <p>
+        Um passo de confirmação tem uma ação e um resultado esperado. Ele precisa ser
+        executável por alguém que não escreveu o código e não acompanhou o trabalho: é esse o
+        ponto, porque na hora da revisão você já esqueceu o contexto.
+      </p>
+      <div class="compare">
+        <div class="pane bad">
+          <div class="label">não é passo</div>
+          <p>"Testar o endpoint."</p>
+          <p>"Garantir que a performance está ok."</p>
+          <p>"Conferir se nada quebrou."</p>
+        </div>
+        <div class="pane good">
+          <div class="label">é passo</div>
+          <p>"POST /api/pair com um código expirado → 400 e o corpo diz que expirou."</p>
+          <p>"Abrir o board com 200 cards → a lista pinta em menos de um segundo com cache frio."</p>
+          <p>"Rodar as três suítes de teste → todas verdes, e a contagem não caiu."</p>
+        </div>
+      </div>
+      <p>
+        Quando um passo precisa de um artefato, diga isso no passo. O agente pode anexar um
+        link, um comando ou a referência de um screenshot na entrega, e o board mostra isso no
+        topo do painel de validação em <b>Para conferir, abra</b>.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">04 · tamanho</div>
+      <h2>Um card, um entregável</h2>
+      <p>
+        Um card precisa caber numa execução, com um agente e uma branch. Se o <b>Como
+        confirmo</b> passa de uns seis passos, ou se os passos são de telas diferentes, você
+        está segurando dois cards. Separe: o board guarda a relação, e duas entregas pequenas
+        revisam mais rápido que uma grande.
+      </p>
+      <p>
+        Trabalho grande e ainda indeciso não é card. Faça um card <b>rfc</b> cujo entregável é
+        um documento; aprovar esse documento cria os cards de execução, e a trilha da decisão
+        até o código continua inteira. O capítulo 8 cobre esse padrão.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">05 · deixe o agente abrir cards</div>
+      <h2>Descoberta é card, não recado no chat</h2>
+      <p>
+        Agentes também criam cards via MCP. Quando aparece no meio do trabalho algo que não é
+        função daquele card, o movimento honesto é abrir um card novo em vez de esticar o
+        escopo.
+      </p>
+      <div class="say">
+        <span class="who">fale isso para o seu agente</span>
+        registra isso como uma task para depois: o endpoint de pareamento não tem rate limit.
+        escreve o quê, por quê e como confirmo, e cria no projeto atual.
+      </div>
+      <p>
+        O card que ele criar vale o mesmo contrato. Se o seu agente escrever um card vago,
+        diga uma vez o que faltou; a maioria mantém o formato depois disso.
+      </p>
+    </section>
+
+    <div class="checklist">
+      <h2>Checklist do capítulo</h2>
+      <ul>
+        <li>Todo card responde O quê, Por quê e Como confirmo</li>
+        <li>O Como confirmo tem passos numerados, cada um com resultado esperado</li>
+        <li>Alguém que não fez o trabalho conseguiria rodar esses passos</li>
+        <li>Um card produz um entregável numa branch</li>
+        <li>Trabalho indeciso vira card rfc, não card de feature gigante</li>
+        <li>Descobertas durante a execução viram cards novos, não escopo extra</li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a href="02-conectar-agente.html">
+        <span class="dir">← anterior</span>
+        <span class="title">02 · Conecte um agente com código de pareamento</span>
+      </a>
+      <a class="next" href="04-politica-de-harness.html">
+        <span class="dir">próximo →</span>
+        <span class="title">04 · A política de harness</span>
+      </a>
+    </div>
+
+  </div>
+</main>
+
+
+<footer>
+  <div class="wrap foot-grid">
+    <span class="wordmark">over<span>click</span></span>
+    <div class="foot-links">
+      <a href="../index.html">Início</a>
+      <a href="index.html">Índice do curso</a>
+      <a href="../../learn/03-card-as-contract.html" hreflang="en" lang="en">English</a>
+      <a href="https://github.com/rafaeldominguesdev/pilotdeck" rel="noopener">GitHub</a>
+      <a href="https://github.com/rafaeldominguesdev/pilotdeck/blob/main/LICENSE" rel="noopener">Licença MIT</a>
+    </div>
+    <div class="spacer"></div>
+    <span class="foot-moto">seu board · seu servidor · seus dados</span>
+  </div>
+</footer>
+
+<script src="../../learn/learn.js"></script>
+</body>
+</html>

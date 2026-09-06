@@ -1,0 +1,3 @@
+ALTER TABLE "workspace" ALTER COLUMN "executors" SET DEFAULT '[{"id":"overclock","label":"Overclock","enabled":false,"models":[]},{"id":"claude-code","label":"Claude Code","enabled":false,"models":[]},{"id":"codex","label":"Codex","enabled":false,"models":[]},{"id":"gemini-cli","label":"Gemini CLI","enabled":false,"models":[]},{"id":"cursor","label":"Cursor","enabled":false,"models":[]},{"id":"aider","label":"Aider","enabled":false,"models":[]},{"id":"generic-mcp","label":"Other (generic MCP)","enabled":false,"models":[]}]'::jsonb;--> statement-breakpoint
+ALTER TABLE "handoff" ADD COLUMN "how_to_verify" text;--> statement-breakpoint
+ALTER TABLE "task" ADD COLUMN "validation_ticks" jsonb DEFAULT '[]'::jsonb NOT NULL;

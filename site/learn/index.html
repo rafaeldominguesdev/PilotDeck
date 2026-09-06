@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learn PilotDeck: from install to a working human + agent loop</title>
+<meta name="description" content="A short course on running PilotDeck well: install, connect an agent, write cards as contracts, set the harness policy, review with discipline, work from the terminal, and read what each card cost.">
+<meta property="og:title" content="Learn PilotDeck">
+<meta property="og:description" content="Eight chapters from docker compose up to a team that reviews agent work with a script instead of a vibe.">
+<meta property="og:locale" content="en_US">
+<link rel="alternate" hreflang="en" href="index.html">
+<link rel="alternate" hreflang="pt-BR" href="../br/learn/index.html">
+<link rel="alternate" hreflang="x-default" href="index.html">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23D1D9EB' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23D1D9EB'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="learn.css">
+</head>
+<body>
+
+<div class="atmo" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-mist" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-grain" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-vignette" aria-hidden="true"></div>
+
+<nav class="nav">
+  <a class="wordmark" href="../index.html">over<span>click</span></a>
+  <div class="links">
+    <a href="../index.html#loop">The loop</a>
+    <a href="../index.html#features">Features</a>
+    <a href="index.html" class="on">Learn</a>
+  </div>
+  <div class="spacer"></div>
+  <div class="lang" aria-label="Language">
+    <a href="index.html" class="on" hreflang="en" lang="en" aria-current="true">EN</a>
+    <span aria-hidden="true">·</span>
+    <a href="../br/learn/index.html" hreflang="pt-BR" lang="pt-BR">PT</a>
+  </div>
+  <a class="btn btn-ghost btn-sm" href="https://github.com/rafaeldominguesdev/pilotdeck" rel="noopener">GitHub</a>
+</nav>
+
+<header class="course-head wrap">
+  <div class="col-read">
+    <p class="eyebrow">course · <b>eight chapters</b> · about 45 minutes</p>
+    <h1>Learn <span>PilotDeck</span></h1>
+    <p class="lede">
+      The repo tells you what the product is. This course teaches the practices that make
+      the loop actually work: <b>cards written as contracts</b>, a harness policy instead of
+      model roulette, and a review where <b>done is not validated</b>.
+    </p>
+    <div class="meta-row">
+      <span>start at chapter 1 on a clean machine</span>
+      <span>·</span>
+      <span>every command is copyable</span>
+      <span>·</span>
+      <span>each chapter closes with a checklist</span>
+    </div>
+
+    <div class="chapters">
+      <a class="chapter-card" href="01-install.html">
+        <span class="num">01</span>
+        <span>
+          <h2>Install and first run</h2>
+          <p>Two commands, your own Postgres, an admin account that exists only on your machine, and the three-step onboarding that ends with a board waiting for an agent.</p>
+          <span class="tags"><span>docker</span><span>10 min</span></span>
+        </span>
+      </a>
+      <a class="chapter-card" href="02-connect-agent.html">
+        <span class="num">02</span>
+        <span>
+          <h2>Connect an agent with a pairing code</h2>
+          <p>Six digits your agent trades for a real token, so the bearer value never appears in a chat, a log or a livestream. Then the first card moves without you touching the board.</p>
+          <span class="tags"><span>mcp</span><span>pairing</span><span>8 min</span></span>
+        </span>
+      </a>
+      <a class="chapter-card" href="03-card-as-contract.html">
+        <span class="num">03</span>
+        <span>
+          <h2>Write a card as a contract</h2>
+          <p>What, Why, How to confirm. Side-by-side cards that work and cards that come back wrong, and the one question that fixes most briefings before an agent wastes an hour.</p>
+          <span class="tags"><span>contracts</span><span>examples</span><span>8 min</span></span>
+        </span>
+      </a>
+      <a class="chapter-card" href="04-harness-policy.html">
+        <span class="num">04</span>
+        <span>
+          <h2>The harness policy</h2>
+          <p>Declare the CLIs and models you actually own, map each activity type to one, and let every card be born with the right executor recommended instead of guessed.</p>
+          <span class="tags"><span>policy</span><span>models</span><span>6 min</span></span>
+        </span>
+      </a>
+      <a class="chapter-card" href="05-review.html">
+        <span class="num">05</span>
+        <span>
+          <h2>The review discipline</h2>
+          <p>Done is the agent's opinion; validated is yours. How to run the Done column as a queue, and how a reopen comment travels straight into the agent's next claim.</p>
+          <span class="tags"><span>review</span><span>quality</span><span>7 min</span></span>
+        </span>
+      </a>
+      <a class="chapter-card" href="06-terminal.html">
+        <span class="num">06</span>
+        <span>
+          <h2>Working with agents from the terminal</h2>
+          <p>The prompt patterns that hold up in daily use: grab the next task, register this as a task, what is the harness policy, how much did this mission cost.</p>
+          <span class="tags"><span>prompts</span><span>daily flow</span><span>6 min</span></span>
+        </span>
+      </a>
+      <a class="chapter-card" href="07-cost.html">
+        <span class="num">07</span>
+        <span>
+          <h2>What a card costs</h2>
+          <p>Tokens are the fact, dollars are arithmetic. The price table, the three labels a cost figure can carry, and the questions Insights answers about where the money went.</p>
+          <span class="tags"><span>cost</span><span>insights</span><span>6 min</span></span>
+        </span>
+      </a>
+      <a class="chapter-card" href="08-team-patterns.html">
+        <span class="num">08</span>
+        <span>
+          <h2>Team patterns</h2>
+          <p>Three roles per card, a review queue that stays short, missions that carry context, and RFCs whose approval spawns the execution cards.</p>
+          <span class="tags"><span>teams</span><span>missions</span><span>7 min</span></span>
+        </span>
+      </a>
+    </div>
+
+    <div class="note">
+      <b>Prefer the reference?</b> The course teaches the practice; the repo documents the
+      surface. The MCP tool list, error codes and the manage flag live in
+      <a href="https://github.com/rafaeldominguesdev/pilotdeck/blob/main/docs/mcp.md" rel="noopener">docs/mcp.md</a>.
+    </div>
+
+    <div class="pager">
+      <a class="next" href="01-install.html" style="flex:1 1 100%">
+        <span class="dir">start here</span>
+        <span class="title">01 · Install and first run →</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<footer>
+  <div class="wrap foot-grid">
+    <span class="wordmark">over<span>click</span></span>
+    <div class="foot-links">
+      <a href="../index.html">Home</a>
+      <a href="https://github.com/rafaeldominguesdev/pilotdeck" rel="noopener">GitHub</a>
+      <a href="https://github.com/rafaeldominguesdev/pilotdeck/blob/main/docs/mcp.md" rel="noopener">Docs</a>
+      <a href="https://github.com/rafaeldominguesdev/pilotdeck/blob/main/LICENSE" rel="noopener">MIT License</a>
+    </div>
+    <div class="spacer"></div>
+    <span class="foot-moto">your board · your server · your data</span>
+  </div>
+</footer>
+
+<script src="learn.js"></script>
+</body>
+</html>

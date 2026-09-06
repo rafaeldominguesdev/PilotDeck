@@ -1,0 +1,9 @@
+{
+  "name": "pilotdeck",
+  "version": "0.3.16",
+  "description": "Claim, execute, and deliver cards on your own self-hosted PilotDeck board. Ships the workflow skill, the /pilotdeck:* commands, and hooks: a session-start board snapshot and a delivery commit check run by default, while the claim guard and the stop/harness guards ship disabled. The only network endpoint is the PilotDeck instance you configure - no third-party calls, no telemetry.",
+  "author": {
+    "name": "PilotDeck"
+  },
+  "license": "MIT"
+}

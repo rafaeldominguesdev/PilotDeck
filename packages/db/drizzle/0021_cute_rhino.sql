@@ -1,0 +1,1 @@
+ALTER TABLE "cardapio_entry" ADD COLUMN "chain" text[];

@@ -1,0 +1,85 @@
+# Runs the suite the repo already ships on every push and pull request. The
+# release-image workflow publishes to ghcr.io on a v* tag with no gate of its
+# own, so this is the check that stands between a red suite and a tagged image.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    # Backs the real-postgres regression suite (pairing.real-postgres.integration.test.ts),
+    # which exists because the PGlite-only suite shipped OCL-109: PGlite tolerates a
+    # `Date` bound into `sql`, postgres-js — what production runs — does not. Every
+    # other integration test still boots its own in-memory PGlite and ignores this.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # corepack reads packageManager from package.json, so the lockfile is
+      # resolved by the pinned pnpm 9.15.9 and not by whatever the runner ships.
+      - run: corepack enable
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Build from the clean checkout before tests. This catches incomplete
+      # commits that unit tests can miss but the release image cannot compile.
+      - run: pnpm build
+
+      # The migration folder is only read by db:migrate and the tests, so a
+      # snapshot can rot there unnoticed: an unreadable one stops drizzle-kit
+      # before it does anything, and only the next person to touch the schema
+      # finds out. Running it here also catches a schema change whose migration
+      # was never committed, since that shows up as a diff.
+      - run: pnpm db:generate
+      - run: git diff --exit-code packages/db/drizzle
+
+      # vitest transpiles with esbuild, which strips types without checking them,
+      # so a type error reaches main unless tsc is asked separately.
+      - run: pnpm -r --if-present typecheck
+
+      # Most integration tests boot an in-memory PGlite and need no service.
+      # pairing.real-postgres.integration.test.ts is the exception: it talks
+      # to the postgres service above through the same postgres-js driver
+      # production uses, which is what OCL-109 needed and PGlite cannot give it.
+      - run: pnpm test
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+
+      # The plugin package is not a pnpm workspace, so `pnpm test` never reached
+      # it and this suite only ever ran by hand. That is how the manifest version
+      # drift behind the OCL-76 ghost install got to main, and it left the suite
+      # itself red here for a while without anyone finding out. Runs against stub
+      # CLIs, no network.
+      - run: scripts/test-plugin-package.sh

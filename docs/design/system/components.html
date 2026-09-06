@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en" data-theme="xai">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PilotDeck design system — components</title>
+<!--
+  OCL-81 — the live exemplar of docs/design/system/components.md.
+
+  This page LINKS THE REAL THEME FILES, so every component below renders with
+  the board's actual tokens; switch themes with the buttons in the header.
+  If a token value changes in the app, this page changes with it.
+
+  Only two things are declared locally, both pending extraction decisions
+  (docs/design/system/decisions.md): the D1 type-scale tokens and the D7
+  --oc-z-toast rung. They are marked inline.
+-->
+<link rel="stylesheet" href="../../../apps/web/src/styles/themes/nebula.css">
+<link rel="stylesheet" href="../../../apps/web/src/styles/themes/xai.css">
+<link rel="stylesheet" href="../../../apps/web/src/styles/themes/overclock.css">
+<style>
+  /* ---- D1 (decisions.md): the UI type ramp, pending token extraction ---- */
+  :root {
+    --oc-text-display: 22px;
+    --oc-text-title: 16px;
+    --oc-text-body: 13px;
+    --oc-text-label: 12px;
+    --oc-text-data: 11px;
+    --oc-weight-regular: 400;
+    --oc-weight-semibold: 600;
+    /* D7: proposed rung, pending doctrine amendment */
+    --oc-z-toast: 70;
+  }
+
+  /* ================= page chrome (not the system) ================= */
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--oc-bg);
+    color: var(--oc-text-1);
+    font-family: var(--oc-font-ui);
+    font-size: var(--oc-text-body);
+    padding: var(--oc-space-8) var(--oc-space-6) 96px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  .pg-head { display: flex; align-items: center; justify-content: space-between; gap: var(--oc-space-4); margin-bottom: var(--oc-space-8); }
+  .pg-title { font-size: var(--oc-text-display); font-weight: var(--oc-weight-semibold); letter-spacing: var(--oc-tracking-tight); }
+  .pg-sub { color: var(--oc-text-3); font-size: var(--oc-text-label); margin-top: var(--oc-space-1); }
+  .pg-themes { display: flex; gap: var(--oc-space-2); }
+  section { margin-top: var(--oc-space-9); }
+  .sec-title { font-size: var(--oc-text-title); font-weight: var(--oc-weight-semibold); margin-bottom: var(--oc-space-1); }
+  .sec-note { color: var(--oc-text-3); font-size: var(--oc-text-label); margin-bottom: var(--oc-space-4); max-width: 72ch; line-height: 1.55; }
+  .row { display: flex; flex-wrap: wrap; gap: var(--oc-space-3); align-items: center; }
+  .col { display: grid; gap: var(--oc-space-3); align-items: start; }
+  .cell-label { font-family: var(--oc-font-data); font-size: var(--oc-text-data); color: var(--oc-text-3); }
+  .frame { border: 1px solid var(--oc-border); border-radius: var(--oc-radius-panel); padding: var(--oc-space-4); display: grid; gap: var(--oc-space-3); }
+
+  /* ================= the system, spec by spec ================= */
+
+  /* ---- §1 Button ---- */
+  .btn {
+    display: inline-flex; align-items: center; gap: var(--oc-space-2);
+    height: 32px; padding: 0 var(--oc-space-3);
+    border-radius: var(--oc-radius-control);
+    font: 500 var(--oc-text-body) var(--oc-font-ui);
+    border: 1px solid transparent; background: transparent; color: var(--oc-text-2);
+    cursor: pointer;
+    transition: background-color var(--oc-duration-micro) var(--oc-ease-atmosphere),
+                border-color var(--oc-duration-micro) var(--oc-ease-atmosphere),
+                color var(--oc-duration-micro) var(--oc-ease-atmosphere);
+  }
+  .btn:focus-visible { outline: none; box-shadow: var(--oc-focus-ring-offset); }
+  .btn-lg { height: 40px; padding: 0 var(--oc-space-4); }
+  .btn-pri { background: var(--oc-btn-light-bg); color: var(--oc-btn-light-text); }
+  .btn-pri:hover, .btn-pri.is-hover { filter: brightness(0.92); }
+  .btn-pri:active, .btn-pri.is-active { filter: brightness(0.85); }
+  .btn-sec { border-color: var(--oc-border); }
+  .btn-sec:hover, .btn-sec.is-hover { background: var(--oc-surface-hover); border-color: var(--oc-border-strong); color: var(--oc-text-1); }
+  .btn-ghost { color: var(--oc-text-3); }
+  .btn-ghost:hover, .btn-ghost.is-hover { color: var(--oc-text-1); }
+  .btn-danger { border-color: rgb(var(--oc-danger-rgb) / 0.4); color: var(--oc-danger); }
+  .btn-danger:hover, .btn-danger.is-hover { background: rgb(var(--oc-danger-rgb) / 0.08); border-color: rgb(var(--oc-danger-rgb) / 0.6); }
+  .btn:disabled, .btn.is-disabled { opacity: 0.45; cursor: not-allowed; filter: none; background: transparent; }
+  .btn-pri:disabled, .btn-pri.is-disabled { background: var(--oc-btn-light-bg); }
+
+  /* ---- §2 The Control ---- */
+  .control {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 32px; padding: 0 var(--oc-space-3);
+    border-radius: var(--oc-radius-control); border: 1px solid var(--oc-border);
+    background: transparent; color: var(--oc-text-2);
+    font: 500 var(--oc-text-body) var(--oc-font-ui); cursor: pointer;
+    transition: background-color var(--oc-duration-micro) var(--oc-ease-atmosphere),
+                border-color var(--oc-duration-micro) var(--oc-ease-atmosphere),
+                color var(--oc-duration-micro) var(--oc-ease-atmosphere);
+  }
+  .control:hover, .control.is-open { background: var(--oc-surface-3); border-color: var(--oc-border-strong); color: var(--oc-text-1); }
+  .control:focus-visible { outline: none; box-shadow: var(--oc-focus-ring-offset); }
+  .control .chev { transition: transform var(--oc-duration-micro) var(--oc-ease-atmosphere); }
+  .control.is-open .chev { transform: rotate(180deg); }
+
+  /* ---- §3 Select + dropdown ---- */
+  .oc-select-wrap { position: relative; display: inline-block; }
+  .oc-select {
+    appearance: none; height: 32px;
+    padding: 0 calc(var(--oc-space-3) + 14px) 0 var(--oc-space-3);
+    border-radius: var(--oc-radius-control); border: 1px solid var(--oc-border);
+    background: var(--oc-surface-input); color: var(--oc-text-1);
+    font: var(--oc-weight-regular) var(--oc-text-body) var(--oc-font-ui);
+    cursor: pointer;
+    transition: border-color var(--oc-duration-micro) var(--oc-ease-atmosphere);
+  }
+  .oc-select:hover, .oc-select.is-hover { border-color: var(--oc-border-strong); }
+  .oc-select:focus-visible { outline: none; border-color: var(--oc-border-strong); box-shadow: var(--oc-focus-ring-offset); }
+  .oc-select:disabled { color: var(--oc-text-3); background: var(--oc-surface-subtle); cursor: not-allowed; }
+  .oc-select option { background: var(--oc-surface-3); color: var(--oc-text-1); }
+  .oc-select-wrap .chev { position: absolute; right: var(--oc-space-3); top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--oc-text-3); }
+
+  .pop {
+    background: var(--oc-panel-bg); border: 1px solid var(--oc-border);
+    border-radius: var(--oc-radius-panel); box-shadow: var(--oc-shadow-panel);
+    padding: var(--oc-space-2); min-width: 240px;
+    max-width: min(320px, calc(100vw - var(--oc-space-8)));
+  }
+  .pop-group {
+    display: flex; align-items: end; height: 28px; padding: 0 var(--oc-space-3);
+    font: var(--oc-weight-semibold) var(--oc-text-data) var(--oc-font-ui);
+    text-transform: uppercase; letter-spacing: var(--oc-tracking-wide);
+    color: var(--oc-text-3);
+  }
+  .pop-group + .pop-group { border-top: 1px solid var(--oc-divider); margin-top: var(--oc-space-2); padding-top: calc(var(--oc-space-2) + 4px); height: 36px; }
+  .pop-item {
+    display: flex; align-items: center; gap: var(--oc-space-2);
+    height: 32px; padding: 0 var(--oc-space-3);
+    border-radius: var(--oc-radius-control); color: var(--oc-text-2);
+    font-size: var(--oc-text-body); cursor: pointer; white-space: nowrap;
+  }
+  .pop-item:hover, .pop-item.is-hover { background: var(--oc-surface-hover); color: var(--oc-text-1); }
+  .pop-item.is-selected { color: var(--oc-text-1); }
+  .pop-item .tick { width: 14px; flex: none; color: var(--oc-text-1); }
+  .pop-item .why { margin-left: auto; font-family: var(--oc-font-data); font-size: var(--oc-text-data); color: var(--oc-text-3); }
+  .pop-item.is-disabled { color: var(--oc-text-3); cursor: default; }
+  .pop-item.is-disabled:hover { background: transparent; color: var(--oc-text-3); }
+  .pop-item.is-danger { color: var(--oc-danger); }
+  .pop-item.is-danger:hover { background: rgb(var(--oc-danger-rgb) / 0.08); }
+  .pop-sep { height: 1px; background: var(--oc-divider); margin: var(--oc-space-2) 0; }
+  .pop-title { padding: var(--oc-space-2) var(--oc-space-3) var(--oc-space-1); font: var(--oc-weight-semibold) var(--oc-text-data) var(--oc-font-ui); text-transform: uppercase; letter-spacing: var(--oc-tracking-wide); color: var(--oc-text-3); }
+
+  /* ---- §4 Form field ---- */
+  .field { display: grid; gap: var(--oc-space-2); max-width: 340px; }
+  .field-label { font: 500 var(--oc-text-label) var(--oc-font-ui); color: var(--oc-text-2); display: flex; gap: var(--oc-space-2); align-items: baseline; }
+  .field-opt { font-family: var(--oc-font-data); font-size: var(--oc-text-data); color: var(--oc-text-3); }
+  .oc-input {
+    height: 36px; padding: 0 var(--oc-space-3);
+    border-radius: var(--oc-radius-control); border: 1px solid var(--oc-border);
+    background: var(--oc-surface-input); color: var(--oc-text-1);
+    font: var(--oc-weight-regular) var(--oc-text-body) var(--oc-font-ui);
+  }
+  .oc-input::placeholder { color: var(--oc-text-3); }
+  .oc-input:hover { border-color: var(--oc-border-strong); }
+  .oc-input:focus-visible { outline: none; border-color: var(--oc-border-strong); box-shadow: var(--oc-focus-ring-offset); }
+  .oc-input:disabled { color: var(--oc-text-3); background: var(--oc-surface-subtle); }
+  .oc-input.mono { font-family: var(--oc-font-data); font-size: var(--oc-text-data); }
+  .field.is-error .oc-input { border-color: rgb(var(--oc-danger-rgb) / 0.4); }
+  .field-hint { font-size: var(--oc-text-label); color: var(--oc-text-3); }
+  .field-error { font-size: var(--oc-text-label); color: var(--oc-danger); }
+
+  /* ---- §5 Chip / badge ---- */
+  .chip {
+    display: inline-flex; align-items: center; gap: var(--oc-space-1);
+    height: 22px; padding: 0 var(--oc-space-2);
+    border-radius: var(--oc-radius-control); border: 1px solid var(--oc-border);
+    color: var(--oc-text-2); font: 500 var(--oc-text-label) var(--oc-font-ui);
+  }
+  .chip.clickable { cursor: pointer; }
+  .chip.clickable:hover, .chip.is-hover { background: var(--oc-surface-hover); border-color: var(--oc-border-strong); color: var(--oc-text-1); }
+  .chip.is-active { color: var(--oc-text-1); border-color: var(--oc-border-strong); }
+  .chip.is-disabled { border-style: dashed; color: var(--oc-text-3); cursor: default; }
+  .chip .dot { width: 7px; height: 7px; border-radius: var(--oc-radius-circle); background: var(--oc-ok); flex: none; }
+  .chip .dot.bad { background: var(--oc-danger); }
+  .count-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
+    background: var(--oc-accent); color: var(--oc-accent-contrast);
+    font: var(--oc-weight-semibold) var(--oc-text-data) var(--oc-font-data);
+    font-variant-numeric: tabular-nums;
+  }
+  .meta { font-family: var(--oc-font-data); font-size: var(--oc-text-data); color: var(--oc-text-3); }
+
+  /* ---- §6 Table ---- */
+  .oc-table { border-collapse: collapse; min-width: 430px; }
+  .oc-table th {
+    text-align: left; padding: 0 var(--oc-space-3) var(--oc-space-2) 0;
+    font: var(--oc-weight-semibold) var(--oc-text-data) var(--oc-font-ui);
+    text-transform: uppercase; letter-spacing: var(--oc-tracking-wide); color: var(--oc-text-3);
+  }
+  .oc-table th.num, .oc-table td.num { text-align: right; }
+  .oc-table td {
+    padding: var(--oc-space-2) var(--oc-space-3) var(--oc-space-2) 0;
+    border-top: 1px solid var(--oc-divider);
+    font-size: var(--oc-text-body); color: var(--oc-text-1);
+  }
+  .oc-table td.num { font-family: var(--oc-font-data); font-size: var(--oc-text-data); font-variant-numeric: tabular-nums; }
+  .oc-table tbody tr { transition: background-color var(--oc-duration-micro) var(--oc-ease-atmosphere); }
+  .oc-table tbody tr:hover { background: var(--oc-surface-hover); }
+  .oc-table th.sorted { color: var(--oc-text-2); }
+  .oc-table th .caret { font-size: 10px; color: var(--oc-text-3); }
+
+  /* ---- §8 Empty state ---- */
+  .empty-inline {
+    border: 1px dashed var(--oc-border-dashed); border-radius: var(--oc-radius-panel);
+    padding: var(--oc-space-6) var(--oc-space-4); text-align: center;
+    color: var(--oc-text-3); font-size: var(--oc-text-label);
+    display: grid; justify-items: center; gap: var(--oc-space-2); min-width: 260px;
+  }
+  .empty-block {
+    padding: var(--oc-space-9) var(--oc-space-6); text-align: center;
+    max-width: 560px; display: grid; justify-items: center; gap: var(--oc-space-2);
+  }
+  .empty-block .t { font-size: var(--oc-text-title); font-weight: var(--oc-weight-semibold); color: var(--oc-text-1); margin-top: var(--oc-space-2); }
+  .empty-block .b { color: var(--oc-text-2); line-height: 1.55; }
+  .empty-block .btn { margin-top: var(--oc-space-3); }
+
+  /* ---- §9 Toast ---- */
+  .toast {
+    width: 320px; display: flex; gap: var(--oc-space-3); align-items: flex-start;
+    background: var(--oc-panel-bg); border: 1px solid var(--oc-border);
+    border-radius: var(--oc-radius-panel); box-shadow: var(--oc-shadow-panel);
+    padding: var(--oc-space-3) var(--oc-space-4);
+  }
+  .toast .ti { flex: none; margin-top: 1px; }
+  .toast .tt { font-weight: 500; color: var(--oc-text-1); }
+  .toast .tb { font-size: var(--oc-text-label); color: var(--oc-text-2); margin-top: 2px; }
+  .toast .ta { margin-top: var(--oc-space-2); font-weight: 500; color: var(--oc-text-1); background: none; border: 0; padding: 0; font-size: var(--oc-text-body); cursor: pointer; }
+  .toast .ta:hover { text-decoration: underline; }
+
+  /* ---- §10 Loading ---- */
+  .skel { border-radius: var(--oc-radius-control-sm); background: var(--oc-surface-subtle); animation: sk-pulse var(--oc-duration-blink) var(--oc-ease-atmosphere) infinite alternate; }
+  @keyframes sk-pulse { to { opacity: 0.5; } }
+  @media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
+
+  .swatch { width: 48px; height: 32px; border-radius: var(--oc-radius-control); border: 1px solid var(--oc-border); }
+</style>
+</head>
+<body>
+
+<header class="pg-head">
+  <div>
+    <div class="pg-title">Design system</div>
+    <div class="pg-sub">PilotDeck components, rendered with the real theme files. docs/design/system/components.md</div>
+  </div>
+  <div class="pg-themes" role="group" aria-label="Theme">
+    <button class="btn btn-sec" data-set-theme="nebula">nebula</button>
+    <button class="btn btn-sec" data-set-theme="xai">xai</button>
+    <button class="btn btn-sec" data-set-theme="overclock">overclock</button>
+  </div>
+</header>
+
+<!-- ================= §1 Button ================= -->
+<section>
+  <div class="sec-title">Button</div>
+  <p class="sec-note">One anatomy, four variants, two sizes. Hover is surface/border/text only; no transform, no glow.</p>
+  <div class="row">
+    <span class="cell-label">rest</span>
+    <button class="btn btn-pri">Create card</button>
+    <button class="btn btn-sec">Move to mission</button>
+    <button class="btn btn-ghost">Clear filters</button>
+    <button class="btn btn-danger">Delete project</button>
+  </div>
+  <div class="row" style="margin-top: var(--oc-space-3)">
+    <span class="cell-label">hover</span>
+    <button class="btn btn-pri is-hover">Create card</button>
+    <button class="btn btn-sec is-hover">Move to mission</button>
+    <button class="btn btn-ghost is-hover">Clear filters</button>
+    <button class="btn btn-danger is-hover">Delete project</button>
+  </div>
+  <div class="row" style="margin-top: var(--oc-space-3)">
+    <span class="cell-label">disabled / lg</span>
+    <button class="btn btn-pri" disabled>Create card</button>
+    <button class="btn btn-sec" disabled>Move to mission</button>
+    <button class="btn btn-sec btn-lg">Large 40px</button>
+  </div>
+</section>
+
+<!-- ================= §2 The Control ================= -->
+<section>
+  <div class="sec-title">The Control (bar trigger)</div>
+  <p class="sec-note">Doctrine §3 verbatim: 32px, 1px border, 8px radius, 14px icon. The active filter carries the count badge.</p>
+  <div class="row">
+    <button class="control">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      Filters
+    </button>
+    <button class="control is-open">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      Filters <span class="count-badge">2</span>
+      <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <button class="control">
+      All projects
+      <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <button class="control">Clear</button>
+  </div>
+</section>
+
+<!-- ================= §3 Select + dropdown ================= -->
+<section>
+  <div class="sec-title">Select and dropdown</div>
+  <p class="sec-note">Native select for forms; the custom dropdown for grouped, annotated choices. Disabled options stay visible with a reason, and are never selectable.</p>
+  <div class="row" style="align-items: flex-start">
+    <div class="col">
+      <span class="cell-label">select — rest / hover / disabled</span>
+      <span class="oc-select-wrap">
+        <select class="oc-select" aria-label="Effort">
+          <option>low</option><option selected>medium</option><option>high</option><option>max</option>
+        </select>
+        <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </span>
+      <span class="oc-select-wrap">
+        <select class="oc-select is-hover" aria-label="Effort hover">
+          <option selected>medium</option>
+        </select>
+        <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </span>
+      <span class="oc-select-wrap">
+        <select class="oc-select" disabled aria-label="Effort disabled">
+          <option selected>medium</option>
+        </select>
+        <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </span>
+    </div>
+
+    <div class="col">
+      <span class="cell-label">dropdown — grouped by CLI, with disabled options (listbox)</span>
+      <div class="pop" role="listbox" aria-label="Model">
+        <div class="pop-group" id="g-claude">claude</div>
+        <div class="pop-item is-selected" role="option" aria-selected="true" aria-labelledby="g-claude">
+          <svg class="tick" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>
+          claude-opus-4-8
+        </div>
+        <div class="pop-item" role="option" aria-selected="false"><span class="tick"></span>claude-sonnet-4-6</div>
+        <div class="pop-group" id="g-codex">codex</div>
+        <div class="pop-item is-hover" role="option" aria-selected="false"><span class="tick"></span>gpt-5.6-sol</div>
+        <div class="pop-item is-disabled" role="option" aria-selected="false" aria-disabled="true">
+          <span class="tick"></span>gpt-5.5 <span class="why">not installed</span>
+        </div>
+        <div class="pop-group" id="g-kimi">kimi</div>
+        <div class="pop-item" role="option" aria-selected="false"><span class="tick"></span>k3</div>
+        <div class="pop-item is-disabled" role="option" aria-selected="false" aria-disabled="true">
+          <span class="tick"></span>k2.5 <span class="why">removed from catalog</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <span class="cell-label">menu — actions (menu role)</span>
+      <div class="pop" role="menu" aria-label="Account">
+        <div class="pop-item" role="menuitem">Settings</div>
+        <div class="pop-item" role="menuitem">Theme</div>
+        <div class="pop-sep"></div>
+        <div class="pop-item is-danger" role="menuitem">Sign out</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= §4 Form field ================= -->
+<section>
+  <div class="sec-title">Form field</div>
+  <p class="sec-note">Label 12px/500, input 36px, hint and error below the field. Validation is inline; never a toast.</p>
+  <div class="row" style="align-items: flex-start">
+    <div class="field">
+      <label class="field-label" for="f1">Branch name</label>
+      <input class="oc-input" id="f1" placeholder="ocl-82-short-slug">
+      <span class="field-hint">Lowercase, the card prefix leads.</span>
+    </div>
+    <div class="field is-error">
+      <label class="field-label" for="f2">Token</label>
+      <input class="oc-input mono" id="f2" value="ovk_…" aria-invalid="true">
+      <span class="field-error" role="status">This token cannot do that. Ask for a token with the manage flag.</span>
+    </div>
+    <div class="field">
+      <label class="field-label" for="f3">Context <span class="field-opt">optional</span></label>
+      <input class="oc-input" id="f3" disabled placeholder="Disabled field">
+    </div>
+  </div>
+</section>
+
+<!-- ================= §5 Chip / badge ================= -->
+<section>
+  <div class="sec-title">Chip, badge, type as a word</div>
+  <p class="sec-note">One chip container; the status dot is the only colored element. Types are plain words, never colored chips. Disabled chip: dashed border.</p>
+  <div class="row">
+    <span class="chip"><span class="dot"></span>running</span>
+    <span class="chip"><span class="dot bad"></span>failed</span>
+    <span class="chip clickable">awaiting review</span>
+    <span class="chip is-active">feature <span class="count-badge">18</span></span>
+    <span class="chip is-disabled">kimi k2.5</span>
+    <span class="meta">OCL-81 · bug · aberto 21 min</span>
+  </div>
+</section>
+
+<!-- ================= §6 Table ================= -->
+<section>
+  <div class="sec-title">Table</div>
+  <p class="sec-note">Caption headers, divider rows, numbers right-aligned in data face, hover row, no zebra.</p>
+  <table class="oc-table">
+    <thead>
+      <tr><th class="sorted">Model <span class="caret">▾</span></th><th>Cards</th><th class="num">Tokens</th><th class="num">Cost</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>gpt-5.6-sol</td><td class="meta">14</td><td class="num">94.8M</td><td class="num">US$ 41.20</td></tr>
+      <tr><td>claude-opus-4-8</td><td class="meta">6</td><td class="num">51.2M</td><td class="num">US$ 96.10</td></tr>
+      <tr><td>k3</td><td class="meta">3</td><td class="num">12k</td><td class="num">no price</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ================= §7 Popover ================= -->
+<section>
+  <div class="sec-title">Popover panel anatomy</div>
+  <p class="sec-note">Rendered above in §3: one panel anatomy serving listbox, menu and filter dialog, 6px off the trigger, shared close behavior.</p>
+</section>
+
+<!-- ================= §8 Empty state ================= -->
+<section>
+  <div class="sec-title">Empty state</div>
+  <p class="sec-note">Inline for a region, block for a page. Copy from microcopy.md.</p>
+  <div class="row" style="align-items: flex-start">
+    <div class="empty-inline" title="Nothing queued. Create a card or tell your agent: register this as a task.">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--oc-text-3)"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      <span>Nothing queued. Create a card or tell your agent: <i>register this as a task</i>.</span>
+    </div>
+    <div class="empty-block">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--oc-text-3)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <div class="t">No cards match these filters</div>
+      <div class="b">The board is intact behind them. Clear the filters to see everything again.</div>
+      <button class="btn btn-sec">Clear filters</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= §9 Toast ================= -->
+<section>
+  <div class="sec-title">Toast</div>
+  <p class="sec-note">New component. Bottom-right stack, 5s auto-dismiss; errors persist. Status color lives only on the icon.</p>
+  <div class="col">
+    <div class="toast" role="status">
+      <svg class="ti" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--oc-ok)" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>
+      <div><div class="tt">3 cards moved to the mission.</div></div>
+    </div>
+    <div class="toast" role="status">
+      <svg class="ti" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--oc-text-3)" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <div><div class="tt">Copied.</div></div>
+    </div>
+    <div class="toast" role="alert">
+      <svg class="ti" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--oc-danger)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div>
+        <div class="tt">Could not move the cards. Nothing changed.</div>
+        <button class="ta">Try again</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= §10 Loading ================= -->
+<section>
+  <div class="sec-title">Loading</div>
+  <p class="sec-note">Skeleton bars for regions, dimmed label with aria-busy inline. No spinner exists in the system.</p>
+  <div class="row" style="align-items: flex-start">
+    <div class="col" style="min-width: 260px">
+      <span class="cell-label">region skeleton</span>
+      <div class="skel" style="height: 13px; width: 70%"></div>
+      <div class="skel" style="height: 13px; width: 92%"></div>
+      <div class="skel" style="height: 13px; width: 55%"></div>
+      <div class="skel" style="height: 18px; width: 18px; border-radius: 9px"></div>
+    </div>
+    <div class="col">
+      <span class="cell-label">inline (aria-busy)</span>
+      <button class="btn btn-sec" aria-busy="true" style="opacity: 0.5">Saving…</button>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Theme switching only: point <html> at a real theme file's attribute block.
+  document.querySelectorAll("[data-set-theme]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      document.documentElement.setAttribute("data-theme", b.getAttribute("data-set-theme"));
+    });
+  });
+</script>
+</body>
+</html>

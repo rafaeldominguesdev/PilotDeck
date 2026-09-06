@@ -1,0 +1,79 @@
+{
+  "description": "PilotDeck workflow guards and board context.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.mjs\"",
+            "timeout": 15,
+            "statusMessage": "Loading the PilotDeck board"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "task_claim|mcp__.*__task_claim|task_deliver|mcp__.*__task_deliver|task_release|mcp__.*__task_release",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/claim-guard.mjs\"",
+            "timeout": 15,
+            "statusMessage": "Updating the local PilotDeck claim marker"
+          }
+        ]
+      },
+      {
+        "matcher": "task_deliver|mcp__.*__task_deliver",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/post-deliver.mjs\"",
+            "timeout": 30,
+            "statusMessage": "Checking the delivered commit"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/stop-guard.mjs\"",
+            "timeout": 15,
+            "statusMessage": "Checking active PilotDeck claims"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "task_create|mcp__.*__task_create",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/pre-create.mjs\"",
+            "timeout": 15,
+            "statusMessage": "Checking the current harness recommendation"
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/claim-guard.mjs\"",
+            "timeout": 15,
+            "statusMessage": "Checking for an PilotDeck claim"
+          }
+        ]
+      }
+    ]
+  }
+}

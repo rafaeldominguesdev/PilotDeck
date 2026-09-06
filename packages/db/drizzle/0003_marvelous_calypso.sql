@@ -1,0 +1,1 @@
+ALTER TABLE "workspace" ADD COLUMN "seen_executors" jsonb DEFAULT '[]'::jsonb NOT NULL;

@@ -1,0 +1,50 @@
+# LOCAL / SELF-HOSTED — one command: docker compose up --build
+# Data stays in this compose project. Nothing phones home.
+#
+# PilotDeck runs on your machine or a box you control. There is no hosted tier
+# and no auto-updater sidecar (the fork dropped the container that mounted the
+# host Docker socket). To update: git pull && docker compose up -d --build
+name: pilotdeck
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: pilotdeck
+      POSTGRES_PASSWORD: pilotdeck
+      POSTGRES_DB: pilotdeck
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pilotdeck -d pilotdeck"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  app:
+    image: ghcr.io/rafaeldominguesdev/pilotdeck:latest
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://pilotdeck:pilotdeck@postgres:5432/pilotdeck
+      # Required for every installation. Generate it before first boot with:
+      #   export AUTH_SECRET="$(openssl rand -base64 32)"
+      AUTH_SECRET: "${AUTH_SECRET:?AUTH_SECRET is required; generate one per installation with openssl rand -base64 32}"
+      NEXT_TELEMETRY_DISABLED: "1"
+      NODE_ENV: production
+      PILOTDECK_DEPLOY_MODE: quickstart
+      # GHSA-hccf: the pairing endpoint charges wrong guesses to the origin they
+      # came from, and the only way it learns one is from a proxy that APPENDS
+      # the peer to x-forwarded-for. Off here because this file publishes port
+      # 3000 directly. Turn it on only when a reverse proxy of yours sits in
+      # front: PILOTDECK_TRUSTED_PROXY=1 docker compose up
+      PILOTDECK_TRUSTED_PROXY: "${PILOTDECK_TRUSTED_PROXY:-0}"
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+volumes:
+  pgdata:

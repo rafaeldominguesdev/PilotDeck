@@ -1,0 +1,5 @@
+# Image ships the web app plus the packages it imports at runtime.
+packages:
+  - "apps/web"
+  - "packages/db"
+  - "packages/mcp-core"

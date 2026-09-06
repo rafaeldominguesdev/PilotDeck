@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>07 · What a card costs · Learn PilotDeck</title>
+<meta name="description" content="Tokens are the fact, dollars are arithmetic: the price table per model, the labels a cost figure carries, and the questions the Insights page answers.">
+<meta property="og:title" content="What a card costs · Learn PilotDeck">
+<meta property="og:description" content="Computed, agent reported or estimated: read cost per card, per mission and per model without fooling yourself.">
+<meta property="og:locale" content="en_US">
+<link rel="alternate" hreflang="en" href="07-cost.html">
+<link rel="alternate" hreflang="pt-BR" href="../br/learn/07-custo.html">
+<link rel="alternate" hreflang="x-default" href="07-cost.html">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23D1D9EB' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23D1D9EB'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="learn.css">
+</head>
+<body>
+
+<div class="atmo" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-mist" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-grain" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-vignette" aria-hidden="true"></div>
+
+<nav class="nav">
+  <a class="wordmark" href="../index.html">over<span>click</span></a>
+  <div class="links">
+    <a href="../index.html#loop">The loop</a>
+    <a href="../index.html#features">Features</a>
+    <a href="index.html" class="on">Learn</a>
+  </div>
+  <div class="spacer"></div>
+  <div class="lang" aria-label="Language">
+    <a href="07-cost.html" class="on" hreflang="en" lang="en" aria-current="true">EN</a>
+    <span aria-hidden="true">·</span>
+    <a href="../br/learn/07-custo.html" hreflang="pt-BR" lang="pt-BR">PT</a>
+  </div>
+  <a class="btn btn-ghost btn-sm" href="https://github.com/rafaeldominguesdev/pilotdeck" rel="noopener">GitHub</a>
+</nav>
+
+<header class="course-head wrap">
+  <div class="col-read">
+    <p class="eyebrow">chapter 07 of 08 · <b>cost per card</b></p>
+    <h1>Tokens are the fact, dollars are arithmetic</h1>
+    <p class="lede">
+      An agent knows how many tokens it burned. It usually does not know today's price. So
+      the board keeps a <b>price table per model</b> and does the multiplication itself, and
+      every figure on screen says where it came from.
+    </p>
+  </div>
+</header>
+
+<main class="chapter wrap">
+  <div class="col-read">
+
+    <section>
+      <div class="sec-index">01 · where the numbers come from</div>
+      <h2>Usage arrives with the delivery</h2>
+      <p>
+        <code>task_deliver</code> carries a usage block: input tokens, output tokens, cache
+        tokens, duration, turns, and optionally a cost. Exact numbers when the harness
+        exposes them; otherwise an estimate marked <code>estimated: true</code>.
+      </p>
+      <p>
+        One number does not depend on agent goodwill at all: the server measures the
+        duration itself, from claim to deliver. A card delivered by an agent that reports
+        nothing still shows real time on it.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">02 · the price table</div>
+      <h2>Settings › Model prices</h2>
+      <p>
+        One row per model: <b>input, output and cache price per million tokens</b>. The
+        table ships seeded with public list prices and each seeded row is stamped with the
+        date those prices were read, so nobody has to guess how old a number is. Every value
+        is editable, because your contract is not necessarily the list price.
+      </p>
+      <p>
+        Models the board has seen run but cannot price are offered right there, waiting for
+        a number. An unpriced model is never invented: it is counted separately so a total
+        cannot quietly pretend to be complete.
+      </p>
+      <div class="note">
+        <b>Cache column.</b> It prices the <code>tokens_cache</code> counter of the usage
+        contract and is seeded at the cache read rate, which is what a long agent session is
+        mostly made of. If your provider bills you differently, that is the row to change.
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-index">03 · three labels</div>
+      <h2>Every figure says where it came from</h2>
+      <table class="table">
+        <thead>
+          <tr><th>Label</th><th>Meaning</th><th>Trust</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>computed</b></td>
+            <td>The board multiplied the reported tokens by your price table.</td>
+            <td>As good as the price you typed. This is the default whenever tokens exist.</td>
+          </tr>
+          <tr>
+            <td><b>agent reported</b></td>
+            <td>The agent sent a dollar figure and the board had no price for that model.</td>
+            <td>Depends on the CLI knowing current prices. Add the model to the table to upgrade it.</td>
+          </tr>
+          <tr>
+            <td><b>estimated</b></td>
+            <td>Same as above, and the agent flagged its own numbers as a guess.</td>
+            <td>Directional. Fine for a trend, wrong for a budget.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        The labels travel everywhere the number does: the card footer, the totals, the
+        per-card table, and the MCP response. A mixed total says so instead of borrowing the
+        most flattering label.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">04 · insights</div>
+      <h2>The four questions the page answers</h2>
+      <ul>
+        <li><b>What did this project cost?</b> Totals per project, with tokens and time next to the dollars.</li>
+        <li><b>What did this mission cost?</b> The same, grouped by mission, which is how a feature-sized effort gets a price.</li>
+        <li><b>Which model is eating the budget?</b> Grouped by model. Pair it with the next question before you react.</li>
+        <li><b>Which model gets reopened?</b> The reopened rate per model: deliveries that a human sent back. A cheap model that is reopened half the time is not cheap.</li>
+      </ul>
+      <p>
+        Only finished attempts count, example cards stay out so demo data never inflates
+        real cost, and a card nobody could price keeps a null instead of a fake zero. The
+        honesty note above the totals tells you how many attempts were estimated and how
+        many reported nothing.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">05 · from an agent</div>
+      <h2>The same numbers over MCP</h2>
+      <p>
+        <code>insights_query</code> runs the same loaders and the same aggregation the page
+        runs, so an agent's answer and your screen cannot disagree. Group by project,
+        mission, model or card, and narrow with <code>since</code> and <code>until</code>.
+      </p>
+      <div class="say">
+        <span class="who">say this to your agent</span>
+        query insights grouped by model for the last two weeks, and tell me which model has
+        the worst reopened rate
+      </div>
+      <p>
+        The price table is readable too, through <code>harness_list</code>. That is what lets
+        an orchestrator reason about cost <b>before</b> it picks a harness, instead of
+        discovering the bill afterwards.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">06 · acting on it</div>
+      <h2>Turn a number into a policy change</h2>
+      <p>
+        Cost data is only worth collecting if it moves a decision. The two moves that
+        actually pay:
+      </p>
+      <ul>
+        <li><b>Downgrade what does not need judgment.</b> Mechanical work on a top model is the most common leak. One policy line fixes it for every future card.</li>
+        <li><b>Upgrade what keeps coming back.</b> A type with a high reopened rate is paying twice: once for the run, once for your review. The cheaper model was not cheaper.</li>
+      </ul>
+    </section>
+
+    <div class="checklist">
+      <h2>Chapter checklist</h2>
+      <ul>
+        <li>Every model your team runs has a row in the price table</li>
+        <li>You know when the seeded prices were captured, and have updated the ones that changed</li>
+        <li>Cards show a cost labeled computed, agent reported or estimated</li>
+        <li>You can name the most expensive mission of the month</li>
+        <li>You have looked at the reopened rate per model, not just the cost</li>
+        <li>At least one policy line changed because of a number you saw</li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a href="06-terminal.html">
+        <span class="dir">← previous</span>
+        <span class="title">06 · Working with agents from the terminal</span>
+      </a>
+      <a class="next" href="08-team-patterns.html">
+        <span class="dir">next →</span>
+        <span class="title">08 · Team patterns</span>
+      </a>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot-grid">
+    <span class="wordmark">over<span>click</span></span>
+    <div class="foot-links">
+      <a href="../index.html">Home</a>
+      <a href="index.html">Course index</a>
+      <a href="https://github.com/rafaeldominguesdev/pilotdeck" rel="noopener">GitHub</a>
+      <a href="https://github.com/rafaeldominguesdev/pilotdeck/blob/main/LICENSE" rel="noopener">MIT License</a>
+    </div>
+    <div class="spacer"></div>
+    <span class="foot-moto">your board · your server · your data</span>
+  </div>
+</footer>
+
+<script src="learn.js"></script>
+</body>
+</html>

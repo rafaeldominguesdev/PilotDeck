@@ -1,0 +1,1 @@
+ALTER TABLE "task_comment" ADD COLUMN "kind" text DEFAULT 'comment' NOT NULL;

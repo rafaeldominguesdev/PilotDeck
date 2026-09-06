@@ -1,0 +1,141 @@
+:root {
+  color-scheme: dark;
+  --bg: #0b0d10;
+  --fg: #e8eaed;
+  --muted: #8b919a;
+  --line: #242a32;
+  --card: #12161b;
+  --accent: #d7dbdf;
+  --danger: #e07070;
+  --focus: #9aa3ad;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  padding: 48px 16px;
+}
+
+.shell {
+  width: 100%;
+  max-width: 420px;
+}
+
+.brand {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  margin: 0 0 8px;
+}
+
+.sub {
+  color: var(--muted);
+  margin: 0 0 28px;
+  line-height: 1.5;
+}
+
+form,
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+
+input {
+  background: #0b0d10;
+  border: 1px solid var(--line);
+  color: var(--fg);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font: inherit;
+}
+
+input:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+button,
+.button {
+  appearance: none;
+  border: 0;
+  border-radius: 8px;
+  padding: 11px 14px;
+  font: inherit;
+  cursor: pointer;
+}
+
+button[type="submit"],
+.primary {
+  background: var(--accent);
+  color: #111;
+  font-weight: 560;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--line);
+}
+
+.error {
+  color: var(--danger);
+  font-size: 13px;
+  margin: 0;
+}
+
+.foot {
+  margin-top: 20px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.meta {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}

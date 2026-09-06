@@ -1,0 +1,4 @@
+{"type":"usage.record","model":"kimi-code/k3","usage":{"inputOther":900,"output":80,"inputCacheRead":400,"inputCacheCreation":0},"usageScope":"turn","time":1787163274899}
+{"type":"usage.record","model":"kimi-code/k3","usage":{"inputOther":100,"output":20,"inputCacheRead":50,"inputCacheCreation":5},"usageScope":"turn","time":1787163280899}
+{"type":"usage.record","model":"kimi-code/k3","usage":{"inputOther":99999,"output":9999,"inputCacheRead":9999,"inputCacheCreation":9999},"usageScope":"session","time":1787163281899}
+{"type":"usage.record","model":"kimi-code/k3-mini","usage":{"inputOther":40,"output":10,"inputCacheRead":0,"inputCacheCreation":0},"usageScope":"turn","time":1787163282899}

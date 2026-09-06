@@ -1,0 +1,33 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const here = dirname(fileURLToPath(import.meta.url));
+const read = (path: string) => readFileSync(join(here, path), "utf8");
+
+/**
+ * The component sheets the style guards audit — the single list every guard
+ * (`tokens.test.ts`, `type-ramp.test.ts`, `naked-element-selectors.test.ts`)
+ * reads from, so "which sheets are covered" has one answer (OCL-89, item 3:
+ * `app/globals.css` joins this list — it is the file whose bare `label`
+ * selector broke the Filtros panel, see `naked-element-selectors.test.ts`).
+ */
+export const COMPONENT_SHEETS: Record<string, string> = {
+  "styles/nebula.css": read("nebula.css"),
+  "app/insights/insights.css": read("../app/insights/insights.css"),
+  "app/settings/project-context.module.css": read(
+    "../app/settings/project-context.module.css",
+  ),
+  "app/globals.css": read("../app/globals.css"),
+};
+
+/**
+ * globals.css predates the `--oc-*` system: it is the auth/login shell and
+ * keeps its own local custom properties (`--bg`, `--fg`, ...), not the
+ * board's design-token contract. It is audited by every guard above, but is
+ * exempt, explicitly, from the two `tokens.test.ts` checks that assume the
+ * `--oc-*` contract: no component owns a colour literal, and every token
+ * asked for is one the base theme declares. A future migration of the auth
+ * shell onto `--oc-*` removes this entry.
+ */
+export const LEGACY_LOCAL_TOKEN_SHEETS = new Set(["app/globals.css"]);

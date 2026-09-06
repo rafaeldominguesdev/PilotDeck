@@ -1,0 +1,31 @@
+{
+  "name": "@pilotdeck/db",
+  "version": "0.3.16",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts",
+    "./domain": "./src/domain/index.ts"
+  },
+  "scripts": {
+    "generate": "drizzle-kit generate",
+    "migrate": "tsx src/migrate.ts",
+    "seed": "tsx src/seed.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@pilotdeck/mcp-core": "workspace:*",
+    "drizzle-orm": "^0.44.7",
+    "postgres": "^3.4.7",
+    "tsx": "^4.19.4"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.3.14",
+    "@types/node": "^22.15.3",
+    "drizzle-kit": "^0.31.4",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.3"
+  }
+}

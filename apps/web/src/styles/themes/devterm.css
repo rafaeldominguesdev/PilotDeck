@@ -1,0 +1,289 @@
+/* ============================================================
+   THEME — devterm (the board's default: a terminal, not a nebula)
+
+   OCL-56. This file is the token contract: every other theme is the same
+   list of `--oc-*` names with different values, and nothing else. A theme
+   file never contains a selector, a size that moves a box, or a rule about
+   a component — only values. That is what makes the switch instant and
+   layout-free (doctrine §5, item 14).
+
+   `:root` and `[data-theme="devterm"]` share this block on purpose. `:root`
+   is the fallback for a theme nobody recognises: `data-theme="whatever"`
+   matches no theme rule, so the values here are what the board draws with.
+   Unknown theme falls back to devterm without a line of JavaScript deciding
+   it.
+
+   The look: DevTerm. Monochrome grays, low profile, minimal. Near-black
+   canvas, hairline borders, flat surfaces, no neon and no coloured brand
+   accent — the accent is a light neutral gray. The atmosphere layer is
+   off, like overclock. Status colours stay, muted, because they carry
+   meaning. The structural tokens — the spacing scale, the `--oc-z-*`
+   ladder, the motion tokens, the touch floor — are identical to what the
+   board has always shipped: this theme changes the paint, not the frame.
+   ============================================================ */
+
+/*
+   EXEMPTIONS — Tier-2 divergences declared per A2 (OCL-88, docs/design/amendments.md).
+   - devterm is the fork's product identity: a monochrome terminal skin
+        → Tier-2 rule: theme-scoped identity
+        → source: the DevTerm product look
+*/
+
+:root,
+[data-theme="devterm"] {
+  /* ---------- colour families, as RGB triplets ----------
+     A triplet composes with any alpha (`rgb(var(--x) / .4)`), which is what
+     lets one theme value carry the fifteen tints the board draws from it.
+     DevTerm keeps every family neutral: the accent is a light gray, the
+     status hues are desaturated, the atmosphere families never surface. */
+  --oc-black-rgb: 0 0 0;
+  --oc-white-rgb: 255 255 255;
+  --oc-accent-rgb: 212 212 212;
+  --oc-ok-rgb: 122 168 138;
+  --oc-danger-rgb: 190 130 130;
+  /* the deep red the usage warning sits on, not a tint of --oc-danger */
+  --oc-danger-deep-rgb: 90 45 45;
+  --oc-info-rgb: 150 165 180;
+  /* OCL-138: mission progress's "aberto" segment. U4 reserves --oc-danger for
+     errors/destructive actions, so a to-do state gets its own warm, clearly
+     distinct hue instead of reusing it — here a muted terracotta. */
+  --oc-todo-rgb: 180 150 135;
+  --oc-warn-rgb: 200 180 140;
+  --oc-warn-2-rgb: 190 170 135;
+  --oc-warn-3-rgb: 180 160 130;
+  --oc-mist-rgb: 130 130 130;
+  --oc-mist-deep-rgb: 110 110 110;
+  --oc-haze-rgb: 140 140 140;
+  /* the recessed floors: scrim under inputs and code, then the four
+     surfaces the board stacks from canvas up */
+  --oc-scrim-rgb: 8 8 9;
+  --oc-surface-2-rgb: 18 18 19;
+  --oc-surface-3-rgb: 15 15 16;
+  --oc-surface-deep-rgb: 12 12 13;
+  --oc-surface-tile-rgb: 16 16 17;
+  --oc-surface-btn-rgb: 20 20 21;
+
+  /* ---------- canvas and surfaces ---------- */
+  --oc-bg: rgb(11 11 12);
+  --oc-surface: transparent;
+  --oc-surface-2: rgb(var(--oc-surface-2-rgb) / 0.72);
+  --oc-surface-3: rgb(var(--oc-surface-3-rgb));
+  --oc-surface-deep: rgb(var(--oc-surface-deep-rgb));
+  --oc-surface-tile: rgb(var(--oc-surface-tile-rgb));
+  /* the three white washes a control uses to say rest, hover, chosen */
+  --oc-surface-subtle: rgb(var(--oc-white-rgb) / 0.03);
+  --oc-surface-input: rgb(var(--oc-white-rgb) / 0.04);
+  --oc-surface-hover: rgb(var(--oc-white-rgb) / 0.06);
+  --oc-surface-on: rgb(var(--oc-white-rgb) / 0.1);
+  /* a floating panel and the modal: the same colour the surface settles on,
+     at the opacity that stops the board bleeding through the text */
+  --oc-panel-bg: rgb(var(--oc-surface-3-rgb) / 0.96);
+  --oc-modal-bg: rgb(var(--oc-surface-3-rgb) / 0.94);
+  --oc-overlay-bg: rgb(var(--oc-black-rgb) / 0.72);
+
+  /* ---------- borders ----------
+     Hairlines. .06 at rest, .12 hovered or open. No colour. */
+  --oc-border: rgb(var(--oc-white-rgb) / 0.06);
+  --oc-border-hover: rgb(var(--oc-white-rgb) / 0.12);
+  --oc-border-strong: rgb(var(--oc-white-rgb) / 0.12);
+  --oc-border-dashed: rgb(var(--oc-white-rgb) / 0.1);
+  --oc-divider: rgb(var(--oc-white-rgb) / 0.05);
+
+  /* ---------- text ---------- */
+  --oc-text-1: rgb(var(--oc-white-rgb) / 0.92);
+  --oc-text-2: rgb(var(--oc-white-rgb) / 0.6);
+  --oc-text-3: rgb(var(--oc-white-rgb) / 0.4);
+  --oc-text-glow: transparent;
+  --oc-icon: rgb(var(--oc-white-rgb) / 0.55);
+
+  /* ---------- the gray ladder ----------
+     If two elements need to differ they differ by one step on this ladder
+     or one weight of type, never by hue. */
+  --oc-mist-deep: #6e6e6e;
+  --oc-mist: #828282;
+  --oc-mist-light: #969696;
+  --oc-accent: #d4d4d4;
+  --oc-accent-contrast: #0a0a0a;
+  --oc-dust-edge: #7a7a7a;
+  --oc-dust-core: #e5e5e5;
+  --oc-star: #b0b0b0;
+  --oc-star-far: #5a5a5a;
+
+  /* ---------- status ----------
+     Meaning, never decoration: doctrine §2 allows these on status dots,
+     status and error text and destructive actions, nowhere else. Muted
+     here so they read without glowing. */
+  --oc-ok: #7aa88a;
+  --oc-danger: #be8282;
+  --oc-info: #96a5b4;
+  --oc-warn: #c8b48c;
+  --oc-warn-pip: #b3a074;
+  --oc-warn-deep: #8a7a4a;
+  /* OCL-138: a to-do state, not an error — kept off --oc-danger on purpose. */
+  --oc-todo: #b4967f;
+
+  /* ---------- the type badges ----------
+     Roles, so the theme decides whether a type is a colour or a word.
+     DevTerm keeps bug on the danger hue and lets the rest go gray. */
+  --oc-tag-bug-fg: var(--oc-danger);
+  --oc-tag-bug-border: rgb(var(--oc-danger-rgb) / 0.25);
+  --oc-tag-rfc-fg: var(--oc-text-2);
+  --oc-tag-rfc-border: var(--oc-border);
+  --oc-tag-feature-fg: var(--oc-text-2);
+  --oc-tag-feature-border: var(--oc-border);
+  /* the count that rides on a chip */
+  --oc-badge-fg: var(--oc-dust-core);
+  /* the "your review" chip: a role, so a theme can keep the meaning and
+     drop the colour */
+  --oc-chip-review-fg: var(--oc-warn);
+  --oc-chip-review-bg: rgb(var(--oc-warn-rgb) / 0.07);
+  --oc-chip-review-border: rgb(var(--oc-warn-rgb) / 0.28);
+
+  /* ---------- typography ----------
+     Two faces and one role between them. `--oc-font-label` is what a
+     control, a section title or a chip speaks; `--oc-font-data` is ids,
+     counts, money, timestamps and code. DevTerm answers both with mono. */
+  --oc-font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --oc-font-data: "SF Mono", ui-monospace, Menlo, monospace;
+  --oc-font-label: var(--oc-font-data);
+
+  --oc-text-display: clamp(48px, 9vw, 88px);
+  --oc-text-caption: clamp(14px, 2.2vw, 18px);
+  --oc-weight-light: 300;
+  --oc-weight-medium: 500;
+  --oc-tracking-tight: -0.02em;
+  --oc-tracking-wide: 0.06em;
+  --oc-leading-none: 1;
+
+  /* ---------- spacing (structural: identical to the board's scale) ---------- */
+  --oc-space-1: 4px;
+  --oc-space-2: 8px;
+  --oc-space-3: 12px;
+  --oc-space-4: 16px;
+  --oc-space-6: 24px;
+  --oc-space-8: 32px;
+  --oc-space-9: 48px;
+  --oc-space-caption-gap: 10px;
+
+  /* ---------- radii ----------
+     Named by role, not by number. DevTerm keeps them tight, on the
+     overclock side of the scale. */
+  --oc-radius-tick: 4px;
+  --oc-radius-control-sm: 4px;
+  --oc-radius-chip: 5px;
+  --oc-radius-badge: 5px;
+  --oc-radius-control: 6px;
+  --oc-radius-note: 6px;
+  --oc-radius-box: 7px;
+  --oc-radius-card: 8px;
+  --oc-radius-tile: 8px;
+  --oc-radius-panel: 10px;
+  --oc-radius-sheet: 10px;
+  --oc-radius-plan: 10px;
+  --oc-radius-pill: 999px;
+  --oc-radius-circle: 50%;
+
+  /* ---------- glass and depth ----------
+     Flat. A shadow only where a panel really floats over content; no halo,
+     no glow, no neon. */
+  --oc-glass-bg: var(--oc-surface-2);
+  --oc-glass-border: var(--oc-border);
+  --oc-glass-highlight: inset 0 1px 0 rgb(var(--oc-white-rgb) / 0.04);
+  --oc-glass-blur: 8px;
+  --oc-shadow-panel: 0 8px 24px rgb(var(--oc-black-rgb) / 0.5), var(--oc-glass-highlight);
+  --oc-shadow-card-hover: 0 10px 28px rgb(var(--oc-black-rgb) / 0.55), var(--oc-glass-highlight);
+  --oc-glow-text: none;
+  /* the halos: off, this theme draws flat dots */
+  --oc-glow-dot-ok: none;
+  --oc-glow-dot-exec: none;
+  --oc-glow-dot-exec-dim: none;
+  --oc-glow-pip: none;
+  --oc-glow-accent: none;
+  --oc-glow-ok: none;
+
+  /* ---------- atmosphere: off (like overclock, the board is flat) ---------- */
+  --oc-blur-bokeh-near: 2px;
+  --oc-blur-bokeh-far: 8px;
+  --oc-grain-opacity: 0;
+  --oc-vignette: none;
+  --oc-atmo-mist: none;
+  --oc-atmo-veil: none;
+  --oc-atmo-opacity: 0;
+  --oc-alpha-mist: 0;
+  --oc-alpha-dust: 0;
+  --oc-alpha-star: 0.6;
+
+  /* ---------- corners ---------- */
+  --oc-corner-size: 14px;
+  --oc-corner-width: 2px;
+  --oc-corner-color: rgb(var(--oc-white-rgb) / 0.12);
+  --oc-corner-offset: 10px;
+
+  /* ---------- plan card ---------- */
+  --oc-plan-bg: var(--oc-surface-tile);
+  --oc-plan-border: rgb(var(--oc-white-rgb) / 0.08);
+  --oc-plan-glow: none;
+
+  /* ---------- promo banner ---------- */
+  --oc-banner-bg: var(--oc-surface-deep);
+  --oc-banner-border: rgb(var(--oc-white-rgb) / 0.1);
+  --oc-btn-light-bg: #d4d4d4;
+  --oc-btn-light-text: #0a0a0a;
+
+  /* ---------- account button ---------- */
+  --oc-btn-account-bg: rgb(var(--oc-surface-btn-rgb) / 0.55);
+  --oc-btn-account-border: var(--oc-border);
+  --oc-btn-account-radius: var(--oc-radius-pill);
+  --oc-btn-account-blur: 8px;
+
+  /* ---------- focus ----------
+     One ring for the whole system, outside the control so nothing resizes
+     when it appears. Doctrine §1: the focus ring must not get quieter. */
+  --oc-focus-ring: 0 0 0 2px rgb(var(--oc-accent-rgb) / 0.55);
+  --oc-focus-ring-offset: 0 0 0 4px rgb(var(--oc-black-rgb) / 0.55), var(--oc-focus-ring);
+  --oc-focus-ring-inset: inset 0 0 0 2px rgb(var(--oc-accent-rgb) / 0.55);
+
+  /* ---------- touch floor (structural: identical to the board's) ----------
+     44px is the floor for anything a thumb has to hit. Density is bought
+     from padding and font size, never from the target. */
+  --oc-tap: 44px;
+  --oc-tap-min: 24px;
+
+  /* ---------- layers (OCL-59) — structural: identical to the board's ladder ----------
+     The one ladder the board stacks on. A rule never writes a number, it
+     names a rung, and a rung above another is above it on screen no matter
+     which element carries it. Read from the floor up:
+
+       atmo-*   the canvas behind everything, below the content plane
+       content  the content plane over the atmosphere
+       fade     the viewport's bottom blur, over the board, under any control
+       bar      the floating bulk-selection bar
+       panel    a filter panel hanging off a control in the bar
+       backdrop the tap-away sheet that closes a phone panel
+       chrome   the bars themselves
+       menu     dropdowns, menus and popovers: always over the board
+       modal    the card detail and its overlay: over the menu that opened it
+       sheet    the phone's full-screen detail, over everything */
+  --oc-z-atmo-back: -3;
+  --oc-z-atmo-mid: -2;
+  --oc-z-atmo-front: -1;
+  --oc-z-content: 2;
+  --oc-z-fade: 5;
+  --oc-z-bar: 10;
+  --oc-z-panel: 20;
+  --oc-z-backdrop: 25;
+  --oc-z-chrome: 30;
+  --oc-z-menu: 40;
+  --oc-z-modal: 50;
+  --oc-z-sheet: 60;
+
+  /* ---------- motion (structural: identical to the board's) ---------- */
+  /* the micro-interaction window the doctrine sets for hover states */
+  --oc-duration-micro: 200ms;
+  --oc-duration-blink: 1s;
+  --oc-duration-drift: 12s;
+  --oc-duration-flow: 26s;
+  --oc-ease-atmosphere: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --oc-ease-cursor: steps(1, end);
+  --oc-lerp-mouse: 0.08;
+}

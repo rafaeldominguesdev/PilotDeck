@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>06 · Trabalhando com agentes no terminal · Aprenda PilotDeck</title>
+<meta name="description" content="Os padrões de prompt que aguentam o dia a dia: pega a próxima task, registra isso como task, qual é a política de harness, quanto custou esta missão.">
+<meta property="og:title" content="Trabalhando com agentes no terminal · Aprenda PilotDeck">
+<meta property="og:description" content="Diga o resultado, nomeie o card, deixe o board carregar o contexto. Padrões de prompt que funcionam.">
+<meta property="og:locale" content="pt_BR">
+<link rel="alternate" hreflang="en" href="../../learn/06-terminal.html">
+<link rel="alternate" hreflang="pt-BR" href="06-terminal.html">
+<link rel="alternate" hreflang="x-default" href="../../learn/06-terminal.html">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23D1D9EB' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23D1D9EB'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../learn/learn.css">
+</head>
+<body>
+
+<div class="atmo" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-mist" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-grain" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-vignette" aria-hidden="true"></div>
+
+<nav class="nav">
+  <a class="wordmark" href="../index.html">over<span>click</span></a>
+  <div class="links">
+    <a href="../index.html#loop">O loop</a>
+    <a href="../index.html#features">Recursos</a>
+    <a href="index.html" class="on">Aprender</a>
+  </div>
+  <div class="spacer"></div>
+  <div class="lang" aria-label="Idioma">
+    <a href="../../learn/06-terminal.html" hreflang="en" lang="en">EN</a>
+    <span aria-hidden="true">·</span>
+    <a href="06-terminal.html" class="on" hreflang="pt-BR" lang="pt-BR" aria-current="true">PT</a>
+  </div>
+  <a class="btn btn-ghost btn-sm" href="https://github.com/rafaeldominguesdev/pilotdeck" rel="noopener">GitHub</a>
+</nav>
+
+<header class="course-head wrap">
+  <div class="col-read">
+    <p class="eyebrow">capítulo 06 de 08 · <b>no terminal</b></p>
+    <h1>Diga o resultado e deixe o board carregar o contexto</h1>
+    <p class="lede">
+      Você não precisa descrever o trabalho duas vezes. O card já guarda o contrato, o harness, a missão e a convenção de branch, e o agente lê tudo isso no claim. Seus prompts podem ser <b>curtos e sobre intenção</b>.
+    </p>
+  </div>
+</header>
+
+<main class="chapter wrap">
+  <div class="col-read">
+
+    <section>
+      <div class="sec-index">01 · os quatro padrões</div>
+      <h2>O que você fala o dia inteiro</h2>
+
+      <h3>Pega a próxima task</h3>
+      <div class="say">
+        <span class="who">fale isso</span>
+        pega a próxima task do board
+      </div>
+      <p>
+        O agente lista a fila, pega um card e recebe o briefing. Estreite quando você se
+        importa com qual: "pega o próximo bug aberto em AGB", "pega o AGB-12 e trabalha nele".
+      </p>
+
+      <h3>Registra isso como uma task</h3>
+      <div class="say">
+        <span class="who">fale isso</span>
+        registra isso como uma task para depois: a página de insights não tem estado vazio
+        para um workspace sem nenhuma execução. escreve o quê, por quê e como confirmo.
+      </div>
+      <p>
+        Descobertas viram cards enquanto o contexto está fresco. É o único hábito que impede
+        um log de chat de virar o backlog de verdade.
+      </p>
+
+      <h3>Qual é a política</h3>
+      <div class="say">
+        <span class="who">fale isso</span>
+        qual é a política de harness deste board, e o que ela recomenda para um bug?
+      </div>
+      <p>
+        Útil antes de delegar algo caro, e útil para pegar uma linha de política que ficou
+        órfã depois de alguém mexer nos executores.
+      </p>
+
+      <h3>Quanto custou</h3>
+      <div class="say">
+        <span class="who">fale isso</span>
+        quanto custou a missão de lançamento até agora, por modelo?
+      </div>
+      <p>
+        O agente consulta a mesma agregação que a página de Insights roda, então o número que
+        ele te dá e o número da tela não podem discordar. O capítulo 7 aprofunda.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">02 · o que faz um prompt funcionar</div>
+      <h2>Três hábitos e um antipadrão</h2>
+      <ul>
+        <li><b>Chame o card pelo id curto.</b> "Trabalha o AGB-14" é sem ambiguidade; "aquela coisa do login" custa uma busca e às vezes acha o card errado.</li>
+        <li><b>Peça a ferramenta quando o agente se perder.</b> A maioria escolhe certo, mas "usa o <code>task_list</code> no pilotdeck" encerra a confusão na hora.</li>
+        <li><b>Diga quando o trabalho acaba.</b> "Entrega quando as três suítes passarem" dá ao agente uma linha de chegada que ele mesmo confere.</li>
+        <li><b>Não cole o card no chat.</b> Redescrever o contrato no prompt cria uma segunda versão da verdade. Se o card está errado, conserte o card.</li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="sec-index">03 · o contrato do executor</div>
+      <h2>Todo briefing termina igual</h2>
+      <p>
+        A última coisa que um agente lê no briefing é o contrato do executor: ao terminar,
+        chame <code>task_deliver</code> com resumo, evidência, branch e um bloco de uso com
+        tokens, duração, custo e turns. Se o harness não consegue ler números exatos, a
+        instrução é <b>estimar e marcar como estimado</b>, porque estimativa ganha do silêncio.
+      </p>
+      <p>
+        De vez em quando você vai encontrar um agente que entrega sem uso. O card cai assim
+        mesmo, o board sinaliza, e você pode pedir os números depois: eles podem ser gravados
+        na tentativa mesmo após a entrega.
+      </p>
+      <div class="say">
+        <span class="who">fale isso</span>
+        você entregou o AGB-14 sem uso. estima os tokens, turns e custo daquela execução e
+        atualiza o card, marcando como estimado.
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-index">04 · execuções longas</div>
+      <h2>Mantenha o board em dia enquanto o trabalho é longo</h2>
+      <p>
+        O claim já move o card para Em execução e carimba o executor nele, o que é quase tudo
+        o que um status serve para dizer. Para trabalho de horas, duas coisas mantêm o board
+        honesto:
+      </p>
+      <ul>
+        <li><b>Registre a branch</b> assim que ela existir, para o card e o código apontarem um para o outro antes da entrega.</li>
+        <li><b>Poste uma nota quando o plano mudar</b>, em vez de redefinir o card em silêncio. Se a mudança é escopo de verdade, é card novo.</li>
+      </ul>
+      <div class="say">
+        <span class="who">fale isso</span>
+        registra a branch agb-14-normaliza-email no card e segue
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-index">05 · o formato do dia</div>
+      <h2>Board de manhã, terminal o dia todo</h2>
+      <ul>
+        <li><b>De manhã, no board</b>: escreva cards. Contratos, com o harness já preenchido pela política.</li>
+        <li><b>O dia todo, no terminal</b>: "pega a próxima task", "registra isso como task". Os agentes abrem os próprios achados como cards.</li>
+        <li><b>No fim do dia, no board</b>: a coluna Feito é a sua fila de revisão. Valide ou reabra, como no capítulo 5.</li>
+      </ul>
+    </section>
+
+    <div class="checklist">
+      <h2>Checklist do capítulo</h2>
+      <ul>
+        <li>Você começa um trabalho com uma frase e sem colar contexto</li>
+        <li>Descobertas viram cards na hora, direto do terminal</li>
+        <li>Você nomeia os cards pelo id curto ao delegar</li>
+        <li>Seus agentes entregam com uso, estimado quando não dá para medir</li>
+        <li>As branches são registradas nos cards</li>
+        <li>O log do chat não é onde o seu backlog mora</li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a href="05-revisao.html">
+        <span class="dir">← anterior</span>
+        <span class="title">05 · A disciplina de revisão</span>
+      </a>
+      <a class="next" href="07-custo.html">
+        <span class="dir">próximo →</span>
+        <span class="title">07 · Quanto custa um card</span>
+      </a>
+    </div>
+
+  </div>
+</main>
+
+
+<footer>
+  <div class="wrap foot-grid">
+    <span class="wordmark">over<span>click</span></span>
+    <div class="foot-links">
+      <a href="../index.html">Início</a>
+      <a href="index.html">Índice do curso</a>
+      <a href="../../learn/06-terminal.html" hreflang="en" lang="en">English</a>
+      <a href="https://github.com/rafaeldominguesdev/pilotdeck" rel="noopener">GitHub</a>
+      <a href="https://github.com/rafaeldominguesdev/pilotdeck/blob/main/LICENSE" rel="noopener">Licença MIT</a>
+    </div>
+    <div class="spacer"></div>
+    <span class="foot-moto">seu board · seu servidor · seus dados</span>
+  </div>
+</footer>
+
+<script src="../../learn/learn.js"></script>
+</body>
+</html>

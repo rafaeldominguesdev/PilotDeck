@@ -1,0 +1,24 @@
+{
+  "name": "pilotdeck",
+  "private": true,
+  "version": "0.3.16",
+  "description": "Self-hosted board for hybrid human+agent teams. Data never leaves the server.",
+  "license": "MIT",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @pilotdeck/web dev",
+    "build": "pnpm -r --if-present build",
+    "start": "pnpm --filter @pilotdeck/web start",
+    "test": "pnpm -r --if-present test",
+    "db:generate": "pnpm --filter @pilotdeck/db generate",
+    "db:migrate": "pnpm --filter @pilotdeck/db migrate",
+    "db:seed": "pnpm --filter @pilotdeck/db seed",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "lint": "pnpm -r --if-present lint",
+    "check:topbar": "node scripts/topbar-one-line.mjs",
+    "check:sheet": "node scripts/detail-sheet.mjs"
+  }
+}

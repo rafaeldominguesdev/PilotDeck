@@ -1,0 +1,1 @@
+ALTER TABLE "execution_attempt" ADD COLUMN "usage_segments" jsonb;

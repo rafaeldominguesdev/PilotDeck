@@ -1,0 +1,3760 @@
+/* ============================================================
+   NEBULA — the board's component layer.
+
+   The tokens this file draws with no longer live here: they live in
+   styles/themes/<name>.css, one file per theme, each one the same list of
+   `--oc-*` names with different values (OCL-56). This file imports the two
+   the board ships with and then maps them onto the `--nebula-*` names the
+   rules below have always used, so a rule reads the same as it did and a
+   theme change reaches every one of them.
+
+   The order matters: devterm is `:root` as well as `[data-theme="devterm"]`,
+   so a theme nobody recognises falls back to it without a line of code
+   deciding that. overclock is an attribute rule that wins over `:root` on
+   the same element when the attribute is there.
+
+   Rules below use tokens only — no hex, no rgba literal (doctrine §5,
+   item 1). styles/tokens.test.ts fails the build if one comes back.
+   ============================================================ */
+
+@import "./themes/devterm.css";
+@import "./themes/overclock.css";
+
+/* ============================================================
+   The `--nebula-*` contract, now a view over the theme.
+
+   Every name here is a name the rules below (and a handful of inline
+   styles) already used. Keeping them is what made the extraction a
+   no-op on screen: nothing was renamed, only re-sourced.
+   ============================================================ */
+
+:root {
+  /* ---------- Cor: base ---------- */
+  --nebula-void: var(--oc-bg);
+
+  /* ---------- Cor: névoa ---------- */
+  --nebula-mist-deep:  var(--oc-mist-deep);
+  --nebula-mist:       var(--oc-mist);
+  --nebula-mist-light: var(--oc-mist-light);
+  --nebula-mist-glow:  var(--oc-accent);
+
+  /* ---------- Cor: poeira ---------- */
+  --nebula-dust-edge:  var(--oc-dust-edge);
+  --nebula-dust-core:  var(--oc-dust-core);
+
+  /* ---------- Cor: estrelas ---------- */
+  --nebula-star:       var(--oc-star);
+  --nebula-star-far:   var(--oc-star-far);
+
+  /* ---------- Cor: texto ---------- */
+  --nebula-text-primary:   var(--oc-text-1);
+  --nebula-text-secondary: var(--oc-text-2);
+  --nebula-text-tertiary:  var(--oc-text-3);
+  --nebula-text-glow:      var(--oc-text-glow);
+
+  /* ---------- Tipografia ---------- */
+  --nebula-font-sans: var(--oc-font-ui);
+  --nebula-font-mono: var(--oc-font-data);
+  /* the voice of a control, a section title, a chip: mono in nebula, the
+     UI face in a theme that demotes mono to a data voice */
+  --nebula-font-label: var(--oc-font-label);
+
+  --nebula-text-display: var(--oc-text-display);
+  --nebula-text-caption: var(--oc-text-caption);
+
+  --nebula-weight-medium: var(--oc-weight-medium);
+  --nebula-weight-light:  var(--oc-weight-light);
+
+  --nebula-tracking-tight: var(--oc-tracking-tight);
+  --nebula-tracking-wide:  var(--oc-tracking-wide);
+
+  --nebula-leading-none: var(--oc-leading-none);
+
+  /* ---------- Espaçamento ---------- */
+  --nebula-space-1: var(--oc-space-1);
+  --nebula-space-2: var(--oc-space-2);
+  --nebula-space-3: var(--oc-space-3);
+  --nebula-space-4: var(--oc-space-4);
+  --nebula-space-6: var(--oc-space-6);
+  --nebula-space-8: var(--oc-space-8);
+  --nebula-space-caption-gap: var(--oc-space-caption-gap);
+
+  /* ---------- Efeitos ---------- */
+  --nebula-glow-text: var(--oc-glow-text);
+  --nebula-blur-bokeh-near: var(--oc-blur-bokeh-near);
+  --nebula-blur-bokeh-far:  var(--oc-blur-bokeh-far);
+  --nebula-grain-opacity: var(--oc-grain-opacity);
+  --nebula-vignette: var(--oc-vignette);
+
+  /* ---------- Glass ---------- */
+  --nebula-glass-bg: var(--oc-glass-bg);
+  --nebula-glass-border: var(--oc-glass-border);
+  --nebula-glass-highlight: var(--oc-glass-highlight);
+  --nebula-glass-blur: var(--oc-glass-blur);
+  --nebula-glass-radius: var(--oc-radius-panel);
+  --nebula-glass-shadow: var(--oc-shadow-panel);
+  /* The same surface with no glass left in it, for a panel that covers what
+     it sits on. Glass is depth while there is something worth seeing behind;
+     once the panel is the screen, depth is just two texts on top of each
+     other. Same colour the glass settles on, at full opacity. */
+  --nebula-panel-solid: var(--oc-surface-3);
+
+  /* ---------- Cantos ---------- */
+  --nebula-corner-size: var(--oc-corner-size);
+  --nebula-corner-width: var(--oc-corner-width);
+  --nebula-corner-color: var(--oc-corner-color);
+  --nebula-corner-offset: var(--oc-corner-offset);
+
+  /* ---------- Plan card ---------- */
+  --nebula-plan-bg: var(--oc-plan-bg);
+  --nebula-plan-border: var(--oc-plan-border);
+  --nebula-plan-radius: var(--oc-radius-plan);
+  --nebula-plan-glow: var(--oc-plan-glow);
+  --nebula-plan-divider: var(--oc-divider);
+  --nebula-icon: var(--oc-icon);
+
+  /* ---------- Promo banner ---------- */
+  --nebula-banner-bg: var(--oc-banner-bg);
+  --nebula-banner-border: var(--oc-banner-border);
+  --nebula-banner-radius: var(--oc-radius-sheet);
+  --nebula-btn-light-bg: var(--oc-btn-light-bg);
+  --nebula-btn-light-text: var(--oc-btn-light-text);
+
+  /* ---------- Botão de conta ---------- */
+  --nebula-btn-account-bg: var(--oc-btn-account-bg);
+  --nebula-btn-account-border: var(--oc-btn-account-border);
+  --nebula-btn-account-radius: var(--oc-btn-account-radius);
+  --nebula-btn-account-blur: var(--oc-btn-account-blur);
+
+  /* ---------- Opacidade ---------- */
+  --nebula-alpha-mist:  var(--oc-alpha-mist);
+  --nebula-alpha-dust:  var(--oc-alpha-dust);
+  --nebula-alpha-star:  var(--oc-alpha-star);
+
+  /* ---------- Foco ----------
+     One ring for the whole system. A border that changes colour is not a
+     focus indicator: it moves nothing, it is the same weight as the resting
+     state, and on a dark glass surface it is invisible from a metre away.
+     The ring sits outside the control so it never resizes what it marks. */
+  --nebula-focus-ring: var(--oc-focus-ring);
+  --nebula-focus-ring-offset: var(--oc-focus-ring-offset);
+
+  /* ---------- Alvo de toque ----------
+     44px is the coarse-pointer hit floor; 24px is the universal minimum
+     (WCAG 2.2 SC 2.5.8). Neither is a visual height — the .oc-tappable
+     utility grows the hit area without moving the box (ux-v2 §3, A1). */
+  --nebula-tap: var(--oc-tap);
+
+  /* ---------- Motion ---------- */
+  --nebula-duration-blink: var(--oc-duration-blink);
+  --nebula-duration-drift: var(--oc-duration-drift);
+  --nebula-duration-flow:  var(--oc-duration-flow);
+  --nebula-ease-atmosphere: var(--oc-ease-atmosphere);
+  --nebula-ease-cursor:     var(--oc-ease-cursor);
+  --nebula-lerp-mouse: var(--oc-lerp-mouse);
+}
+
+/* ---------- Utilitários ---------- */
+.nebula-surface {
+  background: var(--nebula-void);
+  color: var(--nebula-text-primary);
+  font-family: var(--nebula-font-sans);
+}
+.nebula-display {
+  font-size: var(--nebula-text-display);
+  font-weight: var(--nebula-weight-medium);
+  letter-spacing: var(--nebula-tracking-tight);
+  text-shadow: var(--nebula-glow-text);
+}
+.nebula-caption {
+  font-family: var(--nebula-font-label);
+  font-size: var(--nebula-text-caption);
+  font-weight: var(--nebula-weight-light);
+  letter-spacing: var(--nebula-tracking-wide);
+  color: var(--nebula-text-secondary);
+}
+.nebula-cursor {
+  display: inline-block;
+  width: 0.6em;
+}
+
+/* ---------- touch floor utility (A1) ----------
+   Grows the hit target without growing the drawn box. The pseudo-element
+   paints nothing; it inherits pointer-events from the control it rides on,
+   so a tap on the expanded area is a tap on the control.
+
+   The expanded selector list covers controls whose markup cannot easily
+   carry the utility class; components that can add it explicitly do so. */
+.oc-tappable,
+.nb .btn-back,
+.nb .btn-next,
+.nb .btn-new,
+.nb .btn-ghost,
+.nb .btn-rev,
+.nb .skip,
+.nb .settabs button,
+.nb .ff-search-clear,
+.nb .d-close,
+.nb .upd-toggle,
+.nb .ins-empty-cta,
+.nb-auth .btn-next {
+  position: relative;
+}
+
+.oc-tappable::after,
+.nb .btn-back::after,
+.nb .btn-next::after,
+.nb .btn-new::after,
+.nb .btn-ghost::after,
+.nb .btn-rev::after,
+.nb .skip::after,
+.nb .settabs button::after,
+.nb .ff-search-clear::after,
+.nb .d-close::after,
+.nb .upd-toggle::after,
+.nb .ins-empty-cta::after,
+.nb-auth .btn-next::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: max(100%, var(--oc-tap-min));
+  height: max(100%, var(--oc-tap-min));
+}
+
+@media (pointer: coarse) {
+  .oc-tappable::after,
+  .nb .btn-back::after,
+  .nb .btn-next::after,
+  .nb .btn-new::after,
+  .nb .btn-ghost::after,
+  .nb .btn-rev::after,
+  .nb .skip::after,
+  .nb .settabs button::after,
+  .nb .ff-search-clear::after,
+  .nb .d-close::after,
+  .nb .upd-toggle::after,
+  .nb .ins-empty-cta::after,
+  .nb-auth .btn-next::after {
+    width: max(100%, var(--oc-tap));
+    height: max(100%, var(--oc-tap));
+  }
+}
+
+.nebula-cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.1em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: rgb(var(--oc-white-rgb) / 0.7);
+  animation: nebula-blink var(--nebula-duration-blink) var(--nebula-ease-cursor) infinite;
+}
+@keyframes nebula-blink { 50% { opacity: 0; } }
+
+.nebula-glass {
+  background: var(--nebula-glass-bg);
+  border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--nebula-glass-radius);
+  box-shadow: var(--nebula-glass-shadow);
+  /* Prefix first: Lightning CSS keeps the standards form that comes last. */
+  -webkit-backdrop-filter: blur(var(--nebula-glass-blur));
+  backdrop-filter: blur(var(--nebula-glass-blur));
+}
+.nebula-glass-fade {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 100%;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+}
+.nebula-glass-fade::after {
+  content: "";
+  position: absolute;
+  inset: 50% 0 0 0;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+}
+.nebula-corners { position: relative; }
+.nebula-corners::before {
+  content: "";
+  position: absolute;
+  inset: var(--nebula-corner-offset);
+  pointer-events: none;
+  background:
+    linear-gradient(var(--nebula-corner-color), var(--nebula-corner-color)) left top / var(--nebula-corner-size) var(--nebula-corner-width),
+    linear-gradient(var(--nebula-corner-color), var(--nebula-corner-color)) left top / var(--nebula-corner-width) var(--nebula-corner-size),
+    linear-gradient(var(--nebula-corner-color), var(--nebula-corner-color)) right top / var(--nebula-corner-size) var(--nebula-corner-width),
+    linear-gradient(var(--nebula-corner-color), var(--nebula-corner-color)) right top / var(--nebula-corner-width) var(--nebula-corner-size),
+    linear-gradient(var(--nebula-corner-color), var(--nebula-corner-color)) left bottom / var(--nebula-corner-size) var(--nebula-corner-width),
+    linear-gradient(var(--nebula-corner-color), var(--nebula-corner-color)) left bottom / var(--nebula-corner-width) var(--nebula-corner-size),
+    linear-gradient(var(--nebula-corner-color), var(--nebula-corner-color)) right bottom / var(--nebula-corner-size) var(--nebula-corner-width),
+    linear-gradient(var(--nebula-corner-color), var(--nebula-corner-color)) right bottom / var(--nebula-corner-width) var(--nebula-corner-size);
+  background-repeat: no-repeat;
+}
+
+/* ============================================================
+   AGB-73 — the icon set, as the system sees it.
+
+   The component in components/icon.tsx already carries its own size and its
+   own stroke, so an icon is correct before this file has a word to say about
+   it. What lives here is only how a glyph behaves next to text: it never
+   stretches when a flex row runs out of room, it sits on the line rather
+   than on the baseline, and it inherits the colour of whatever it stands
+   beside, which is how the Nebula palette reaches it without a hex value.
+
+   The muted variant is for a mark that anchors a label it does not compete
+   with: a column head, a section title. The word stays the thing being read.
+   ============================================================ */
+.nb-icon { flex: none; display: inline-block; vertical-align: -0.14em; }
+/* a mark beside a word is a landmark, not a second voice */
+.nb .icon-muted { color: var(--nebula-icon); opacity: .8; }
+/* the gap between a mark and the word it belongs to, in one place */
+.nb .with-icon { display: inline-flex; align-items: center; gap: 6px; }
+
+/* ---------- where the set lands on the board and in the detail ----------
+   The spacing between a mark and its word is a margin and not a flex gap on
+   purpose: two of these controls turn into blocks on the phone, and a gap
+   that only exists while a box is flex is a gap that disappears exactly
+   where the layout changed. */
+
+/* A mark leading a label inside a control. The gap is declared rather than
+   left to a whitespace-only text node, which flex drops when a control gains
+   an icon. */
+.nb .btn-ghost { display: inline-flex; align-items: center; gap: 6px; }
+
+/* the columns: the mark anchors the head, the word still names it */
+.nb .col-head .col-mark { align-self: center; margin-right: -2px; color: var(--nebula-icon); opacity: .75; }
+/* an empty column keeps its own mark, faded to the weight of a placeholder */
+.nb .empty-col { display: flex; flex-direction: column; align-items: center; gap: 9px; }
+.nb .empty-mark { color: var(--nebula-icon); opacity: .38; }
+
+/* the detail's section titles: a silhouette per section, so the eye jumps */
+.nb .d-sec .lbl-name { display: inline-flex; align-items: center; gap: 7px; min-width: 0; }
+
+/* the way out, and the phone's menu: a glyph centred in its own circle */
+.nb .d-close, .nb .filters-btn, .nb .am-trigger { display: inline-flex; align-items: center; justify-content: center; }
+
+/* the copy chips: mark, then the word for what is being copied */
+.nb .d-copy { display: inline-flex; align-items: center; gap: 6px; }
+.nb .d-copy > span { overflow: hidden; text-overflow: ellipsis; }
+
+/* the status chip carries the mark of the column the card sits in */
+.nb .d-status { display: inline-flex; align-items: center; gap: 5px; }
+
+/* a link that leaves the board says so before it is clicked */
+.nb a.d-verify-value .nb-icon { margin-left: 5px; opacity: .7; }
+
+/* the two filters: a caret is what says a word opens something */
+.nb .pf-caret, .nb .mf-caret { margin-left: 5px; opacity: .5; }
+.nb .mf-clear { display: inline-flex; align-items: center; }
+.nb .ml-caret { display: inline-flex; align-items: center; }
+/* the search box wears its mark inside the field, so the box reads as search */
+.nb .mf-search-row {
+  display: flex; align-items: center; gap: 7px; margin-bottom: 6px; padding: 0 8px;
+  background: var(--oc-surface-input); border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--oc-radius-control); color: var(--nebula-text-tertiary);
+}
+.nb .mf-search-row:focus-within { border-color: var(--oc-border-strong); }
+.nb .mf-search-row .mf-search {
+  margin: 0; padding: 6px 0; background: none; border: 0; border-radius: 0; flex: 1; min-width: 0;
+}
+.nb .mf-search-row .mf-search:focus { border: 0; }
+
+/* ============================================================
+   ATMOSFERA — camadas fixas atrás da UI.
+   O canvas 2D é montado pelo componente <NebulaAtmosphere/>;
+   estas camadas CSS (drift 12s/26s + grain + vignette) são o
+   reforço e o fallback.
+   ============================================================ */
+.atmo, .atmo canvas, .atmo-overlay { position: fixed; inset: 0; }
+.atmo { z-index: var(--oc-z-atmo-back); background: var(--nebula-void); }
+/* the 2D layer is drawn in JS with the nebula palette baked in: a theme
+   that has no atmosphere turns it off here, and the fixed layer behind
+   everything moves nothing when it goes */
+.atmo canvas { width: 100%; height: 100%; display: block; opacity: var(--oc-atmo-opacity); }
+.atmo-overlay { pointer-events: none; }
+
+.atmo-mist {
+  z-index: var(--oc-z-atmo-mid);
+  background: var(--oc-atmo-mist);
+  animation: nebula-drift-a var(--nebula-duration-drift) var(--nebula-ease-atmosphere) infinite alternate;
+}
+.atmo-veil {
+  z-index: var(--oc-z-atmo-mid);
+  background: var(--oc-atmo-veil);
+  animation: nebula-drift-b var(--nebula-duration-flow) var(--nebula-ease-atmosphere) infinite alternate;
+}
+@keyframes nebula-drift-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(-3.5vw, 2vh, 0) scale(1.06); }
+}
+@keyframes nebula-drift-b {
+  from { transform: translate3d(0, 0, 0); opacity: 0.7; }
+  to   { transform: translate3d(2.5vw, -3vh, 0); opacity: 1; }
+}
+.atmo-grain {
+  z-index: var(--oc-z-atmo-front);
+  opacity: calc(var(--nebula-grain-opacity) * 0.22);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+.atmo-vignette { z-index: var(--oc-z-atmo-front); background: var(--nebula-vignette); }
+
+@media (prefers-reduced-motion: reduce) {
+  .atmo-mist, .atmo-veil { animation: none; }
+}
+
+/* ============================================================
+   HOME / BOARD — componentes sobre os tokens.
+   Escopo: tudo sob .nb para não vazar para login/setup.
+   ============================================================ */
+body:has(.nb) { display: block; padding: 0; background: var(--nebula-void); }
+.shell:has(.nb) { max-width: none; }
+
+.nb {
+  position: relative;
+  min-height: 100vh;
+  padding: 28px 32px 60px;
+  /* clip, not hidden: hidden would make this box a scroll container and the
+     phone's sticky bar (AGB-65) would scroll away with the list */
+  overflow-x: clip;
+  color: var(--nebula-text-primary);
+  font-family: var(--nebula-font-sans);
+}
+
+/* ---------- top bar ----------
+   OCL-35 (ux-v2 §3): on the board the bar is two levels. Level 1 holds
+   identity, work state, telemetry and account; level 2 owns filtering.
+   Filter and navigation no longer fight for one line, which was the source
+   of every squeezed header. Both levels sit on the canvas — no glass — and
+   the only chrome is the 1px line under level 2. The bare `.topbar` rule
+   below still serves the other screens (Insights, Settings), which keep
+   their one glass bar.
+
+   OCL-59: whatever a bar is made of, it owns a rung, at every width, and it
+   owns it because of what hangs off it. A bar that is a stacking context —
+   the glass one on Insights, or any level that gains one tomorrow — locks
+   its menu's `--oc-z-menu` inside itself: from outside, bar and menu are one
+   box with no layer at all, and the cards, later in the document, draw over
+   an open menu and take its clicks. So the rung is named on the wrap, which
+   carries both levels, and on `.topbar` itself, which is the whole bar
+   everywhere else. */
+.nb .topbar {
+  display: flex; align-items: center; gap: var(--nebula-space-4);
+  padding: var(--nebula-space-3) 18px; margin-bottom: 22px;
+  position: relative; z-index: var(--oc-z-chrome);
+}
+.nb .topbar-wrap {
+  margin-bottom: 22px;
+  position: relative; z-index: var(--oc-z-chrome);
+}
+.nb .topbar-l1 { padding: 10px 0; margin-bottom: 0; }
+.nb .topbar-l2 {
+  display: flex; align-items: center; flex-wrap: nowrap;
+  gap: var(--nebula-space-3); padding: 0 0 12px;
+  border-bottom: 1px solid var(--nebula-glass-border);
+}
+/* AGB-65: on the desktop the wrapper is transparent to the level, the
+   controls inside it lay out exactly as before, and the phone-only filters
+   button stays hidden. */
+.nb .topbar-more { display: contents; }
+.nb .filters-btn { display: none; }
+.nb .menu-backdrop { display: none; }
+.nb .logo {
+  font-weight: var(--nebula-weight-medium);
+  letter-spacing: var(--nebula-tracking-tight);
+  font-size: 15px;
+  text-shadow: var(--nebula-glow-text);
+}
+/* AGB-79: the wordmark is a link home. Only the anchor takes these, so the
+   executor tiles that also carry .logo keep their own cursor and colour. */
+.nb a.logo {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: var(--oc-radius-chip);
+  /* OCL-37: the wordmark is drawn now, not typed. The anchor is a box around
+     an svg, so it stops inheriting the line-height of the bar's text and stops
+     leaving a descender's worth of dead space under the mark. */
+  display: inline-flex;
+  align-items: center;
+  /* The glow was aimed at the old text; on a stroked mark it only fuzzes the
+     letterforms, and the doctrine took coloured glows out of the system. */
+  text-shadow: none;
+}
+.nb a.logo svg { display: block; }
+/* The two halves differ by alpha alone (OCL-37): hover lifts the trailing half
+   towards the leading one instead of swapping in a second colour, which is what
+   let the old wordmark read differently in every theme. */
+.nb a.logo .wordmark-trail { transition: opacity .18s ease; }
+.nb a.logo:hover .wordmark-trail { opacity: .8; }
+.nb a.logo:focus-visible {
+  outline: none;
+  box-shadow: var(--nebula-focus-ring-offset);
+}
+.nb .crumb {
+  font-family: var(--nebula-font-label); font-size: 12px;
+  color: var(--nebula-text-secondary); letter-spacing: 0.04em;
+}
+.nb .crumb b { color: var(--nebula-text-primary); font-weight: var(--nebula-weight-medium); }
+.nb .crumb select {
+  appearance: none; background: transparent; border: 0; padding: 0 2px 0 0;
+  color: var(--nebula-text-primary); font: inherit; font-weight: var(--nebula-weight-medium);
+  letter-spacing: inherit; cursor: pointer;
+}
+.nb .crumb select:focus { outline: none; }
+.nb .filter-chip {
+  display: inline-flex; align-items: center;
+  border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-pill);
+  padding: 3px 10px; background: var(--oc-surface-subtle);
+}
+.nb .filter-chip select {
+  appearance: none; background: transparent; border: 0; padding: 0;
+  color: var(--nebula-text-secondary); font-family: var(--nebula-font-label);
+  font-size: 11px; letter-spacing: 0.04em; cursor: pointer; max-width: 180px;
+}
+.nb .filter-chip select:focus { outline: none; }
+
+/* ---------- project filter ----------
+   The crumb keeps its shape: the trigger reads like the select it replaced,
+   the panel below it is where any combination of projects is a valid answer. */
+.nb .project-filter { position: relative; display: inline-flex; }
+.nb .pf-trigger {
+  appearance: none; background: transparent; border: 0; padding: 0 2px 0 0;
+  color: var(--nebula-text-primary); font: inherit;
+  font-weight: var(--nebula-weight-medium); letter-spacing: inherit; cursor: pointer;
+}
+.nb .pf-label {
+  display: block; max-width: 260px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.nb .pf-panel {
+  position: absolute; z-index: var(--oc-z-panel); top: calc(100% + 8px); left: 0;
+  min-width: 240px; max-width: min(320px, calc(100vw - 32px));
+  padding: 8px; background: var(--oc-panel-bg);
+}
+.nb .pf-list { display: flex; flex-direction: column; max-height: 46vh; overflow-y: auto; }
+.nb .pf-opt {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  padding: 6px 8px; background: transparent; border: 0; border-radius: var(--oc-radius-control);
+  color: var(--nebula-text-secondary); font-family: var(--nebula-font-label);
+  font-size: 11px; letter-spacing: 0.04em; text-align: left; cursor: pointer;
+}
+.nb .pf-opt:hover { background: var(--oc-surface-hover); color: var(--nebula-text-primary); }
+.nb .pf-opt.on { color: var(--nebula-text-primary); }
+.nb .pf-box {
+  flex: none; width: 14px; height: 14px; border-radius: var(--oc-radius-control-sm);
+  border: 1px solid var(--nebula-glass-border);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 10px; line-height: 1;
+}
+.nb .pf-opt.on .pf-box { border-color: rgb(var(--oc-accent-rgb) / 0.5); background: var(--oc-surface-on); }
+.nb .pf-opt-name {
+  flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.nb .pf-context-status {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: var(--nebula-text-tertiary); font-size: 9px; letter-spacing: 0.02em;
+}
+.nb .pf-opt-count { flex: none; opacity: 0.65; font-variant-numeric: tabular-nums; }
+/* The option row: the toggle takes the space, `only` and the counts sit at
+   the end. `only` stays out of the way until the row is hovered or its button
+   focused, so a list of 26 projects does not read as 26 buttons. */
+.nb .pf-opt-row {
+  display: flex; align-items: center; gap: 8px;
+  padding-right: 8px; border-radius: var(--oc-radius-control);
+}
+.nb .pf-opt-row:hover { background: var(--oc-surface-hover); }
+.nb .pf-opt-row .pf-opt { flex: 1; min-width: 0; }
+.nb .pf-opt-row .pf-opt:hover { background: transparent; }
+.nb .pf-only {
+  flex: none; padding: 2px 6px; border: 0; border-radius: var(--oc-radius-control-sm);
+  background: var(--oc-surface-on); color: var(--nebula-text-secondary);
+  font-family: var(--nebula-font-label); font-size: 11px; letter-spacing: 0.04em;
+  cursor: pointer; opacity: 0; visibility: hidden;
+}
+.nb .pf-opt-row:hover .pf-only,
+.nb .pf-only:focus-visible { opacity: 1; visibility: visible; }
+.nb .pf-only:hover { color: var(--nebula-text-primary); }
+
+/* ---------- mission filter ----------
+   The chip reads as the select it replaced; the panel it opens is what a
+   select could not be: counts beside each mission, a clear that costs one
+   click, and a search box once the list grows past a handful. */
+.nb .mission-filter { position: relative; display: inline-flex; }
+.nb .mf-chip { gap: 6px; }
+.nb .mf-chip.on {
+  border-color: var(--oc-border-strong);
+  background: var(--oc-surface-hover);
+}
+.nb .mf-trigger, .nb .mf-clear {
+  appearance: none; background: transparent; border: 0; padding: 0;
+  color: var(--nebula-text-secondary); font-family: var(--nebula-font-label);
+  font-size: 11px; letter-spacing: 0.04em; cursor: pointer;
+}
+.nb .mf-chip.on .mf-trigger { color: var(--nebula-text-primary); }
+.nb .mf-label {
+  /* OCL-35 (ux-v2 §3): the mission title is the filter people read, so it
+     prints whole up to ~60ch on its own level; past that it truncates and
+     the title attribute keeps the full reading. */
+  display: block; max-width: 60ch;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.nb .mf-clear { font-size: 13px; line-height: 1; opacity: 0.7; }
+.nb .mf-clear:hover { opacity: 1; color: var(--nebula-text-primary); }
+.nb .mf-panel {
+  position: absolute; z-index: var(--oc-z-panel); top: calc(100% + 6px); left: 0;
+  min-width: 240px; max-width: min(320px, calc(100vw - 32px));
+  padding: 8px; background: var(--oc-panel-bg);
+}
+.nb .mf-search {
+  width: 100%; margin-bottom: 6px; padding: 6px 8px;
+  background: var(--oc-surface-input); border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--oc-radius-control); color: var(--nebula-text-primary);
+  font-family: var(--nebula-font-label); font-size: 11px; letter-spacing: 0.04em;
+}
+.nb .mf-search:focus { outline: none; border-color: var(--oc-border-strong); }
+.nb .mf-list { display: flex; flex-direction: column; max-height: 46vh; overflow-y: auto; }
+.nb .mf-opt {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 6px 8px; background: transparent; border: 0; border-radius: var(--oc-radius-control);
+  color: var(--nebula-text-secondary); font-family: var(--nebula-font-label);
+  font-size: 11px; letter-spacing: 0.04em; text-align: left; cursor: pointer;
+}
+.nb .mf-opt:hover { background: var(--oc-surface-hover); color: var(--nebula-text-primary); }
+.nb .mf-opt.on { color: var(--nebula-text-primary); background: rgb(var(--oc-white-rgb) / 0.08); }
+/* a mission row also carries its progress bar (OCL-138): stack the summary
+   line over the bar instead of squeezing both into one row */
+.nb .mf-opt.mf-opt-stacked { flex-direction: column; align-items: stretch; gap: 4px; }
+.nb .mf-opt-main { display: flex; align-items: center; gap: 10px; width: 100%; }
+.nb .mf-opt-title {
+  flex: 1; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.nb .mf-opt-count { flex: none; opacity: 0.65; font-variant-numeric: tabular-nums; }
+.nb .mf-empty {
+  margin: 0; padding: 8px; color: var(--nebula-text-secondary);
+  font-family: var(--nebula-font-label); font-size: 11px;
+}
+.nb .mf-create-trigger {
+  width: 100%; margin-top: 6px; padding: 8px;
+  border: 0; border-top: 1px solid var(--nebula-glass-border);
+  background: transparent; color: var(--nebula-mist);
+  font-family: var(--nebula-font-label); font-size: 11px; text-align: left;
+  cursor: pointer;
+}
+.nb .mf-create-trigger:hover { color: var(--nebula-text-primary); }
+.nb .mf-panel.creating { width: min(400px, calc(100vw - 32px)); max-width: none; }
+.nb .mf-create { display: flex; flex-direction: column; gap: 9px; }
+.nb .mf-create-head { display: flex; align-items: center; justify-content: space-between; }
+.nb .mf-create-head b,
+.nb .mf-create label > span,
+.nb .mf-create-preview > span {
+  color: var(--nebula-text-secondary); font-family: var(--nebula-font-label);
+  font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.nb .mf-create-head button {
+  display: inline-flex; padding: 3px; border: 0; background: transparent;
+  color: var(--nebula-text-secondary); cursor: pointer;
+}
+.nb .mf-create label { display: flex; flex-direction: column; gap: 4px; }
+.nb .mf-create input,
+.nb .mf-create textarea {
+  width: 100%; padding: 7px 8px; border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--oc-radius-control); background: var(--oc-surface-input);
+  color: var(--nebula-text-primary); font: inherit; font-size: 12px;
+  resize: vertical;
+}
+.nb .mf-create input:focus,
+.nb .mf-create textarea:focus { outline: none; border-color: var(--oc-border-strong); }
+.nb .mf-create-preview {
+  max-height: 180px; padding: 8px; overflow: auto;
+  border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-control);
+  background: rgb(var(--oc-scrim-rgb) / 0.5);
+}
+.nb .mf-create-error { margin: 0; color: var(--oc-danger); font-size: 11px; line-height: 1.4; }
+
+/* ---------- type + priority facets (OCL-31) ----------
+   The seven choices live in one vertical menu. This keeps the scarce topbar
+   width for scope while preserving multi-select semantics inside each facet. */
+.nb .facet-filters { position: relative; display: inline-flex; min-width: 0; }
+.nb .ff-trigger {
+  appearance: none; color: var(--nebula-text-secondary); cursor: pointer;
+  font-family: var(--nebula-font-label); font-size: 11px; letter-spacing: 0.04em;
+}
+.nb .ff-trigger.on {
+  color: var(--nebula-text-primary); border-color: var(--oc-border-strong);
+  background: var(--oc-surface-hover);
+}
+.nb .ff-panel {
+  position: absolute; z-index: var(--oc-z-panel); top: calc(100% + 6px); left: 0;
+  width: 240px; max-width: min(320px, calc(100vw - 32px));
+  max-height: 46vh; overflow-y: auto;
+  padding: 8px; background: var(--oc-panel-bg);
+}
+.nb .ff-search-row {
+  display: flex; align-items: center; gap: 8px; min-height: 32px;
+  padding: 0 8px; border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--oc-radius-control); background: var(--oc-surface-input);
+  color: var(--nebula-text-secondary);
+}
+.nb .ff-search-row:focus-within {
+  border-color: var(--oc-border-strong); box-shadow: var(--nebula-focus-ring-offset);
+}
+.nb .ff-search {
+  flex: 1; min-width: 0; min-height: 30px; padding: 0;
+  border: 0; outline: none; background: transparent;
+  color: var(--nebula-text-primary); font-family: var(--nebula-font-label);
+  font-size: 11px; letter-spacing: 0.04em;
+}
+.nb .ff-search::placeholder { color: var(--nebula-text-tertiary); }
+.nb .ff-search-clear {
+  display: inline-flex; flex: none; align-items: center; justify-content: center;
+  width: 24px; height: 24px; padding: 0; border: 0;
+  background: transparent; color: var(--nebula-text-secondary); cursor: pointer;
+}
+.nb .ff-search-clear:hover { color: var(--nebula-text-primary); }
+.nb .ff-search-clear:focus-visible {
+  outline: none; box-shadow: var(--nebula-focus-ring-inset);
+}
+.nb .ff-section + .ff-section {
+  margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--nebula-glass-border);
+}
+.nb .ff-section h3 {
+  margin: 0; padding: 4px 8px;
+  color: var(--nebula-text-tertiary); font-family: var(--nebula-font-sans);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.nb .ff-list { display: flex; flex-direction: column; }
+.nb .ff-opt {
+  display: flex; flex-direction: row; align-items: center; gap: 8px; width: 100%;
+  padding: 6px 8px; border-radius: var(--oc-radius-control); color: var(--nebula-text-secondary);
+  font-family: var(--nebula-font-label); font-size: 11px;
+  letter-spacing: 0.04em; cursor: pointer;
+}
+.nb .ff-opt:hover { background: var(--oc-surface-hover); color: var(--nebula-text-primary); }
+.nb .ff-opt.on { color: var(--nebula-text-primary); }
+.nb .ff-opt input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.nb .ff-opt:has(input:focus-visible) { outline: none; box-shadow: var(--nebula-focus-ring-offset); }
+.nb .ff-box {
+  flex: none; width: 14px; height: 14px; border-radius: var(--oc-radius-control-sm);
+  border: 1px solid var(--nebula-glass-border);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.nb .ff-opt.on .ff-box { border-color: rgb(var(--oc-accent-rgb) / 0.5); background: var(--oc-surface-on); }
+.nb .ff-radio { border-radius: var(--oc-radius-circle); }
+.nb .ff-radio-dot { width: 6px; height: 6px; border-radius: var(--oc-radius-circle); background: var(--nebula-dust-core); }
+.nb .ff-opt-count {
+  flex: none; color: var(--nebula-text-tertiary); font-variant-numeric: tabular-nums;
+}
+.nb .ff-opt-name { flex: 1; min-width: 0; }
+.nb .ff-clear {
+  width: 100%; margin-top: 8px; padding: 8px;
+  border: 0; border-top: 1px solid var(--nebula-glass-border);
+  background: transparent; color: var(--nebula-mist);
+  font-family: var(--nebula-font-label); font-size: 11px; text-align: left;
+  cursor: pointer;
+}
+.nb .ff-clear:hover:not(:disabled) { color: var(--nebula-text-primary); }
+.nb .ff-clear:disabled { opacity: 0.4; cursor: default; }
+.nb .filter-result {
+  color: var(--nebula-text-secondary); font-family: var(--nebula-font-label);
+  font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+  white-space: nowrap;
+}
+.nb .filter-result { padding-left: 8px; border-left: 1px solid var(--nebula-glass-border); }
+.nb .clear-board-filters { color: var(--nebula-text-secondary); }
+.nb .spacer { flex: 1; }
+/* o globals.css legado estiliza <form> como painel — na home ele é inline */
+.nb form { display: inline; background: none; border: none; padding: 0; gap: 0; }
+.nb .agent-status {
+  display: flex; align-items: center; gap: var(--nebula-space-2);
+  font-family: var(--nebula-font-label); font-size: 11px;
+  letter-spacing: 0.05em; color: var(--nebula-text-secondary);
+}
+/* One dot, wherever the running state is shown: on the chip in level 1 and
+   on its line inside the account menu. Flat, no halo —
+   ux-v2 §1 retires the glow, which was the only thing on the bar drawing a
+   coloured light around itself. */
+.nb .agent-status .dot, .nb .am-state .dot {
+  width: 7px; height: 7px; border-radius: var(--oc-radius-circle); background: var(--oc-ok);
+}
+.nb .agent-status .dot.idle, .nb .am-state .dot.idle { background: var(--nebula-star-far); }
+.nb .btn-ghost {
+  background: var(--nebula-btn-account-bg); color: var(--nebula-text-secondary);
+  border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--oc-radius-pill); font-size: 12px;
+  padding: 7px 14px; cursor: pointer;
+  -webkit-backdrop-filter: blur(var(--nebula-btn-account-blur));
+  backdrop-filter: blur(var(--nebula-btn-account-blur));
+  transition: color 0.3s var(--nebula-ease-atmosphere), border-color 0.3s var(--nebula-ease-atmosphere);
+}
+.nb .btn-ghost:hover { color: var(--nebula-text-primary); border-color: var(--oc-border-hover); }
+.nb .btn-ghost .badge { color: var(--oc-badge-fg); font-weight: 600; }
+
+/* ---------- the running-state chip (OCL-20) ----------
+   Running is not navigation: it is what the board is doing, so it stays on
+   the bar at every width. It jumps to the column it counts. */
+.nb .state-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--nebula-font-label); font-size: 11px; letter-spacing: 0.05em;
+  color: var(--nebula-text-secondary); text-decoration: none; cursor: pointer;
+  border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-pill);
+  padding: 5px 10px; background: var(--oc-surface-subtle);
+  white-space: nowrap;
+  transition: color 0.3s var(--nebula-ease-atmosphere), border-color 0.3s var(--nebula-ease-atmosphere);
+}
+.nb .state-chip:hover { color: var(--nebula-text-primary); border-color: var(--oc-border-hover); }
+
+/* ---------- the account menu (OCL-20) ----------
+   One button on the hard right of the bar for everything that is not a
+   filter and not work state: navigation and the way out. The panel hangs
+   off the button and closes on the gesture every other panel here uses. */
+.nb .account-menu { position: relative; display: inline-flex; }
+.nb .am-trigger {
+  appearance: none; background: var(--nebula-btn-account-bg); color: var(--nebula-text-secondary);
+  border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-pill);
+  padding: 6px 11px; cursor: pointer;
+  -webkit-backdrop-filter: blur(var(--nebula-btn-account-blur));
+  backdrop-filter: blur(var(--nebula-btn-account-blur));
+  transition: color 0.3s var(--nebula-ease-atmosphere), border-color 0.3s var(--nebula-ease-atmosphere);
+}
+.nb .am-trigger:hover { color: var(--nebula-text-primary); border-color: var(--oc-border-hover); }
+.nb .am-panel {
+  position: absolute; z-index: var(--oc-z-menu); top: calc(100% + 8px); right: 0;
+  min-width: 200px; max-width: min(300px, calc(100vw - 32px));
+  padding: 8px; background: var(--oc-panel-bg);
+  display: flex; flex-direction: column; gap: 2px;
+}
+.nb .am-panel form { display: block; }
+.nb .am-opt {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  padding: 7px 10px; border: 0; border-radius: var(--oc-radius-control); background: transparent;
+  color: var(--nebula-text-secondary); font-family: var(--nebula-font-label);
+  font-size: 11.5px; letter-spacing: 0.04em; text-align: left; cursor: pointer;
+  text-decoration: none;
+}
+.nb .am-opt:hover { background: var(--oc-surface-hover); color: var(--nebula-text-primary); }
+/* Under 1100px the running state leaves level 1 and lives here beside the
+   navigation entries. The entry remains separated from navigation by the
+   same rule the panel already uses. */
+.nb .am-state { display: none; }
+.nb .am-state .sc-label { flex: 1; min-width: 0; }
+.nb .am-state .dot { flex: none; }
+
+/* ---------- the theme selector (OCL-56) ----------
+   Three answers, so they sit side by side under one label instead of behind
+   a second menu. The row follows the menu's own anatomy: the option is the
+   same 8px-radius control every trigger on this board is, and the chosen
+   one is marked the way a chosen filter is marked — border and text, never
+   a colour of its own. */
+.nb .am-theme {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-top: 4px; padding: 8px;
+  border-top: 1px solid var(--nebula-glass-border);
+}
+.nb .am-theme-lbl {
+  color: var(--nebula-text-tertiary); font-family: var(--nebula-font-sans);
+  font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+}
+/* Three siblings form one group: equal columns, never an orphan stretched on
+   a second line. Each option follows the Control anatomy (32px, 8px radius,
+   13px UI face) so the picker reads as part of the same control family. */
+.nb .am-theme-opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+@media (pointer: coarse) {
+  .nb .am-theme-opts { gap: var(--oc-space-2); }
+}
+.nb .am-theme-opt {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 32px; padding: 0 8px;
+  border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--oc-radius-control);
+  background: transparent; color: var(--nebula-text-secondary);
+  font-family: var(--nebula-font-sans); font-size: 13px; font-weight: 500;
+  letter-spacing: 0; text-align: center; cursor: pointer;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: color var(--oc-duration-micro) var(--nebula-ease-atmosphere),
+    border-color var(--oc-duration-micro) var(--nebula-ease-atmosphere);
+}
+.nb .am-theme-opt:hover {
+  color: var(--nebula-text-primary); border-color: var(--oc-border-hover);
+  background: var(--oc-surface-hover);
+}
+.nb .am-theme-opt.on {
+  color: var(--nebula-text-primary); border-color: var(--oc-border-strong);
+  background: var(--oc-surface-hover);
+}
+.nb .am-theme-opt:focus-visible { outline: none; box-shadow: var(--nebula-focus-ring-offset); }
+
+/* ---------- the one-line rule on the bar (AGB-71) ----------
+   The rule the phone block already stated, now stated where it always
+   applied: no label in this bar ever breaks across two lines. The two mobile
+   passes taught the bar to shrink and left this to the phone media query, so
+   on a wide desktop the bar shrank its buttons until "Mover para missão" and
+   "nenhum agente rodando" printed as three-line blocks. A flex item shrinks
+   to its longest word by default, and text with nothing telling it otherwise
+   wraps to fill the box it was given.
+
+   So: every control holds its own width, and the only two that may give room
+   back are the two that carry a name somebody typed. They give it back by
+   truncating, with the whole reading still on the title and inside the panel
+   they open. Once nothing is left to truncate the bar collapses into the menu
+   button, which is the third way out and never the fourth one. */
+.nb .topbar { flex-wrap: nowrap; gap: var(--nebula-space-3); }
+/* level 1 keeps the wider 16px rhythm the checklist asks between the
+   wordmark and the first control */
+.nb .topbar.topbar-l1 { gap: var(--nebula-space-4); }
+/* the room a whole label needs comes out of the bar's own spacing, never out
+   of the word: with nine gaps on it, four pixels each is a truncated crumb */
+.nb .topbar .btn-ghost { padding: 7px 12px; }
+.nb .topbar > *, .nb .topbar-l2 > *, .nb .topbar-more > * { flex: none; }
+.nb .topbar .spacer { flex: 1 1 0; min-width: 0; }
+.nb .logo,
+.nb .btn-ghost,
+.nb .agent-status { white-space: nowrap; }
+/* a crumb is one line at every width, on the board and on the four screens
+   that borrowed the bar; what does not fit is cut with an ellipsis */
+.nb .crumb {
+  flex: 0 1 auto; min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* the board's crumb holds a control (the project filter) that opens a panel
+   below the bar, so it lays itself out and gives up the one-line clipping.
+   Anchored on the filter itself, not on a sibling: the workspace crumb that
+   used to sit beside it is gone (one workspace per instance), and the rule
+   must not die with it. */
+.nb .crumb:has(> .project-filter) {
+  display: flex; align-items: center; gap: 4px; text-overflow: clip;
+  /* OCL-9: the filter opens a panel below the bar, and the one-line rule
+     above clips it out of existence — the filter looked dead because nothing
+     it drew could leave the crumb's single line of text. The pieces truncate
+     themselves (min-width: 0 below), so the parent has no clipping to do. */
+  overflow: visible;
+}
+.nb .project-filter, .nb .pf-trigger { min-width: 0; }
+.nb .pf-trigger { display: inline-flex; }
+.nb .pf-label { min-width: 0; }
+.nb .mission-filter { flex: 0 1 auto; min-width: 0; }
+.nb .mf-chip, .nb .mf-trigger { min-width: 0; }
+.nb .mf-trigger { display: inline-flex; }
+.nb .mf-label { min-width: 0; }
+
+/* ---------- the Control (ux-v2 §3, OCL-35) ----------
+   One anatomy for every trigger in the two levels: 32px tall, 1px border,
+   8px radius, the UI face at 13px/500. Nothing in the levels is bare text
+   and nothing is a stretched toggle — the gray "Filtros" pill glued to the
+   wordmark and the borderless crumb triggers die here. The display of each
+   control stays with its own rule (the filters button still appears only
+   when the level folds); this block owns how the control looks.
+
+   The hover surface is a token and not a literal (ux-v2 checklist 1). It is
+   declared here, on the two levels, and not in :root: the `--oc-*` table is
+   OCL-34's file to write, and a card that reaches into another card's scope
+   to save itself one line is how a parallel round produces a conflict. When
+   34 lands, this is one alias to retire. */
+.nb .topbar-l1, .nb .topbar-l2 { --control-hover-bg: var(--oc-surface-hover); }
+.nb .topbar-l1 .state-chip,
+.nb .topbar-l1 .am-trigger,
+.nb .topbar-l2 .pf-trigger,
+.nb .topbar-l2 .mf-trigger,
+.nb .topbar-l2 .ff-trigger,
+.nb .topbar-l2 .filters-btn,
+.nb .topbar-l2 .btn-ghost {
+  align-items: center; gap: 6px;
+  height: 32px; padding: 0 12px;
+  border: 1px solid var(--nebula-glass-border); border-radius: 8px;
+  background: transparent;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  color: var(--nebula-text-secondary);
+  font-family: var(--nebula-font-sans); font-size: 13px;
+  font-weight: var(--nebula-weight-medium); letter-spacing: 0;
+  transition: color 0.2s var(--nebula-ease-atmosphere),
+    border-color 0.2s var(--nebula-ease-atmosphere),
+    background-color 0.2s var(--nebula-ease-atmosphere);
+}
+.nb .topbar-l2 .btn-ghost { display: inline-flex; }
+.nb .topbar-l1 .state-chip:hover,
+.nb .topbar-l1 .am-trigger:hover,
+.nb .topbar-l2 .pf-trigger:hover,
+.nb .topbar-l2 .mf-trigger:hover,
+.nb .topbar-l2 .ff-trigger:hover,
+.nb .topbar-l2 .filters-btn:hover,
+.nb .topbar-l2 .btn-ghost:hover {
+  background: var(--control-hover-bg);
+  border-color: var(--nebula-corner-color);
+  color: var(--nebula-text-primary);
+}
+/* Every control of both levels answers the keyboard (ux-v2 checklist 10).
+   The radius is restated because the generic `.btn-ghost:focus-visible` far
+   below still rounds its ring to the 999px pill these controls stopped
+   being; without it the ring on "limpar"/"Mover para missão" is a capsule
+   drawn around a square. The stat is in this list too: it is a button, and
+   it was the one control on the bar a keyboard could reach silently. */
+.nb .topbar-l1 .state-chip:focus-visible,
+.nb .topbar-l1 .am-trigger:focus-visible,
+.nb .topbar-l1 .board-total:focus-visible,
+.nb .topbar-l2 .pf-trigger:focus-visible,
+.nb .topbar-l2 .mf-trigger:focus-visible,
+.nb .topbar-l2 .mf-clear:focus-visible,
+.nb .topbar-l2 .ff-trigger:focus-visible,
+.nb .topbar-l2 .filters-btn:focus-visible,
+.nb .topbar-l2 .btn-ghost:focus-visible {
+  outline: none; box-shadow: var(--nebula-focus-ring-offset);
+  border-radius: 8px;
+}
+/* an applied filter reads as text-1 with the count badge, never as a
+   colour of its own */
+.nb .topbar-l2 .pf-trigger.on,
+.nb .topbar-l2 .ff-trigger.on { color: var(--nebula-text-primary); }
+.nb .topbar-l2 .badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
+  background: var(--nebula-mist-glow); color: var(--nebula-btn-light-text);
+  font-family: var(--nebula-font-mono); font-size: 11px; font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.nb .topbar-l2 .ff-query-badge {
+  max-width: 132px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* the trigger itself is the bordered control (ux-v2 §3, OCL-86): the chip
+   div is a bare flex wrapper so trigger and clear sit side by side without
+   drawing a second box around the anatomy above. */
+.nb .topbar-l2 .mf-chip {
+  border: 0; border-radius: 0; padding: 0; background: transparent;
+}
+.nb .topbar-l2 .mf-chip.on .mf-trigger,
+.nb .topbar-l2 .mf-chip.on .mf-clear {
+  color: var(--nebula-text-primary);
+}
+.nb .topbar-l2 .mf-chip.on .mf-trigger {
+  border-color: var(--oc-border-strong);
+  background: var(--oc-surface-hover);
+}
+.nb .topbar-l2 .mf-clear { color: var(--nebula-text-secondary); }
+.nb .topbar-l2 .pf-trigger svg,
+.nb .topbar-l2 .mf-trigger svg,
+.nb .topbar-l2 .ff-trigger svg { flex: none; }
+/* Both names on the level truncate rather than wrap, but they do not give
+   room back at the same rate: the mission is the long one and the one whose
+   whole reading is a tooltip and a panel away, so it yields first and the
+   project name — three words people navigate by — survives down to the
+   width where the level folds. Without this the crumb read "Agent Boa…" at
+   1100px while the mission still had 40 characters to spare. */
+.nb .topbar-l2 .mission-filter { flex-shrink: 1; }
+.nb .topbar-l2 .crumb { flex-shrink: 0.02; }
+/* the card count is data, so it keeps the data face, but at the 11px of the
+   ramp: 9px uppercase was a caption of a caption */
+.nb .topbar-l2 .filter-result {
+  font-size: 11px; letter-spacing: 0.04em; text-transform: none;
+}
+/* "Mover para missão" closes the level on the right (ux-v2 §3) */
+.nb .topbar-l2 .move-btn { margin-left: auto; }
+/* In the sheet the level's controls stack one per row, and a row that does
+   not own the full width reads as a different kind of control than the one
+   under it. The count keeps its dividing rule on the level, where it stands
+   between two groups on one line, and drops it here, where there is no line
+   left to divide. `.open` is the sheet: on the desktop this wrapper is
+   `display: contents` and never carries the class. */
+.nb .topbar-more.open .project-filter,
+.nb .topbar-more.open .pf-trigger { width: 100%; }
+.nb .topbar-more.open .filter-result { padding-left: 0; border-left: 0; }
+
+/* ---------- the running total (OCL-20) ----------
+   The headline figure of the bar, not a caption: it is the number that
+   justifies the board, so it carries the size. The stat is a button now: the
+   reading of the figure — what is computed, reported, estimated, missing —
+   lives in the popover it opens, and the bar keeps the figure plus a discreet
+   count of the caveats instead of a badge per caveat. */
+.nb .board-total-wrap { position: relative; display: inline-flex; min-width: 0; }
+.nb .board-total {
+  appearance: none; background: transparent; border: 0; padding: 0;
+  display: inline-flex; align-items: baseline; gap: 7px;
+  margin-left: 4px; padding-left: 14px;
+  border-left: 1px solid var(--nebula-glass-border);
+  color: inherit; font: inherit;
+  text-decoration: none; cursor: pointer;
+  white-space: nowrap; overflow: hidden;
+}
+.nb .board-total .bt-lead {
+  font-family: var(--nebula-font-mono); font-size: 16px; line-height: 1;
+  color: var(--nebula-text-primary); font-weight: 600;
+  letter-spacing: var(--nebula-tracking-tight);
+  font-variant-numeric: tabular-nums;
+  text-shadow: var(--nebula-glow-text);
+}
+.nb .board-total:hover .bt-lead { color: var(--nebula-dust-core); }
+.nb .board-total .bt-sub {
+  font-family: var(--nebula-font-mono); font-size: 11px;
+  letter-spacing: 0.04em; color: var(--nebula-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+/* The break between the figure and what supports it (ux-v2 §4). Size and
+   colour already say which one leads; the dot says where one number ends and
+   the next begins, so "27,10 175.8M" can never be read as one run. */
+.nb .bt-lead + .bt-sub::before { content: "· "; }
+/* The stat's own label ("Custo"): money never leads unnamed (ux-v2 §4).
+   Same quiet voice as the support numbers — the figure is the headline. */
+.nb .bt-label {
+  font-family: var(--nebula-font-mono); font-size: 11px;
+  letter-spacing: 0.04em; color: var(--nebula-text-tertiary);
+}
+.nb .bt-popover .bt-note {
+  color: var(--nebula-text-primary);
+}
+.nb .board-total .bt-none {
+  font-family: var(--nebula-font-mono); font-size: 11px;
+  color: var(--nebula-text-secondary);
+}
+/* The reading of the figure, one line per fact, each caveat linked to where
+   it is resolved. */
+.nb .bt-popover {
+  position: absolute; z-index: var(--oc-z-menu); top: calc(100% + 8px); right: 0;
+  min-width: 260px; max-width: min(340px, calc(100vw - 32px));
+  padding: 12px; background: var(--oc-panel-bg);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.nb .bt-popover .bt-figure { display: flex; align-items: baseline; gap: 7px; }
+.nb .bt-popover .bt-figure .bt-lead {
+  font-family: var(--nebula-font-mono); font-size: 16px; line-height: 1;
+  color: var(--nebula-text-primary); font-weight: 600;
+  font-variant-numeric: tabular-nums; text-shadow: var(--nebula-glow-text);
+}
+.nb .bt-popover .bt-figure .bt-sub {
+  font-family: var(--nebula-font-mono); font-size: 11px;
+  letter-spacing: 0.04em; color: var(--nebula-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+.nb .bt-line {
+  font-family: var(--nebula-font-label); font-size: 11px;
+  letter-spacing: 0.04em; color: var(--nebula-text-secondary);
+}
+.nb a.bt-line { text-decoration: none; }
+.nb a.bt-line:hover { color: var(--nebula-text-primary); }
+.nb .bt-insights { margin-top: 2px; padding-top: 8px; border-top: 1px solid var(--nebula-glass-border); }
+.nb .board-total-wrap { position: relative; }
+.nb .board-total { min-height: 32px; }
+
+/* the columns the state chips jump to clear the bar on the way (OCL-20) */
+.nb [id^="board-col-"] { scroll-margin-top: 76px; }
+
+/* ---------- selected mission ---------- */
+.nb .mission-header {
+  position: relative; margin: 0 0 18px; padding: 18px 20px;
+  border-color: rgb(var(--oc-accent-rgb) / 0.14);
+}
+.nb .mission-overview { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 28px; }
+.nb .mission-heading { min-width: 0; }
+.nb .mission-kicker { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.nb .mission-kicker > span:first-child,
+.nb .mission-form-label,
+.nb .mission-editor label > span {
+  color: var(--nebula-text-secondary); font-family: var(--nebula-font-label);
+  font-size: 9px; letter-spacing: 0.09em; text-transform: uppercase;
+}
+.nb .mission-status {
+  padding: 2px 7px; border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--oc-radius-pill); color: var(--nebula-text-secondary);
+  font-family: var(--nebula-font-label); font-size: 9px; letter-spacing: 0.04em;
+}
+.nb .mission-status.ativa { color: var(--oc-ok); border-color: rgb(var(--oc-ok-rgb) / 0.3); }
+.nb .mission-status.pausada { color: var(--oc-warn); border-color: rgb(var(--oc-warn-rgb) / 0.3); }
+.nb .mission-header h1 {
+  margin: 0 0 6px; color: var(--nebula-text-primary); font-size: 21px;
+  font-weight: var(--nebula-weight-medium); letter-spacing: var(--nebula-tracking-tight);
+  line-height: 1.25;
+}
+.nb .mission-objective { max-width: 82ch; }
+.nb .mission-empty { margin: 0; color: var(--nebula-text-tertiary); font-size: 12px; }
+.nb .mission-counts { display: flex; align-items: flex-start; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+/* ---------- mission progress bar (OCL-138) ----------
+   4 colours, stacked: vermelho/aberto, amarelo/em_execucao, verde/feito,
+   azul/validado. Colour never carries the meaning alone — the bar's
+   aria-label/title and the printed % say the same numbers. */
+.nb .mission-progress-row { grid-column: 1 / -1; }
+.nb .mission-progress { display: flex; align-items: center; gap: 8px; }
+.nb .mission-progress-bar {
+  display: flex; flex: 1; min-width: 40px; overflow: hidden;
+  background: var(--oc-border); border-radius: var(--oc-radius-pill);
+}
+.nb .mission-progress-sm .mission-progress-bar { height: 4px; }
+.nb .mission-progress-lg .mission-progress-bar { height: 8px; }
+.nb .mission-progress-seg { flex-shrink: 0; height: 100%; }
+.nb .mission-progress-seg.seg-aberto { background: var(--oc-todo); }
+.nb .mission-progress-seg.seg-em-execucao { background: var(--oc-warn); }
+.nb .mission-progress-seg.seg-feito { background: var(--oc-ok); }
+.nb .mission-progress-seg.seg-validado { background: var(--oc-info); }
+.nb .mission-progress-seg.seg-empty { background: transparent; }
+.nb .mission-progress-pct {
+  flex: none; color: var(--nebula-text-secondary); font-family: var(--nebula-font-label);
+  font-size: 11px; letter-spacing: 0.02em; font-variant-numeric: tabular-nums;
+}
+.nb .mission-progress-lg .mission-progress-pct { font-size: 12px; color: var(--nebula-text-primary); }
+.nb .mission-count {
+  display: flex; align-items: baseline; gap: 5px; padding: 5px 8px;
+  border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-pill);
+  color: var(--nebula-text-secondary); font-family: var(--nebula-font-label);
+  font-size: 9px; white-space: nowrap;
+}
+.nb .mission-count b { color: var(--nebula-text-primary); font-size: 11px; font-weight: 500; }
+.nb .mission-context { grid-column: 1 / -1; border-top: 1px solid var(--nebula-glass-border); padding-top: 10px; }
+.nb .mission-context summary {
+  width: max-content; color: var(--nebula-text-secondary);
+  font-family: var(--nebula-font-label); font-size: 10px; letter-spacing: 0.06em;
+  cursor: pointer;
+}
+.nb .mission-context[open] summary { margin-bottom: 8px; color: var(--nebula-text-primary); }
+.nb .mission-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.nb .mission-delete-button {
+  padding: 7px 12px; border: 1px solid rgb(var(--oc-danger-rgb) / 0.24); border-radius: var(--oc-radius-pill);
+  background: transparent; color: var(--oc-danger); font-size: 11px; cursor: pointer;
+}
+.nb .mission-delete-button:hover { background: rgb(var(--oc-danger-rgb) / 0.08); }
+.nb .mission-delete-button:disabled { opacity: 0.45; cursor: not-allowed; }
+.nb .mission-delete-confirm { display: flex; align-items: center; gap: 8px; }
+.nb .mission-delete-confirm > span { color: var(--oc-danger); font-size: 11px; }
+.nb .mission-error {
+  margin: 10px 0 0; padding: 7px 10px; border-left: 2px solid rgb(var(--oc-danger-rgb) / 0.45);
+  border-radius: var(--oc-radius-badge); background: rgb(var(--oc-danger-rgb) / 0.06); color: var(--oc-danger); font-size: 11px;
+}
+.nb .mission-editor { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr); gap: 14px 18px; }
+.nb .mission-editor-fields { display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 10px; }
+.nb .mission-editor label { display: flex; flex-direction: column; gap: 5px; }
+.nb .mission-editor .mission-field-wide { grid-column: 1 / -1; }
+.nb .mission-editor input,
+.nb .mission-editor select,
+.nb .mission-editor textarea {
+  width: 100%; padding: 8px 9px; border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--oc-radius-control); background: rgb(var(--oc-scrim-rgb) / 0.6); color: var(--nebula-text-primary);
+  font: inherit; font-size: 12px; resize: vertical;
+}
+.nb .mission-editor input:focus,
+.nb .mission-editor select:focus,
+.nb .mission-editor textarea:focus { outline: none; border-color: var(--oc-border-strong); }
+.nb .mission-preview {
+  min-width: 0; padding: 10px; border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--oc-radius-note); background: rgb(var(--oc-scrim-rgb) / 0.46); overflow: auto;
+}
+.nb .mission-preview > .md { margin-top: 7px; }
+.nb .mission-editor > .mission-error,
+.nb .mission-editor > .mission-actions { grid-column: 1 / -1; margin-top: 0; }
+
+/* ---------- selected release ----------
+   Release is an audit cut, so its header puts scope, status and consumption
+   in one reading before the cards. It reuses the mission header's density but
+   gives telemetry and relationships their own rows instead of a tooltip. */
+.nb .release-header {
+  display: grid; grid-template-columns: minmax(180px, 0.75fr) minmax(0, 1.25fr);
+  gap: 14px 28px; margin: 0 0 18px; padding: 18px 20px;
+  border-color: rgb(var(--oc-accent-rgb) / 0.14);
+}
+.nb .release-heading { min-width: 0; }
+.nb .release-kicker,
+.nb .release-rel-label {
+  display: block; color: var(--nebula-text-secondary);
+  font-family: var(--nebula-font-label); font-size: 9px;
+  letter-spacing: 0.09em; text-transform: uppercase;
+}
+.nb .release-header h1 {
+  margin: 5px 0 0; overflow-wrap: anywhere; color: var(--nebula-text-primary);
+  font-size: 21px; font-weight: var(--nebula-weight-medium);
+  letter-spacing: var(--nebula-tracking-tight); line-height: 1.25;
+}
+.nb .release-counts {
+  display: flex; align-items: flex-start; justify-content: flex-end;
+  gap: 7px; flex-wrap: wrap;
+}
+.nb .release-count {
+  display: inline-flex; align-items: baseline; gap: 5px; padding: 5px 8px;
+  border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-pill);
+  color: var(--nebula-text-secondary); font-family: var(--nebula-font-label);
+  font-size: 9px; white-space: nowrap;
+}
+.nb .release-count b {
+  color: var(--nebula-text-primary); font-size: 11px; font-weight: 500;
+}
+.nb .release-usage {
+  display: flex; align-items: baseline; align-content: flex-start;
+  gap: 7px 14px; flex-wrap: wrap; padding-top: 12px;
+  border-top: 1px solid var(--nebula-glass-border);
+  color: var(--nebula-text-secondary); font-family: var(--nebula-font-mono);
+  font-size: 11px;
+}
+.nb .release-usage b {
+  color: var(--nebula-text-primary); font-size: 14px; font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.nb .release-usage small { flex-basis: 100%; color: var(--nebula-text-tertiary); }
+.nb .release-usage a { color: var(--nebula-mist); text-decoration: none; }
+.nb .release-usage a:hover { color: var(--nebula-text-primary); }
+.nb .release-relations {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;
+  padding-top: 12px; border-top: 1px solid var(--nebula-glass-border);
+}
+.nb .release-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 7px; }
+.nb .release-chip {
+  appearance: none; padding: 4px 8px; border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--oc-radius-pill); background: var(--oc-surface-subtle);
+  color: var(--nebula-text-secondary); font-family: var(--nebula-font-label);
+  font-size: 10px; line-height: 1.25; cursor: pointer;
+}
+.nb .release-chip:hover:not(.static) {
+  color: var(--nebula-text-primary); border-color: var(--oc-border-strong);
+}
+.nb .release-chip.static { cursor: default; }
+.nb .release-empty {
+  color: var(--nebula-text-tertiary); font-family: var(--nebula-font-label);
+  font-size: 10px;
+}
+
+/* ---------- board ---------- */
+/* minmax(0, 1fr), not bare 1fr: a bare fr track is minmax(auto, 1fr), so the
+   cards' smallest content width set the track's floor and, past it, the grid
+   grew past the container — which .nb then clipped without a scroll, cutting
+   the last column off the edge (OCL-24). The zero floor lets the tracks take
+   their quarter and the cards elide, and below 1200px the board switches to
+   minimum-width columns with horizontal scroll instead (media query below). */
+.nb .board { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--nebula-space-4); }
+/* The phone list is in the markup at every width and waits for its media
+   query. Both layouts render the same cards, so only one may ever be on. */
+.nb .board-mobile { display: none; }
+.nb .col-head {
+  display: flex; align-items: baseline; gap: var(--nebula-space-2);
+  padding: 2px 6px 10px;
+  font-family: var(--nebula-font-label); font-size: 11.5px;
+  letter-spacing: var(--nebula-tracking-wide);
+  text-transform: uppercase; color: var(--nebula-text-secondary);
+}
+.nb .col-head .count { color: var(--nebula-text-tertiary); }
+.nb .col { display: flex; flex-direction: column; gap: var(--nebula-space-3); min-height: 300px; padding-bottom: 48px; }
+
+.nb .empty-col {
+  border: 1px dashed var(--oc-border-dashed); border-radius: var(--nebula-glass-radius);
+  padding: 22px 16px; font-size: 11.5px; color: var(--nebula-text-tertiary);
+  line-height: 1.55; text-align: center;
+}
+.nb .empty-col i { font-style: italic; }
+
+.nb .card {
+  /* The rounded border is the card's actual edge, not a suggestion: nothing
+     a descendant draws — a badge, the cost, the telemetry line — may sit
+     past it (OCL-84). Everything below that could overflow it also gets a
+     real max-width, so this is a backstop, not the whole fix. */
+  overflow: hidden;
+  padding: 6px 10px; position: relative; cursor: pointer;
+  transition:
+    transform 0.35s var(--nebula-ease-atmosphere),
+    border-color 0.35s var(--nebula-ease-atmosphere),
+    box-shadow 0.35s var(--nebula-ease-atmosphere),
+    opacity 0.35s var(--nebula-ease-atmosphere);
+}
+.nb .card:hover {
+  transform: translateY(-2px);
+  border-color: rgb(var(--oc-white-rgb) / 0.16);
+  box-shadow: var(--oc-shadow-card-hover);
+}
+/* A bug carries no coloured chip (ux-v2 §3): the one scanning aid left is
+   this 3px rule at 40% alpha, on the card itself. */
+.nb .card.type-bug { border-left: 3px solid rgb(var(--oc-danger-rgb) / 0.4); }
+/* The id's own line: the left group (id, type, badges) wraps and shrinks;
+   the cost is fixed at the right, exactly where §3 draws it, so the footer
+   never has to make room for it. */
+.nb .card .id-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--nebula-space-1); margin-bottom: 2px;
+}
+.nb .card .id-row-main {
+  display: flex; align-items: center; flex-wrap: nowrap; min-width: 0;
+  gap: var(--nebula-space-1); overflow: hidden;
+}
+.nb .card .cid {
+  flex: none;
+  font-family: var(--nebula-font-mono); font-size: 10px;
+  color: var(--nebula-text-tertiary); letter-spacing: 0.06em;
+}
+/* With several projects on the board the prefix is the origin, not a number. */
+.nb .card .cid-prefix {
+  color: var(--nebula-text-secondary);
+  font-weight: var(--nebula-weight-medium);
+}
+.nb .card .id-sep { flex: none; color: var(--nebula-text-tertiary); }
+/* The type, a plain word in the meta line — no chip, no border, no fill
+   (ux-v2 §3 item 4). */
+.nb .card .card-type {
+  flex: none;
+  font-family: var(--nebula-font-mono); font-size: 10px;
+  color: var(--nebula-text-tertiary); letter-spacing: 0.03em;
+}
+/* Cost sits top-right, data face, text-3 — the one number the id-row
+   carries, so it never has to fight the footer for room. */
+.nb .card .card-cost {
+  flex: none; font-family: var(--nebula-font-mono); font-size: 11px;
+  color: var(--nebula-text-tertiary); white-space: nowrap;
+}
+.nb .selo {
+  font-family: var(--nebula-font-label); font-size: 8.5px; letter-spacing: 0.08em;
+  color: var(--nebula-text-tertiary); border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--oc-radius-pill); padding: 1px 6px;
+  /* A badge degrades with an ellipsis before it ever pushes past the card's
+     own edge (OCL-84): overflow other than visible is what lets a flex item
+     shrink below its own content width. */
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.nb .tag {
+  font-family: var(--nebula-font-label); font-size: 9.5px;
+  letter-spacing: var(--nebula-tracking-wide); text-transform: uppercase;
+  border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-pill);
+  padding: 1px 6px; color: var(--nebula-text-secondary);
+}
+.nb .tag.bug { color: var(--oc-tag-bug-fg); border-color: var(--oc-tag-bug-border); }
+.nb .tag.rfc { color: var(--oc-tag-rfc-fg); border-color: var(--oc-tag-rfc-border); }
+.nb .tag.feature { color: var(--oc-tag-feature-fg); border-color: var(--oc-tag-feature-border); }
+/* o título é o herói do card: primeiro no peso, não na ordem.
+   13px is the rampa's body size (ux-v2 §2); two lines is the hard cap
+   (§3) — past that the ellipsis takes over and the full title moves to
+   the title attribute, already set where this renders. */
+.nb .card h4 {
+  font-size: 12px; font-weight: var(--nebula-weight-medium);
+  letter-spacing: var(--nebula-tracking-tight); color: var(--nebula-text-primary);
+  line-height: 1.25; margin-bottom: 2px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* one line only: planned and actual harness, then time and tokens — cost
+   moved to the id-row (ux-v2 §3) and never reaches here. nowrap is the whole
+   rule. When the column cannot hold everything, the line gives up characters
+   instead of gaining a second row: tokens shrink first and end in an
+   ellipsis, the model chain second, and the clock never shrinks, because
+   that is why anyone reads this line. */
+.nb .card-foot {
+  display: flex; align-items: center; flex-wrap: nowrap; gap: 4px;
+  overflow: hidden;
+  border-top: 1px solid var(--nebula-plan-divider);
+  margin-top: 2px; padding-top: 3px;
+  font-family: var(--nebula-font-mono); font-size: 10.5px; color: var(--nebula-text-tertiary);
+  line-height: 1.2;
+}
+.nb .card-foot > * { flex: none; min-width: 0; white-space: nowrap; }
+.nb .card-foot .meta-harness {
+  color: var(--nebula-mist); letter-spacing: 0.03em;
+  flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis;
+}
+/* the numbers: tokens give way first, eight times faster than the chain */
+.nb .card-foot .tel-tokens { flex: 0 8 auto; overflow: hidden; text-overflow: ellipsis; }
+.nb .card-foot .tel-note { flex: 0 4 auto; overflow: hidden; text-overflow: ellipsis; }
+/* a plain sentence tail (returns to, usage not reported) elides from the end */
+.nb .card-foot .telemetry { flex: 0 2 auto; overflow: hidden; text-overflow: ellipsis; }
+.nb .card-foot .tel-sep { color: var(--nebula-text-tertiary); margin-right: 4px; }
+
+/* ---------- CLI brand marks (AGB-66) ----------
+   The marks Settings has been drawing all along, brought to the board. The
+   mark is the label: it carries the CLI's name as its accessible name and on
+   hover, and it is sized to the line it sits on so it never makes a row
+   taller. A CLI the app ships no mark for shows its short name in the same
+   slot, because a stand-in glyph would say something false about a brand. */
+.nb .cli-mark {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 13px; height: 13px; color: var(--nebula-mist-light);
+}
+.nb .cli-mark svg { width: 100%; height: 100%; display: block; }
+.nb .cli-name {
+  flex: none; font-family: var(--nebula-font-label); font-size: 9.5px;
+  letter-spacing: 0.03em; color: var(--nebula-mist);
+  max-width: 86px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* plan and reality, in the same order the model chain reads them */
+.nb .meta-cli { display: inline-flex; align-items: center; gap: 4px; }
+.nb .meta-cli-arrow { font-size: 9px; color: var(--nebula-text-tertiary); }
+
+/* pulse dos executores */
+.nb .exec-pulse {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--nebula-font-label); font-size: 10.5px; color: var(--oc-info);
+}
+.nb .exec-pulse .dot-exec {
+  width: 6px; height: 6px; border-radius: var(--oc-radius-circle);
+  background: var(--oc-info); box-shadow: var(--oc-glow-dot-exec);
+  animation: nebula-exec-pulse 1.6s var(--nebula-ease-atmosphere) infinite;
+}
+@keyframes nebula-exec-pulse {
+  50% { opacity: 0.3; box-shadow: var(--oc-glow-dot-exec-dim); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nb .exec-pulse .dot-exec { animation: none; }
+}
+
+.nb .telemetry {
+  font-family: var(--nebula-font-mono); font-size: 10.5px;
+  color: var(--nebula-text-tertiary); letter-spacing: 0.02em;
+}
+.nb .telemetry b { color: var(--nebula-text-secondary); font-weight: var(--nebula-weight-medium); }
+.nb .review-chip {
+  font-family: var(--nebula-font-label); font-size: 10px; color: var(--oc-chip-review-fg);
+  background: var(--oc-chip-review-bg);
+  border: 1px solid var(--oc-chip-review-border); border-radius: var(--oc-radius-pill); padding: 1px 6px;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* em execução: cantos vivos + borda com a cor de execução, bem de leve */
+.nb .card.exec { border-color: rgb(var(--oc-info-rgb) / 0.16); }
+.nb .card.exec:hover { border-color: rgb(var(--oc-info-rgb) / 0.34); }
+/* validado: apaga com calma, volta quase inteiro no hover */
+.nb .card.dim { opacity: 0.6; box-shadow: var(--nebula-glass-highlight); }
+.nb .card.dim:hover { opacity: 0.95; }
+
+/* ---------- focus, one ring for the board and its panel (AGB-68) ----------
+   The card and the row are the board's own controls, so they answer the
+   keyboard and say where it is. The ring sits outside the control, which
+   means nothing resizes when it appears, and it only shows for a keyboard:
+   a mouse already knows where it clicked. */
+.nb .card:focus-visible,
+.nb .ml-row:focus-visible,
+.nb .ml-status:focus-visible,
+.nb .card-pick:focus-visible,
+.nb .d-close:focus-visible,
+.nb .d-copy:focus-visible,
+.nb .d-mission:focus-visible,
+.nb .d-textarea:focus-visible,
+.nb .d-btn-pri:focus-visible,
+.nb .d-btn-sec:focus-visible,
+.nb .d-btn-ghost:focus-visible,
+.nb .d-location-mission:focus-visible,
+.nb .d-check-row:focus-within {
+  outline: none;
+  box-shadow: var(--nebula-focus-ring);
+}
+
+/* the board's own motion, for whoever asked for none of it */
+@media (prefers-reduced-motion: reduce) {
+  .nb .card { transition: none; }
+  .nb .card:hover { transform: none; }
+  .nb .ov, .nb .detail { animation: none; }
+}
+
+/* ---------- progressive blur no rodapé do viewport ----------
+   The fade signals "more below" but must not hide the last card. Keep it
+   short (48px) and gentle so the title of the last card stays legible. */
+.nb .viewport-fade { position: fixed; height: 48px; z-index: var(--oc-z-fade); }
+
+/* ---------- detalhe do card (overlay client-side) ---------- */
+/* The modal is the top layer of the board: above the phone's sticky bar (30)
+   and the menu it opens (40), because a bar drawn over the panel is the same
+   bleed-through the panel exists to end. */
+.nb .ov { position: fixed; inset: 0; z-index: var(--oc-z-modal); background: var(--oc-overlay-bg);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  display: flex; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 48px 20px;
+  animation: nb-ov-in .18s ease-out; }
+@keyframes nb-ov-in { from { opacity: 0 } to { opacity: 1 } }
+/* legibilidade primeiro: o painel de detalhe é quase opaco — o glass de 72%
+   deixa o board vazar por trás do texto */
+/* AGB-68: the panel takes the focus when it opens, so a screen reader lands
+   inside it; the browser's default ring around a whole panel is noise, and
+   the ring that matters is the one on the controls inside. */
+.nb .detail:focus { outline: none; }
+.nb .detail { width: 700px; max-width: 96vw; padding: 24px; position: relative;
+  background: var(--oc-modal-bg);
+  animation: nb-d-in .22s cubic-bezier(.2,.8,.2,1); }
+@keyframes nb-d-in { from { opacity: 0; transform: translateY(10px) scale(.985) } to { opacity: 1; transform: none } }
+/* AGB-72: the phone's entrance moves an already opaque surface and touches
+   opacity at no frame, because under it there is only the sheet's own floor. */
+@keyframes nb-sheet-in { from { transform: translateY(18px) } to { transform: none } }
+.nb .d-close { position: absolute; top: 16px; right: 18px; background: none; border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--oc-radius-pill); width: 28px; height: 28px; color: var(--nebula-text-secondary); cursor: pointer; font-size: 13px; }
+/* AGB-68: the close button owns the top right corner, so the head and the
+   title stop where it starts instead of running under it. */
+.nb .d-head { display: flex; align-items: center; flex-wrap: wrap; row-gap: 6px;
+  padding-right: 44px; gap: var(--nebula-space-2); margin-bottom: var(--nebula-space-2);
+  font-family: var(--nebula-font-mono); font-size: 11px; color: var(--nebula-text-tertiary); }
+.nb .d-location {
+  flex: 1 1 100%; min-width: 0; display: inline-flex; align-items: baseline;
+  flex-wrap: wrap; gap: 4px; font-family: var(--nebula-font-sans); font-size: 12px;
+  line-height: 1.45; color: var(--nebula-text-secondary);
+}
+.nb .d-location-project { color: var(--nebula-text-primary); font-weight: var(--nebula-weight-medium); }
+.nb .d-location-separator { color: var(--nebula-text-tertiary); }
+.nb .d-location-mission {
+  min-width: 0; padding: 0; border: 0; background: none; color: var(--nebula-text-secondary);
+  font: inherit; text-align: left; cursor: pointer; overflow-wrap: anywhere;
+  text-decoration: underline; text-decoration-color: var(--nebula-text-tertiary);
+  text-underline-offset: 3px;
+}
+.nb button.d-location-mission:hover { color: var(--nebula-text-primary); }
+.nb .d-location-empty { color: var(--nebula-text-tertiary); }
+.nb .d-status { font-family: var(--nebula-font-label); font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase;
+  border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-pill); padding: 2px 9px; color: var(--nebula-text-secondary); }
+.nb .d-status.exec { color: var(--oc-info); border-color: rgb(var(--oc-info-rgb) / .3); }
+.nb .d-status.feito { color: var(--oc-warn); border-color: rgb(var(--oc-warn-rgb) / .3); }
+.nb .d-status.ok { color: var(--oc-ok); border-color: rgb(var(--oc-ok-rgb) / .3); }
+.nb .detail h3 { font-size: 20px; font-weight: var(--nebula-weight-medium); letter-spacing: var(--nebula-tracking-tight);
+  padding-right: 44px; margin-bottom: var(--nebula-space-4); line-height: 1.3; }
+/* AGB-68: an empty contract keeps the mono voice the panel uses for facts,
+   instead of a dash that reads as a rendering accident. */
+.nb .d-sec p.d-empty { font-family: var(--nebula-font-label); font-size: 11px;
+  color: var(--nebula-text-tertiary); letter-spacing: 0.03em; }
+.nb .d-sec { border-top: 1px solid var(--nebula-plan-divider); padding: var(--nebula-space-3) 0; }
+/* seção de validação em revisão: divisor esverdeado marca onde a decisão acontece */
+.nb .d-sec-validate { border-top-color: rgb(var(--oc-ok-rgb) / 0.18); }
+.nb .d-sec .md-field,
+.nb .md-field {
+  margin: 0;
+}
+.nb .d-sec .md,
+.nb .md {
+  color: var(--nebula-text-secondary);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.nb .d-sec .md p,
+.nb .md p {
+  margin: 0;
+  color: inherit;
+  line-height: 1.55;
+  white-space: normal;
+}
+.nb .d-sec .md p + p,
+.nb .md p + p {
+  margin-top: 6px;
+}
+.nb .md .md-inline-code,
+.nb .md code {
+  font-family: var(--nebula-font-mono);
+  color: var(--nebula-text-secondary);
+  background: rgb(var(--oc-scrim-rgb) / 0.22);
+  border: none;
+  border-radius: var(--oc-radius-chip);
+  padding: 1px 4px;
+  font-size: 12px;
+}
+.nb .d-check-step .md code,
+.nb .d-check-expected .md code {
+  font-size: 11px;
+}
+.nb .md pre {
+  margin: 6px 0 8px;
+  padding: 10px 12px;
+  background: rgb(var(--oc-scrim-rgb) / 0.82);
+  border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--oc-radius-note);
+  overflow: auto;
+}
+.nb .md pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+.nb .md ul,
+.nb .md ol {
+  margin: 6px 0 6px 1.4em;
+  padding: 0;
+}
+.nb .md li {
+  margin: 0 0 2px;
+  color: inherit;
+  line-height: 1.45;
+}
+.nb .md a {
+  color: var(--oc-info);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.nb .md a:hover {
+  color: var(--nebula-mist-glow);
+}
+.nb .md blockquote {
+  margin: 6px 0 8px;
+  border-left: 1px solid var(--oc-border-strong);
+  padding-left: 10px;
+  color: var(--nebula-text-secondary);
+}
+.nb .md strong {
+  color: var(--nebula-text-primary);
+}
+.nb .md em { color: var(--nebula-text-secondary); }
+.nb .md .md-em { color: var(--nebula-text-primary); }
+.nb .md h3,
+.nb .md-h {
+  margin: 8px 0 6px;
+  font-family: var(--nebula-font-sans);
+  font-size: 17px;
+  font-weight: var(--nebula-weight-medium);
+  letter-spacing: var(--nebula-tracking-tight);
+  color: var(--nebula-text-primary);
+  line-height: 1.3;
+}
+.nb .d-sec .lbl { display: flex; align-items: baseline; justify-content: space-between; gap: var(--nebula-space-3);
+  font-family: var(--nebula-font-sans); font-size: 11px; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--nebula-text-tertiary); margin-bottom: 8px; }
+.nb .d-progress { font-family: var(--nebula-font-label); font-size: 10px; letter-spacing: .04em;
+  color: var(--nebula-text-tertiary); text-transform: none; }
+.nb .d-progress.done { color: var(--oc-ok); }
+.nb .d-sec p { font-size: 12.5px; color: var(--nebula-text-secondary); line-height: 1.55; white-space: pre-line; }
+.nb .d-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 26px; }
+.nb .d-mono { font-family: var(--nebula-font-mono); font-size: 11px; color: var(--nebula-mist-light); }
+/* what really ran, under the harness the card planned */
+.nb .d-harness-ran { color: var(--nebula-text-tertiary); margin-top: 2px; }
+/* the panel has room for both: the mark, and the model spelled out beside it */
+.nb .d-harness { display: flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%; }
+.nb .d-harness .cli-mark { width: 15px; height: 15px; }
+.nb .d-harness > span {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nb .d-roles .cli-mark { width: 13px; height: 13px; vertical-align: -2px; margin: 0 4px 0 2px; }
+.nb .d-roles { display: flex; gap: var(--nebula-space-2) var(--nebula-space-4); flex-wrap: wrap; min-width: 0; max-width: 100%; }
+.nb .d-roles .rl { font-size: 11.5px; color: var(--nebula-text-tertiary); min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nb .d-roles .rl b { color: var(--nebula-text-primary); font-weight: var(--nebula-weight-medium); margin-left: 2px; }
+.nb .d-evid { background: rgb(var(--oc-scrim-rgb) / .6); border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-box);
+  padding: 10px 13px; font-size: 12px; color: var(--nebula-text-secondary); line-height: 1.55; }
+.nb .d-tel { font-family: var(--nebula-font-mono); font-size: 11px; color: var(--nebula-text-secondary); letter-spacing: .02em; }
+.nb .d-usage-warning { margin: 8px 0 0; padding: 7px 9px; border: 1px solid rgb(var(--oc-danger-rgb) / .32); border-radius: var(--oc-radius-badge); color: var(--oc-danger); background: rgb(var(--oc-danger-deep-rgb) / .12); font-size: 11px; line-height: 1.45; }
+/* the two clocks of a run, each one next to the source that measured it */
+.nb .d-clocks { display: flex; flex-direction: column; gap: 3px; margin-top: 7px; }
+.nb .d-clock { font-family: var(--nebula-font-mono); font-size: 10.5px;
+  color: var(--nebula-text-tertiary); letter-spacing: .02em; }
+.nb .d-clock b { color: var(--nebula-text-secondary); font-weight: var(--nebula-weight-medium); }
+.nb .d-clock i { font-style: normal; color: var(--nebula-text-tertiary); opacity: .75; }
+.nb .d-timeline { display: flex; flex-direction: column; gap: 6px; }
+.nb .d-tl-entry { font-family: var(--nebula-font-mono); font-size: 11px; }
+.nb .d-tl-entry .tag { margin-right: 6px; }
+.nb .d-tl-meta { color: var(--nebula-text-tertiary); }
+.nb .d-transcript-path { font-family: var(--nebula-font-mono); font-size: 11px;
+  color: var(--nebula-text-secondary); word-break: break-all; margin-top: 4px; }
+.nb .d-copy-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 9px; }
+.nb .d-copy { font-family: var(--nebula-font-label); font-size: 10.5px; letter-spacing: .02em;
+  background: rgb(var(--oc-scrim-rgb) / .6); border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-control);
+  padding: 5px 10px; color: var(--nebula-text-secondary); cursor: pointer;
+  transition: border-color .15s, color .15s; max-width: 100%; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; }
+.nb .d-copy:hover { border-color: var(--nebula-mist-light); color: var(--nebula-text-primary); }
+.nb .d-copy.done { border-color: rgb(var(--oc-ok-rgb) / .45); color: var(--oc-ok); }
+.nb .d-transcript-note { font-size: 11px; color: var(--nebula-text-tertiary); margin-top: 8px; }
+
+/* ---------- validation panel (Done · review) ---------- */
+.nb .d-verify { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  background: var(--nebula-panel-solid); border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-box);
+  padding: 9px 13px; margin-bottom: 10px; }
+.nb .d-verify-lbl { font-family: var(--nebula-font-label); font-size: 9.5px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--nebula-text-tertiary); white-space: nowrap; }
+.nb .d-verify-value { font-size: 12px; color: var(--nebula-text-primary); word-break: break-all; }
+.nb a.d-verify-value { text-decoration: underline; text-underline-offset: 2px; }
+.nb .d-checklist { display: flex; flex-direction: column; gap: 6px; }
+/* globals.css estiliza <label> como coluna — aqui a linha é explicitamente horizontal */
+.nb .d-check-row { display: flex; flex-direction: row; gap: 10px; align-items: flex-start;
+  background: rgb(var(--oc-scrim-rgb) / .5); border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-box);
+  padding: 9px 12px; transition: border-color .15s, background .15s; }
+.nb .d-check-row.interactive { cursor: pointer; }
+.nb .d-check-row.interactive:hover { border-color: rgb(var(--oc-ok-rgb) / .4); background: rgb(var(--oc-ok-rgb) / .05); }
+.nb .d-check-row.ticked { border-color: rgb(var(--oc-ok-rgb) / .3); }
+.nb .d-check-row.ticked .d-check-step { color: var(--nebula-text-secondary); }
+.nb .d-check-row input[type="checkbox"] { margin-top: 2px; accent-color: var(--oc-ok); cursor: inherit; }
+.nb .d-check-num { font-family: var(--nebula-font-mono); font-size: 10.5px; color: var(--nebula-text-tertiary);
+  border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-pill); min-width: 18px; height: 18px;
+  display: inline-flex; align-items: center; justify-content: center; margin-top: 1px; }
+.nb .d-check-body { display: flex; flex-direction: column; gap: 2px; }
+.nb .d-check-step { font-size: 12.5px; color: var(--nebula-text-primary); line-height: 1.45; }
+.nb .d-check-expected { font-size: 11.5px; color: var(--nebula-text-secondary); line-height: 1.45; }
+.nb .d-check-meta { font-family: var(--nebula-font-label); font-size: 10px; color: var(--oc-ok); letter-spacing: .02em; }
+.nb .d-btn-ghost { background: none; border: none; color: var(--nebula-text-tertiary); font-size: 11.5px;
+  padding: 8px 6px; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; margin-right: auto; }
+.nb .d-btn-ghost:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ============================================================
+   AGB-74 — THE CARD DETAIL USES THE DESKTOP IT IS GIVEN
+
+   The panel was 700px of column on any screen, so on a 1440 the review was
+   a 700px ribbon with ten sections stacked in it and 740px of board sitting
+   dark on either side. Reading a delivered card meant scrolling past the
+   contract, past the harness, past the branch and the telemetry and the
+   transcript, and the two buttons the review exists for were off the bottom
+   the whole time. A person had to scroll back up to remember what they were
+   validating and back down to validate it.
+
+   Above this width the panel is two columns instead of one. The main column
+   holds what the review acts on: the contract, the reasons, and the
+   checklist that is ticked. The rail holds what is read to decide and never
+   touched: the mission, the harness, the roles, the branch, the telemetry,
+   what the agent handed back and where its transcript lives. The head, the
+   title and the actions span both, so the card still reads as one object.
+
+   The panel is bounded by the window rather than by its content, and the two
+   columns scroll inside it. That is what keeps Validate and Reopen on screen
+   while the contract is being read: they are not at the end of a long page,
+   they are the floor of the panel. A card whose sections fit simply renders
+   a shorter panel, because the height is a maximum and not a height.
+
+   Below this width nothing here applies. The two wrappers are display:
+   contents at every other size, which means at 1024, at 768 and at 390 the
+   browser lays out exactly the elements it laid out before this card, in the
+   order it laid them out, and the full screen sheet AGB-72 built is
+   untouched.
+   ============================================================ */
+
+/* the wrappers exist for the desktop only; everywhere else they are not
+   there at all, so the single column is the same single column it was */
+.nb .d-main, .nb .d-rail { display: contents; }
+
+/* 1200 is where the second column earns its place: the panel is 1060 wide,
+   so below this the board around it shrinks to a strip and the detail stops
+   being a window over the board and starts being the screen. The min-height
+   is the other half of the same rule, and it also keeps this off the
+   landscape phone, which AGB-72 already sends to the sheet. */
+@media (min-width: 1200px) and (min-height: 600px) {
+  .nb .detail {
+    width: min(1060px, 94vw);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    /* the reading row is the one that gives: minmax(0, 1fr) lets it shrink
+       under its own content, which is what turns the columns into scrollers
+       once the card is longer than the window */
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "head  head"
+      "title title"
+      "main  rail"
+      "actions actions";
+    column-gap: 30px;
+    /* a maximum, never a height: a short card still gets a short panel */
+    max-height: calc(100vh - 96px);
+    overflow: hidden;
+  }
+  .nb .d-head { grid-area: head; }
+  .nb .detail h3 { grid-area: title; }
+  .nb .d-main { grid-area: main; }
+  .nb .d-rail { grid-area: rail; }
+  .nb .d-actions { grid-area: actions; }
+
+.nb .d-main, .nb .d-rail {
+    display: block; min-height: 0;
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    /* room for the focus ring, which a scroll container would otherwise cut
+       off the left edge of a checklist row */
+    padding-left: 3px; margin-left: -3px;
+  }
+  /* the rail is the quieter half and the rule between them says so */
+  .nb .d-rail {
+    border-left: 1px solid var(--nebula-plan-divider);
+    padding-left: 26px; margin-left: 0;
+  }
+  /* two-up pairs are not two-up inside a 320px rail */
+  .nb .d-rail .d-grid { grid-template-columns: 1fr; gap: var(--nebula-space-3) 0; }
+  .nb .d-mission {
+    width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .nb .d-harness,
+  .nb .d-roles,
+  .nb .d-roles .rl {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .nb .d-harness > span {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+  }
+  .nb .d-roles .rl {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* the title already separates the columns from the head, so the first rule
+     of each one would be a line drawn under a line */
+  .nb .d-main > .d-sec:first-child,
+  .nb .d-rail > .d-sec:first-child { border-top: 0; padding-top: 0; }
+  /* the actions sit on the floor of the panel, not at the end of the page */
+  .nb .d-actions { margin-top: 0; }
+}
+
+/* ============================================================
+   ONBOARDING (wizard T1–T3) + SETTINGS — mesma base Nebula
+   ============================================================ */
+.nb a { color: inherit; text-decoration: none; }
+.nb-center .stage { min-height: calc(100vh - 88px); display: flex; align-items: center; justify-content: center; }
+.nb .stage { position: relative; z-index: var(--oc-z-content); display: flex; align-items: center; justify-content: center; padding: 20px 0; }
+
+/* ---------- wizard ---------- */
+/* The side padding is a variable because the footer hangs off it with a
+   negative margin: change the padding at one width and the progress bar
+   stops meeting the panel edges unless both read the same number. */
+.nb .wizard {
+  --wiz-pad: 38px;
+  width: 760px; max-width: 94vw;
+  padding: 30px var(--wiz-pad) 0; position: relative; overflow: hidden;
+}
+.nb .steps-ind {
+  display: flex; gap: 22px; margin: 0 0 44px; padding: 0; list-style: none;
+  font-family: var(--nebula-font-label); font-size: 10.5px;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+/* one line each: the step label is a landmark, and a landmark that reflows
+   to two lines stops being one */
+.nb .steps-ind li {
+  min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: var(--nebula-text-tertiary); opacity: .4; transition: opacity .3s, color .3s;
+}
+.nb .steps-ind li.cur { color: var(--nebula-mist-glow); opacity: 1; }
+.nb .steps-ind li.done { opacity: .75; color: var(--oc-ok); }
+.nb .wstep { display: none; min-height: 330px; animation: nb-step-in .22s ease-out; }
+.nb .wstep.active { display: block; }
+@keyframes nb-step-in { from { opacity: 0; transform: translateX(24px) } to { opacity: 1; transform: translateX(0) } }
+.nb .wstep h2 { font-size: 26px; font-weight: var(--nebula-weight-medium); letter-spacing: -.015em; margin-bottom: 8px; }
+.nb .wstep .sub { font-size: 13px; color: var(--nebula-text-secondary); margin-bottom: 26px; }
+.nb .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.nb .field { margin-bottom: 12px; text-align: left; }
+/* One line, always. Two fields side by side share a baseline only if their
+   labels are the same height; an "optional" pill that drops to a second line
+   pushes one input down and the pair stops reading as a pair. */
+.nb .field label {
+  /* row explicitly: the legacy globals.css rule stacks every label's children
+     in a column, and a column flex box reads align-items as the horizontal
+     axis, which centred the caption over its own field */
+  display: flex; flex-direction: row; align-items: center; gap: 6px;
+  min-height: 14px; margin-bottom: 5px;
+  font-family: var(--nebula-font-label); font-size: 10px;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--nebula-text-tertiary);
+  white-space: nowrap; overflow: hidden;
+}
+/* the label text gives way before the pill does: the pill is one word and
+   dropping it to a second line is what knocked the paired inputs out of line */
+.nb .field label .lbl-text {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.nb .field label .opt { flex: none; color: var(--nebula-text-tertiary); opacity: .7; border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-pill); padding: 1px 6px; margin-left: 0; font-size: 9px; }
+.nb .input {
+  width: 100%; background: rgb(var(--oc-surface-deep-rgb) / .6); border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-box);
+  color: var(--nebula-text-primary); font-size: 13.5px; padding: 10px 12px; font-family: var(--nebula-font-sans); outline: none;
+  transition: border-color .15s;
+}
+.nb .input:focus { border-color: rgb(var(--oc-accent-rgb) / .35); }
+.nb .input:focus-visible { outline: none; box-shadow: var(--nebula-focus-ring); }
+.nb .input.mono { font-family: var(--nebula-font-mono); font-size: 12.5px; }
+.nb .preview {
+  margin-top: 16px; padding: 13px 16px; border-radius: var(--oc-radius-card); background: rgb(var(--oc-mist-rgb) / .07);
+  border: 1px solid rgb(var(--oc-mist-rgb) / .14); font-family: var(--nebula-font-label); font-size: 11.5px;
+  color: var(--nebula-mist-light); line-height: 1.6;
+}
+.nb .preview .cap { font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--nebula-text-tertiary); display: block; margin-bottom: 3px; }
+.nb .preview.ghost { opacity: .35; }
+.nb .preview b { color: var(--nebula-mist-glow); font-weight: 500; }
+
+/* executores (grid de CLIs) */
+.nb .seen-sugg { margin-bottom: 18px; }
+.nb .seen-sugg .sec-cap { margin-top: 0; }
+.nb .seen-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.nb .seen-chip { display: inline-flex; align-items: center; gap: 8px;
+  background: var(--nebula-panel-solid); border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-pill);
+  padding: 6px 8px 6px 14px; font-size: 12px; color: var(--nebula-text-primary); }
+.nb .seen-chip b { font-weight: var(--nebula-weight-medium); }
+.nb .seen-chip small { font-family: var(--nebula-font-label); font-size: 10px; color: var(--nebula-text-tertiary); }
+/* A chip button stays dense, but not so dense a mouse has to aim: 32px is
+   the floor here, and on a phone the chip itself becomes a full row so the
+   button clears 44px without the chip growing into a card. */
+.nb .seen-add { background: transparent; border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-pill); color: var(--nebula-text-secondary);
+  font-size: 12px; font-weight: 500; padding: 4px 12px; min-height: 32px; cursor: pointer; white-space: nowrap; }
+.nb .seen-add:hover:not(:disabled) { color: var(--nebula-text-primary); border-color: var(--oc-border-hover); }
+.nb .seen-add:disabled { opacity: .4; cursor: not-allowed; }
+.nb .seen-add:focus-visible { outline: none; box-shadow: var(--nebula-focus-ring-offset); }
+
+/* preços: um modelo que já rodou aqui e continua sem preço */
+.nb .price-alert { border: 1px solid rgb(var(--oc-warn-3-rgb) / .32); border-radius: var(--oc-radius-card);
+  background: rgb(var(--oc-warn-3-rgb) / .05); padding: 12px 14px; }
+.nb .price-alert .sec-cap { color: rgb(var(--oc-warn-2-rgb) / .95); }
+.nb .policy .act small.price-flag { display: inline-block; margin-top: 4px;
+  font-size: 9.5px; font-family: var(--nebula-font-label); color: rgb(var(--oc-warn-2-rgb) / .9);
+  border: 1px solid rgb(var(--oc-warn-3-rgb) / .35); border-radius: var(--oc-radius-pill); padding: 1px 8px;
+  letter-spacing: .04em; }
+.nb .seen-note { font-size: 11.5px; color: var(--nebula-text-tertiary); margin-top: 8px; line-height: 1.5; }
+.nb .exec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.nb .exec {
+  background: var(--nebula-plan-bg); border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-tile); padding: 13px 14px;
+  cursor: pointer; transition: border-color .18s, transform .18s;
+}
+.nb .exec:hover { border-color: rgb(var(--oc-white-rgb) / .18); }
+.nb .exec.on { border-color: rgb(var(--oc-accent-rgb) / .45); }
+.nb .exec .row { display: flex; align-items: center; gap: 10px; }
+.nb .exec .logo {
+  width: 30px; height: 30px; border-radius: var(--oc-radius-note); display: flex; align-items: center; justify-content: center;
+  font-family: var(--nebula-font-mono); font-size: 10px; background: rgb(var(--oc-white-rgb) / .045);
+  border: 1px solid var(--nebula-glass-border); color: var(--nebula-mist-glow); flex: none;
+}
+.nb .exec .logo svg { width: 19px; height: 19px; display: block; }
+.nb .exec .name { font-size: 13px; font-weight: 500; line-height: 1.2; flex: 1; min-width: 0; }
+.nb .exec .check { width: 16px; height: 16px; border-radius: var(--oc-radius-tick); border: 1px solid rgb(var(--oc-white-rgb) / .2); display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; transition: all .18s; }
+.nb .exec.on .check { background: var(--nebula-mist-glow); border-color: var(--nebula-mist-glow); color: var(--oc-accent-contrast); }
+.nb .exec .models { max-height: 0; overflow: hidden; transition: max-height .2s ease-out, margin .2s; display: flex; gap: 6px; flex-wrap: wrap; }
+.nb .exec.on .models { max-height: 90px; margin-top: 10px; }
+@media (pointer: coarse) {
+  .nb .exec.on .models { max-height: 160px; }
+  .nb .exec .models { gap: var(--oc-space-2); }
+}
+.nb .mchip {
+  font-family: var(--nebula-font-label); font-size: 10px; border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-pill); padding: 3px 9px; color: var(--nebula-text-secondary); cursor: pointer; transition: all .15s;
+  /* A1 exception: the chip lives inside .models, which clips for the
+     max-height animation, so the control itself grows to the floor. */
+  min-height: var(--oc-tap-min);
+}
+@media (pointer: coarse) {
+  .nb .mchip { min-height: var(--oc-tap); }
+}
+.nb .mchip.on { background: rgb(var(--oc-accent-rgb) / .14); border-color: var(--oc-border-strong); color: var(--nebula-mist-glow); }
+.nb .mchip .x { margin-left: 6px; opacity: .5; transition: opacity .15s; }
+.nb .mchip .x:hover { opacity: 1; }
+.nb .mchip-add { font-family: var(--nebula-font-label); font-size: 10px; background: transparent; border: 1px dashed var(--nebula-glass-border); border-radius: var(--oc-radius-pill); padding: 3px 9px; color: var(--nebula-text-secondary); width: 78px; outline: none; transition: border-color .15s; }
+.nb .mchip-add:focus { border-color: var(--oc-border-strong); color: var(--nebula-mist-glow); }
+.nb .mchip-add::placeholder { color: var(--nebula-text-secondary); opacity: .6; }
+.nb .exec-add { border: 1px dashed rgb(var(--oc-white-rgb) / .28); background: transparent; }
+.nb .exec-add:hover { border-color: rgb(var(--oc-white-rgb) / .45); }
+.nb .exec-add.on { border-color: rgb(var(--oc-accent-rgb) / .5); }
+.nb .exec-add .logo { border: 1px dashed rgb(var(--oc-white-rgb) / .22); background: transparent; color: var(--nebula-text-secondary); font-size: 14px; font-family: var(--nebula-font-sans); }
+.nb .exec-add .name { color: var(--nebula-text-secondary); font-weight: 500; }
+.nb .exec-add.on .name { color: var(--nebula-text-primary); }
+.nb .exec-add.on .models { max-height: 120px; }
+.nb .exec-add .models .input { padding: 7px 10px; font-size: 11.5px; border-radius: var(--oc-radius-control); }
+.nb .exec-add .note { font-family: var(--nebula-font-label); font-size: 9.5px; letter-spacing: .04em; color: var(--nebula-text-tertiary); line-height: 1.5; width: 100%; }
+.nb .hint {
+  margin-top: 16px; padding: 11px 14px 11px 16px; border-radius: var(--oc-radius-box); background: rgb(var(--oc-surface-2-rgb) / .6);
+  border: 1px solid var(--nebula-glass-border); border-left: 2px solid var(--nebula-mist);
+  font-size: 12px; color: var(--nebula-text-secondary);
+}
+.nb .hint b { color: var(--nebula-text-primary); font-weight: 500; }
+
+/* conectar (T3) */
+/* Same strip, same rules as the settings tabs: one line each, scrolls rather
+   than wraps, and a real button so a keyboard reaches it. */
+.nb .tabs {
+  display: flex; gap: 16px; margin-bottom: 12px;
+  overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.nb .tabs::-webkit-scrollbar { display: none; }
+.nb .tabs button {
+  flex: none;
+  appearance: none; background: none; border: 0;
+  font-family: var(--nebula-font-label); font-size: 11px; letter-spacing: .05em;
+  color: var(--nebula-text-tertiary);
+  min-height: 34px; padding: 0 0 5px;
+  border-bottom: 1px solid transparent;
+  white-space: nowrap; cursor: pointer; transition: color .15s;
+}
+.nb .tabs button:hover { color: var(--nebula-text-secondary); }
+.nb .tabs button.on { color: var(--nebula-text-primary); border-bottom-color: var(--nebula-mist-glow); }
+.nb .tabs button:focus-visible {
+  outline: none; border-radius: var(--oc-radius-chip);
+  box-shadow: var(--oc-focus-ring-inset);
+}
+.nb .cmd {
+  background: rgb(var(--oc-scrim-rgb) / .85); border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-card);
+  font-family: var(--nebula-font-mono); font-size: 11.5px; line-height: 1.7; color: var(--nebula-mist-glow);
+  padding: 14px 16px; position: relative; white-space: pre-wrap; word-break: break-all;
+}
+/* The six digits are the whole point of the screen, so they get the biggest
+   type on it, but they are read aloud from a phone as often as from a
+   laptop, and six characters at 34px with .35em of tracking do not fit 320px.
+   The size follows the viewport instead of clipping the last digit. */
+.nb .pair-code {
+  font-family: var(--nebula-font-mono); font-size: clamp(24px, 7.5vw, 34px);
+  letter-spacing: .35em; font-weight: 600;
+  color: var(--nebula-mist-glow); background: rgb(var(--oc-scrim-rgb) / .85); border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--oc-radius-card); padding: 14px 18px 14px 24px; margin: 4px 0 10px;
+  width: fit-content; max-width: 100%;
+}
+.nb .copy {
+  position: absolute; top: 9px; right: 9px; font-family: var(--nebula-font-mono); font-size: 10px;
+  background: var(--oc-surface-hover); border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-pill);
+  color: var(--nebula-text-secondary); padding: 4px 11px; cursor: pointer; transition: all .15s;
+}
+.nb .copy.ok { color: var(--oc-ok); border-color: rgb(var(--oc-ok-rgb) / .4); }
+.nb .copy:hover { color: var(--nebula-text-primary); border-color: rgb(var(--oc-white-rgb) / .2); }
+.nb .copy:focus-visible { outline: none; box-shadow: var(--nebula-focus-ring-offset); }
+.nb .tok-note { font-family: var(--nebula-font-label); font-size: 9.5px; letter-spacing: .05em; color: var(--nebula-text-tertiary); margin-top: 7px; }
+.nb .reveal { cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.nb .conn {
+  margin-top: 16px; min-height: 72px; border-radius: var(--oc-radius-card); padding: 13px 16px;
+  background: var(--nebula-glass-bg); border: 1px solid var(--nebula-glass-border); position: relative;
+  display: flex; flex-direction: column; justify-content: center; gap: 3px;
+  transition: border-color .3s;
+}
+.nb .conn.lit { border-color: rgb(var(--oc-ok-rgb) / .55); }
+.nb .conn .l1 { display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 500; }
+.nb .conn .l2 { font-size: 11.5px; color: var(--nebula-text-secondary); margin-left: 21px; font-family: var(--nebula-font-label); }
+.nb .conn .cap { position: absolute; right: 14px; bottom: 9px; font-family: var(--nebula-font-label); font-size: 9.5px; letter-spacing: .07em; color: var(--nebula-text-tertiary); text-transform: uppercase; }
+.nb .pip { width: 11px; height: 11px; border-radius: var(--oc-radius-circle); background: var(--oc-warn-pip); animation: nb-pulse 1.8s ease-in-out infinite; position: relative; }
+.nb .pip.green { background: var(--oc-ok); animation: none; }
+@keyframes nb-pulse { 0%,100% { opacity: .4 } 50% { opacity: 1 } }
+@media (prefers-reduced-motion: reduce) { .nb .pip { animation: none; opacity: .7; } }
+
+/* rodapé do wizard
+   The footer hangs off the panel's own side padding, so it reads that padding
+   from the variable instead of repeating the number. The right-hand group is
+   an explicit row with a gap: "configure later" used to be an inline span
+   beside the primary button and the two collided the moment the panel got
+   narrow, printing one on top of the other. */
+.nb .wfoot { margin: 34px calc(var(--wiz-pad) * -1) 0; padding: 0; }
+.nb .progress { height: 2px; background: rgb(var(--oc-white-rgb) / .07); position: relative; }
+.nb .progress i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--nebula-mist-glow); transition: width .3s ease-in-out; }
+.nb .wbtns {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px; padding: 14px var(--wiz-pad) 18px;
+}
+.nb .wbtns-end { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.nb .btn-back, .nb .btn-next, .nb .skip {
+  /* the three actions of the screen: hit area grows via the A1 utility */
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.nb .btn-back { background: none; border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-pill); color: var(--nebula-text-secondary); font-size: 12.5px; padding: 8px 18px; cursor: pointer; white-space: nowrap; }
+.nb .btn-back:disabled { opacity: .3; cursor: not-allowed; }
+.nb .btn-next { background: var(--oc-btn-light-bg); color: var(--oc-btn-light-text); border: none; border-radius: var(--oc-radius-pill); font-size: 13px; font-weight: 500; padding: 9px 22px; cursor: pointer; white-space: nowrap; transition: opacity .15s, transform .2s; }
+.nb .btn-next:disabled { opacity: .4; cursor: not-allowed; }
+.nb .btn-next.go { box-shadow: var(--oc-glow-ok); }
+.nb .skip {
+  appearance: none; background: none; border: 0; padding: 0;
+  font-family: inherit; font-size: 11.5px; color: var(--nebula-text-tertiary);
+  text-decoration: underline; text-underline-offset: 3px;
+  cursor: pointer; white-space: nowrap;
+}
+.nb .skip:hover { color: var(--nebula-text-secondary); }
+.nb .btn-back:focus-visible, .nb .btn-next:focus-visible, .nb .skip:focus-visible {
+  outline: none; box-shadow: var(--nebula-focus-ring-offset); border-radius: var(--oc-radius-pill);
+}
+.nb .werr { color: var(--oc-danger); font-size: 12.5px; margin: 10px 0 0; position: relative; z-index: var(--oc-z-content); }
+.nb .wok { color: var(--oc-ok); font-size: 12.5px; margin: 10px 0; font-family: var(--nebula-font-label); }
+
+/* ---------- settings ---------- */
+.nb .page { position: relative; z-index: var(--oc-z-content); max-width: 1020px; margin: 0 auto; }
+.nb h1 { font-size: 24px; font-weight: var(--nebula-weight-medium); letter-spacing: -.015em; margin-bottom: 4px; text-shadow: var(--nebula-glow-text); }
+.nb .page-sub { font-size: 12.5px; color: var(--nebula-text-secondary); margin-bottom: 20px; }
+/* Seven tabs is more than a narrow window fits, so the strip scrolls instead
+   of wrapping or being clipped: every tab stays one line, and the two that
+   used to fall off the right edge (language, updates) are reachable again.
+   The fade on the trailing edge is what says there is more to the right. */
+.nb .settabs {
+  position: relative;
+  display: flex; gap: 12px;
+  margin-bottom: 22px; padding-bottom: 0;
+  border-bottom: 1px solid var(--nebula-plan-divider);
+  overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.nb .settabs::-webkit-scrollbar { display: none; }
+.nb .settabs button {
+  flex: none;
+  appearance: none; background: none; border: 0;
+  font-family: var(--nebula-font-label); font-size: 11px;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--nebula-text-tertiary);
+  /* the target is the whole tab; the A1 utility grows it on a phone */
+  padding: 0 0 9px; border-bottom: 1px solid transparent; margin-bottom: -1px;
+  white-space: nowrap; cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.nb .settabs button:hover { color: var(--nebula-text-secondary); }
+.nb .settabs button.on { color: var(--nebula-mist-glow); border-bottom-color: var(--nebula-mist-glow); }
+.nb .settabs button:focus-visible {
+  outline: none; border-radius: var(--oc-radius-chip);
+  /* inset: the strip clips its vertical overflow so the underline can meet
+     the divider, and an outset ring would be sliced into an arc */
+  box-shadow: var(--oc-focus-ring-inset);
+}
+.nb .tabpane { display: none; animation: nb-step-in .2s ease-out; }
+.nb .tabpane.active { display: block; }
+.nb .save-row { margin-top: 18px; display: flex; justify-content: flex-end; }
+.nb .gen-row { display: flex; gap: 10px; align-items: center; margin-top: 4px; }
+
+/* One shape for every group a settings tab makes. The token, the recipe, the
+   update mode and the language field are the same card, so crossing tabs
+   never changes the rhythm the eye is following. */
+.nb .set-card {
+  background: var(--nebula-plan-bg);
+  border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-card);
+  padding: 14px 16px; margin-bottom: 12px;
+}
+.nb .set-card > .sec-cap:first-child { margin-top: 0; }
+.nb .set-card > .policy-note:last-child { margin-bottom: 0; }
+/* Prose in settings stops at a line somebody can read, not at the width of
+   the page: a note running the full 1020px is a note nobody finishes. */
+.nb .tabpane .policy-note,
+.nb .tabpane .seen-note,
+.nb .tabpane .page-sub,
+.nb .tabpane .upd-mode-note,
+.nb .tabpane .upd-state,
+.nb .tabpane .hint { max-width: 76ch; }
+
+/* AGB-75: a settings table is a form laid on a grid, so its columns are
+   shares of the width the tab has, never the sum of what each control asked
+   for. Fixed layout is what makes that true: the chain keeps its three
+   selects on one line, the last column stops falling off the right edge, and
+   a row is as tall as the information in it instead of as tall as a wrap. */
+.nb .set-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 16px 0 4px; }
+.nb .policy { width: 100%; border-collapse: collapse; table-layout: fixed; }
+/* the five shares of the harness policy: the activity carries the meaning,
+   the chain carries three controls, the two on the right carry a word each */
+.nb .policy th:nth-child(1) { width: 26%; }
+.nb .policy th:nth-child(2) { width: 15%; }
+.nb .policy th:nth-child(3) { width: 39%; }
+.nb .policy th:nth-child(4) { width: 9%; }
+.nb .policy th:nth-child(5) { width: 11%; }
+/* the price table is one name and three numbers, so it splits differently */
+.nb .policy.prices th:nth-child(1) { width: 28%; }
+.nb .policy.prices th:nth-child(2),
+.nb .policy.prices th:nth-child(3),
+.nb .policy.prices th:nth-child(4) { width: 15%; }
+.nb .policy.prices th:nth-child(5) { width: 27%; }
+.nb .policy th {
+  font-family: var(--nebula-font-label); font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--nebula-text-tertiary); text-align: left; padding: 0 10px 8px 0; font-weight: 400;
+}
+.nb .policy td { padding: 5px 10px 5px 0; border-top: 1px solid var(--nebula-plan-divider); vertical-align: middle; }
+.nb .policy td:last-child { padding-right: 0; }
+.nb .policy .act { font-size: 12.5px; font-weight: 500; line-height: 1.35; }
+.nb .policy .act small { display: block; font-family: var(--nebula-font-label); font-size: 9.5px; color: var(--nebula-text-tertiary); letter-spacing: .04em; line-height: 1.45; margin-top: 1px; font-weight: 400; }
+/* The line of succession reads left to right and never wraps: three links
+   sharing one cell, each one giving up width before the row gives up a line. */
+.nb .policy .chain { display: flex; flex-wrap: nowrap; align-items: center; gap: 4px; }
+.nb .policy .chain .link { display: flex; align-items: center; gap: 4px; flex: 1 1 0; min-width: 0; }
+.nb .policy .chain .link .sel { width: auto; flex: 1 1 auto; }
+/* the arrow lives in CSS so the narrow layout can turn it downward */
+.nb .policy .chain i { flex: none; font-style: normal; font-size: 10px; color: var(--nebula-text-tertiary); }
+.nb .policy .chain i::before { content: "\2192"; }
+/* Named by the policy, missing from the executor: visible, never silently dropped. */
+.nb .policy .chain .sel.orphan { border-color: var(--nebula-warn, var(--oc-warn-deep)); }
+/* every control in a table cell is the width of its share, not of its text */
+.nb .policy .sel { width: 100%; min-width: 0; padding: 6px 20px 6px 7px; background-position: right 7px center; text-overflow: ellipsis; }
+.nb .policy td .input { width: 100%; max-width: 140px; padding: 6px 9px; font-size: 12px; }
+.nb .policy .who { font-family: var(--nebula-font-label); font-size: 10px; line-height: 1.45; color: var(--nebula-mist-light); letter-spacing: .03em; overflow-wrap: anywhere; }
+.nb .policy .who small { display: block; font-size: 9.5px; color: var(--nebula-text-tertiary); margin-top: 2px; }
+.nb .policy .who .dim { color: var(--nebula-text-tertiary); }
+.nb .policy .who .seen-add { margin-top: 6px; }
+.nb .sel {
+  appearance: none; -webkit-appearance: none;
+  background: rgb(var(--oc-surface-deep-rgb) / .6) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%238C96AB' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+  border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-note); color: var(--nebula-text-primary);
+  font-family: var(--nebula-font-label); font-size: 11px; padding: 7px 26px 7px 10px; outline: none; cursor: pointer;
+  min-width: 130px; transition: border-color .15s;
+}
+.nb .sel:hover { border-color: rgb(var(--oc-white-rgb) / .2); }
+.nb .sel:focus { border-color: rgb(var(--oc-accent-rgb) / .35); }
+.nb .sel:focus-visible { outline: none; box-shadow: var(--nebula-focus-ring); }
+.nb .sel.eff { min-width: 96px; }
+.nb .sel option { background: var(--oc-surface-tile); }
+/* AGB-75: below this width the columns stop being columns. A row becomes a
+   block that reads top to bottom, which is the only honest way to keep the
+   effort and the last change on a screen this narrow: the alternative was a
+   table scrolling sideways with two columns nobody ever found. */
+@media (max-width: 940px) {
+  .nb .set-scroll { overflow-x: visible; margin-top: 12px; }
+  .nb .policy, .nb .policy tbody { display: block; }
+  /* the head is what every cell now repeats to itself, so it is read, not shown */
+  .nb .policy thead {
+    position: absolute; width: 1px; height: 1px;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+  .nb .policy tr {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px 10px; align-items: start;
+    padding: 12px 14px; margin-bottom: 10px;
+    background: var(--nebula-plan-bg);
+    border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-card);
+  }
+  .nb .policy td { display: block; padding: 0; border-top: 0; }
+  .nb .policy td::before {
+    content: attr(data-label); display: block;
+    font-family: var(--nebula-font-label); font-size: 9px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--nebula-text-tertiary); margin-bottom: 5px;
+  }
+  /* the title of the block, the chain and the signature take the full width */
+  .nb .policy td.act, .nb .policy td.chain, .nb .policy td.who { grid-column: 1 / -1; }
+  .nb .policy td.act::before { content: none; }
+  .nb .policy td.act { padding-bottom: 2px; }
+  /* the two one-word choices are placed, not flowed, so they share a line
+     instead of each claiming one with the chain sitting between them */
+  .nb .policy.harness td.act { grid-area: 1 / 1 / 2 / -1; }
+  .nb .policy.harness td:nth-child(2) { grid-area: 2 / 1 / 3 / 2; }
+  .nb .policy.harness td:nth-child(4) { grid-area: 2 / 2 / 3 / 3; }
+  .nb .policy.harness td.chain { grid-area: 3 / 1 / 4 / -1; }
+  .nb .policy.harness td.who { grid-area: 4 / 1 / 5 / -1; }
+  /* the signature is a caption and a name: one line, not two */
+  .nb .policy td.who { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; font-size: 10px; }
+  .nb .policy td.who::before { margin-bottom: 0; }
+  .nb .policy td.who small { display: inline; }
+  /* The line of succession reads downward when there is no room across. The
+     arrow keeps a column of its own so the first choice starts on the same
+     edge as the fallbacks under it, instead of standing 16px to their left. */
+  .nb .policy .chain { flex-direction: column; align-items: stretch; gap: 6px; }
+  .nb .policy .chain .link {
+    display: grid; grid-template-columns: 16px minmax(0, 1fr);
+    align-items: center; gap: 0; flex: none;
+  }
+  .nb .policy .chain .link > .sel { grid-column: 2; }
+  .nb .policy .chain i::before { content: "\2193"; }
+  /* a control under a thumb, not a control for a mouse */
+  .nb .policy .sel { min-height: 40px; }
+  .nb .policy td .input { max-width: none; min-height: 40px; }
+  /* a name, three numbers and an origin: the numbers share one line of the block */
+  .nb .policy.prices tr { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .nb .policy.prices td.act, .nb .policy.prices td.who { grid-column: 1 / -1; }
+}
+
+.nb .policy-note {
+  margin-top: 14px; font-family: var(--nebula-font-label); font-size: 10.5px; letter-spacing: .04em;
+  color: var(--nebula-text-tertiary); padding-top: 12px; border-top: 1px solid var(--nebula-plan-divider);
+  line-height: 1.6;
+}
+.nb .policy-note b { color: var(--nebula-mist-light); font-weight: 500; }
+
+/* A recipe is a heading and two fields, so it gets the shape of a group and
+   not of a stretch of page: the four of them stop running into one another. */
+.nb .recipe { margin-bottom: 12px; }
+/* AGB-80: the coverage strip borrows the recipe card's head so it reads as
+   part of the tab, and the two states are told apart by the word, not only by
+   the colour. */
+.nb .rec-cover { margin-bottom: 18px; }
+.nb .rec-cover .rec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; margin: 0 0 10px; }
+.nb .rec-cover .rec-head .rec-name { font-size: 13px; font-weight: 500; }
+.nb .cover-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.nb .cover-list li {
+  display: flex; align-items: baseline; gap: 6px;
+  border: 1px solid rgb(var(--oc-white-rgb) / .10); border-radius: var(--oc-radius-pill);
+  padding: 4px 10px; background: var(--oc-surface-subtle);
+}
+.nb .cover-list .cover-cli { font-size: 12px; }
+.nb .cover-list .cover-state {
+  font-family: var(--nebula-font-label); font-size: 9.5px; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--nebula-text-tertiary);
+}
+.nb .cover-list li.has .cover-state { color: var(--oc-ok); }
+.nb .cover-list li.missing { border-color: rgb(var(--oc-warn-2-rgb) / .35); }
+.nb .cover-list li.missing .cover-state { color: rgb(var(--oc-warn-2-rgb) / .95); }
+.nb .rec-cover .sec-cap { text-transform: none; letter-spacing: .02em; font-size: 11px; margin: 12px 0 0; }
+.nb .rec-cover .rec-head .sec-cap { text-transform: uppercase; letter-spacing: .08em; font-size: 10px; margin: 0; }
+.nb .recipe .rec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; margin: 0 0 10px; }
+.nb .recipe .rec-head .rec-name { font-size: 13px; font-weight: 500; }
+.nb .recipe .lbl {
+  display: block; font-family: var(--nebula-font-label); font-size: 9.5px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--nebula-text-tertiary); margin: 12px 0 5px;
+}
+/* Whole lines, always: a textarea sized by `rows` under border-box loses the
+   padding out of its own content box and ends halfway through a line. */
+.nb .recipe textarea.input { width: 100%; resize: vertical; font-size: 12.5px; line-height: 1.6; height: calc(3 * 1.6em + 22px); }
+/* A shell command is read as code or it is not read at all: .input set the
+   sans face after .d-mono asked for the mono one, so the recipe that every
+   agent copies was rendered in prose. The height is whole lines, so the box
+   never ends halfway through one. */
+.nb .recipe textarea.d-mono { font-family: var(--nebula-font-mono); font-size: 11.5px; }
+.nb .recipe textarea.d-mono.filled { height: calc(8 * 1.6em + 22px); }
+
+/* The three modes are one decision, so they read as one group of options. */
+.nb .upd-modes { padding: 4px 16px 14px; }
+.nb .upd-modes .upd-toggle:first-of-type { margin-top: 10px; }
+
+.nb .tok-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.nb .tok {
+  display: flex; align-items: center; gap: 14px; padding: 10px 14px;
+  background: var(--nebula-plan-bg); border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-card);
+  transition: border-color .2s, opacity .3s;
+}
+.nb .tok .meta { flex: 1; min-width: 0; }
+.nb .tok .label { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+/* Was a read-only badge; it is a checkbox now, because the capability has to
+   be grantable where the MCP error says it is (OCL-136). Unticked it reads as
+   an empty slot rather than an accent pill, so a token that holds manage is
+   still the one that stands out in the list. */
+.nb .tok-cap {
+  display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto;
+  padding: 2px 8px; border-radius: var(--oc-radius-pill);
+  border: 1px solid var(--nebula-glass-border); background: none;
+  font-family: var(--nebula-font-label); font-size: 9px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--nebula-text-tertiary); font-weight: 400; cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.nb .tok-cap:has(input:checked) {
+  border-color: rgb(var(--oc-accent-rgb) / .3); background: rgb(var(--oc-accent-rgb) / .08);
+  color: var(--nebula-mist-light);
+}
+.nb .tok-cap:has(input:disabled) { cursor: default; opacity: .5; }
+.nb .tok-cap input { accent-color: rgb(var(--oc-accent-rgb)); margin: 0; cursor: inherit; }
+/* the legacy global `.sub` ends with a 28px paragraph margin, which inside a
+   card is 28px of nothing under every token: a row three times the height of
+   the two lines it holds */
+.nb .tok .sub { font-family: var(--nebula-font-label); font-size: 10px; color: var(--nebula-text-tertiary); letter-spacing: .03em; margin-bottom: 0; }
+.nb .tok .val { font-family: var(--nebula-font-mono); font-size: 11px; color: var(--nebula-mist-light); letter-spacing: .03em; }
+.nb .tok.revoked { opacity: .4; }
+.nb .tok.revoked .val { text-decoration: line-through; }
+.nb .btn-rev {
+  background: none; border: 1px solid rgb(var(--oc-danger-rgb) / .3); border-radius: var(--oc-radius-pill); color: var(--oc-danger);
+  font-size: 11px; padding: 5px 13px; cursor: pointer; transition: all .15s; font-family: var(--nebula-font-sans);
+}
+.nb .btn-rev:hover { background: rgb(var(--oc-danger-rgb) / .1); }
+.nb .btn-rev:disabled { opacity: .4; cursor: default; background: none; }
+.nb .btn-rev:focus-visible { outline: none; box-shadow: 0 0 0 2px rgb(var(--oc-danger-rgb) / .6); }
+.nb .btn-new {
+  background: var(--nebula-btn-light-bg); color: var(--nebula-btn-light-text); border: none; border-radius: var(--oc-radius-pill);
+  font-size: 12.5px; font-weight: 500; padding: 8px 18px; cursor: pointer;
+  transition: box-shadow .3s var(--nebula-ease-atmosphere), transform .3s var(--nebula-ease-atmosphere);
+}
+.nb .btn-new:hover { box-shadow: var(--oc-glow-accent); transform: translateY(-1px); }
+.nb .btn-new:disabled { opacity: .4; cursor: not-allowed; transform: none; box-shadow: none; }
+.nb .btn-new:focus-visible { outline: none; box-shadow: var(--nebula-focus-ring-offset); }
+@media (prefers-reduced-motion: reduce) { .nb .btn-new:hover { transform: none; } }
+.nb .sec-cap { font-family: var(--nebula-font-label); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--nebula-text-tertiary); margin: 22px 0 10px; }
+.nb .fresh-tok { margin-bottom: 16px; }
+.nb .fresh-tok .lbl { font-family: var(--nebula-font-label); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--oc-ok); margin-bottom: 8px; }
+
+/* ---------- ações do detalhe do card ---------- */
+.nb .d-actions { border-top: 1px solid var(--nebula-plan-divider); padding-top: 16px; margin-top: 4px; }
+.nb .d-actions-row { display: flex; gap: 10px; justify-content: flex-end; }
+.nb .d-actions-reopen .d-actions-row { margin-top: 10px; }
+.nb .d-btn-sec { background: none; border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-pill); color: var(--nebula-text-secondary); font-size: 12.5px; padding: 8px 18px; cursor: pointer; }
+.nb .d-btn-sec:disabled { opacity: .4; cursor: not-allowed; }
+.nb .d-btn-pri { background: var(--oc-btn-light-bg); border: none; border-radius: var(--oc-radius-pill); color: var(--oc-btn-light-text); font-size: 12.5px; font-weight: 500; padding: 8px 20px; cursor: pointer; }
+.nb .d-btn-pri:disabled { opacity: .4; cursor: not-allowed; }
+.nb .d-textarea {
+  width: 100%; background: rgb(var(--oc-surface-deep-rgb) / .6); border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-box);
+  color: var(--nebula-text-primary); font-size: 12.5px; padding: 10px 12px; font-family: var(--nebula-font-sans);
+  outline: none; resize: vertical;
+}
+.nb .d-textarea:focus { border-color: rgb(var(--oc-accent-rgb) / .35); }
+/* AGB-68: an error is a state of the panel, so it gets the shape of one:
+   the same left rule and tinted surface the rest of the system uses. */
+.nb .d-err { color: var(--oc-danger); font-size: 12px; margin: 0 0 8px; padding: 7px 11px;
+  background: rgb(var(--oc-danger-rgb) / 0.06); border-left: 2px solid rgb(var(--oc-danger-rgb) / 0.45);
+  border-radius: var(--oc-radius-control); line-height: 1.5; }
+
+/* ---- update banner + updates tab (AGB-18) ----
+   ux-v2 §1/§3: a one-line notice, not a changelog block — the release notes
+   are a disclosure the reader opens, so the collapsed banner never competes
+   with the board for the first fold. */
+.nb .update-banner { margin: 0 0 18px; padding: 10px 18px; border: 1px solid var(--nebula-plan-divider); border-radius: var(--oc-radius-box); }
+.nb .update-banner .ub-head { display: flex; align-items: center; gap: 14px; }
+.nb .update-banner .ub-head a { color: var(--nebula-mist-glow); font-size: 12px; }
+.nb .update-banner .ub-notes-toggle {
+  background: none; border: none; padding: 0; margin: 0; cursor: pointer;
+  color: var(--nebula-mist-glow); font-family: var(--nebula-font-sans); font-size: 12px;
+}
+.nb .update-banner .ub-notes-toggle:hover { color: var(--nebula-text-primary); }
+.nb .update-banner .ub-notes-toggle:focus-visible { outline: none; box-shadow: var(--nebula-focus-ring-offset); border-radius: var(--oc-radius-control-sm); }
+/* §1: mono is the data voice, not the prose voice — the changelog body reads
+   in the UI face; only the .ub-cmd code lines below stay in mono. */
+.nb .update-banner .ub-notes { margin: 10px 0 0; padding: 10px 12px; max-height: 140px; overflow: auto; font-family: var(--nebula-font-sans); font-size: 12px; color: var(--nebula-text-secondary); white-space: pre-wrap; border: 1px solid var(--nebula-plan-divider); border-radius: var(--oc-radius-control); }
+.nb .update-banner .ub-cmd { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 12px; color: var(--nebula-text-secondary); }
+.nb .update-banner .ub-cmd code { font-family: var(--nebula-font-mono); color: var(--nebula-mist-light); }
+/* §3: the banner's own controls follow the Control anatomy (32px, 13px/500)
+   — scoped to the banner only, the topbar's ghost/new buttons are untouched.
+   §1: blur is for panels that float over content; a button in flow doesn't. */
+.nb .update-banner .btn-ghost,
+.nb .update-banner .btn-new {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 13px;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+/* row explicitly: the global `label` rule stacks its children in a column. */
+.nb .upd-toggle { display: flex; flex-direction: row; align-items: center; gap: 10px; font-size: 13px; cursor: pointer; margin-top: 16px; }
+.nb .upd-toggle input { flex: 0 0 auto; }
+.nb .upd-panel { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--nebula-plan-divider); }
+.nb .upd-version { font-family: var(--nebula-font-mono); font-size: 11.5px; color: var(--nebula-text-tertiary); margin: 0 0 10px; }
+.nb .upd-state { font-size: 12.5px; color: var(--nebula-text-secondary); margin: 10px 0 0; line-height: 1.55; }
+.nb .upd-state.ok { color: var(--oc-ok); }
+.nb .upd-state.bad { color: var(--oc-danger); }
+.nb .upd-cmd-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.nb .upd-cmd-row code { font-family: var(--nebula-font-mono); font-size: 11.5px; color: var(--nebula-mist-light);
+  background: rgb(var(--oc-scrim-rgb) / .6); border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-control); padding: 6px 10px; }
+.nb .upd-log { margin: 10px 0 0; padding: 10px 12px; max-height: 140px; overflow: auto;
+  font-family: var(--nebula-font-mono); font-size: 11px; color: var(--nebula-text-secondary);
+  white-space: pre-wrap; border: 1px solid var(--nebula-plan-divider); border-radius: var(--oc-radius-control); }
+.nb .upd-mode-note { display: block; font-size: 11.5px; color: var(--nebula-text-tertiary); line-height: 1.5; margin-top: 2px; }
+.nb .upd-toggle { align-items: flex-start; }
+.nb .upd-steps { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.nb .upd-step { font-size: 12.5px; color: var(--nebula-text-secondary); line-height: 1.5;
+  border-left: 2px solid var(--nebula-plan-divider); padding-left: 10px; }
+.nb .upd-step.ok { border-left-color: var(--oc-ok); }
+.nb .upd-step.failed { border-left-color: var(--oc-danger); }
+.nb .upd-step-name { font-family: var(--nebula-font-label); font-size: 11.5px; color: var(--nebula-mist-light); }
+.nb .upd-step-status { font-family: var(--nebula-font-label); font-size: 11px; color: var(--nebula-text-tertiary); }
+.nb .upd-step.ok .upd-step-status { color: var(--oc-ok); }
+.nb .upd-step.failed .upd-step-status { color: var(--oc-danger); }
+
+/* ---- moving cards between missions (AGB-49) ---- */
+/* the mission of the card, as a control instead of a label */
+.nb .d-mission {
+  appearance: none; background: rgb(var(--oc-surface-deep-rgb) / .6);
+  border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-control);
+  color: var(--nebula-text-secondary); font-family: var(--nebula-font-sans);
+  font-size: 12.5px; padding: 6px 10px; width: 100%; max-width: 100%; min-width: 0;
+  cursor: pointer; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;
+}
+.nb .d-mission:focus { outline: none; border-color: rgb(var(--oc-accent-rgb) / .35); }
+.nb .d-mission:disabled { opacity: .5; cursor: progress; }
+/* picking mode: the card stops opening and starts answering the checkbox */
+.nb .card.selectable { cursor: pointer; }
+.nb .card.picked { border-color: var(--oc-border-strong); box-shadow: 0 0 0 1px rgb(var(--oc-accent-rgb) / 0.18); }
+.nb .card-pick { flex: 0 0 auto; margin: 0; accent-color: var(--oc-accent); cursor: pointer; }
+/* the bar only exists while a selection does, so it sits over the board */
+.nb .bulk-bar {
+  position: fixed; z-index: var(--oc-z-bar); left: 50%; bottom: 24px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+  background: var(--oc-modal-bg);
+}
+.nb .bulk-count {
+  font-family: var(--nebula-font-label); font-size: 11px; letter-spacing: 0.04em;
+  color: var(--nebula-text-secondary);
+}
+.nb .bulk-err { font-size: 12px; color: var(--oc-danger); max-width: 320px; }
+.nb .btn-ghost.on { color: var(--nebula-text-primary); border-color: var(--oc-border-strong); }
+
+/* ============================================================
+   PHONE: the board as one list you can read (AGB-58, AGB-62)
+
+   Below 768px, and on a phone held in landscape, the four columns stop
+   squeezing side by side. AGB-58 turned them into a snap carousel; AGB-62
+   replaced that with a single vertical list, because the carousel still kept
+   two columns fighting for the screen and the card title, the one thing
+   anyone opens the board to read, was what paid for it. Now one column shows
+   at a time, the card takes the whole width, and the column head becomes the
+   selector that switches it, carrying that column's count.
+
+   The one-line rule the card footer already had now holds for everything:
+   column headers, counters, empty states, the topbar crumb, the mission
+   chip and card titles each take exactly one line. Whatever cannot fit
+   truncates with an ellipsis and stays reachable whole: the card title
+   opens in the detail panel, the selects list their full options natively,
+   and the truncated texts carry a title attribute.
+   ============================================================ */
+/* ============================================================
+   THE BAR UNDER PRESSURE (AGB-71)
+
+   Two steps between the full desktop bar and the phone, so that the one-line
+   rule never has to be paid for by a label. The bar gives up detail first and
+   controls last, and both steps are reversible by widening the window.
+   ============================================================ */
+
+/* ============================================================
+   THE COLUMNS UNDER PRESSURE (OCL-24 / OCL-124)
+
+   Between the full desktop board and the phone list the columns stay fluid:
+   five proportional columns shrink to fit the viewport instead of forcing a
+   horizontal scroll. The phone list takes over at 768px, so every width above
+   that sees all columns at once — no snap-scroll, no overflow-x.
+   ============================================================ */
+
+/* Step one: the supporting numbers beside the total step aside, so that the
+   names people typed print whole. The figure they support is the one the bar
+   exists for, so it stays at full size with its marks, and the tokens and the
+   time it dropped are on the link's title and one click away in Insights. The
+   threshold is where the bar stops holding every label at its natural width,
+   which is above 1440: a crumb reading "Agent Bo…" on the widest screen in
+   the house is the same complaint as a crumb on three lines. */
+/* The stat used to spend this width on four bare numbers and a caveat pill,
+   so the support had to go early. Labeled money is shorter than that, and
+   ux-v2 §4 wants the tokens and the time reading behind it: they hold now
+   at the widths that have the room. Measured, not guessed: at 1100 the bar
+   overflows by 40px with them on, so they fold one step before the stat
+   itself moves into the account menu. */
+@media (max-width: 1199px) {
+  .nb .board-total .bt-sub { display: none; }
+}
+
+/* OCL-35 (ux-v2 §3): under 1100px level 1 folds the running-state chip into
+   the account menu. The telemetry stat never leaves level 1. */
+@media (max-width: 1099px) {
+  .nb .topbar-l1 .state-chip { display: none; }
+  .nb .am-state { display: flex; }
+  /* The state entry and navigation stay visibly separate. */
+  .nb .am-state + :not(.am-state) {
+    margin-top: 4px; padding-top: 6px;
+    border-top: 1px solid var(--nebula-glass-border);
+  }
+}
+
+
+@media (max-width: 768px), (orientation: landscape) and (max-height: 500px) {
+  .nb { padding: 16px 16px 48px; }
+  .nb .mission-header { padding: 15px; }
+  .nb .mission-overview { grid-template-columns: 1fr; gap: 12px; }
+  .nb .mission-counts { justify-content: flex-start; }
+  .nb .mission-editor { grid-template-columns: 1fr; }
+  .nb .mission-editor-fields { grid-template-columns: 1fr; }
+  .nb .mission-editor .mission-field-wide { grid-column: auto; }
+  .nb .mission-editor > .mission-error,
+  .nb .mission-editor > .mission-actions { grid-column: auto; }
+  .nb .mission-actions,
+  .nb .mission-delete-confirm { align-items: flex-end; flex-wrap: wrap; }
+  .nb .release-header { grid-template-columns: 1fr; gap: 12px; padding: 15px; }
+  .nb .release-counts { justify-content: flex-start; }
+  .nb .release-usage, .nb .release-relations { padding-top: 10px; }
+  .nb .release-relations { grid-template-columns: 1fr; }
+
+  /* AGB-65 + OCL-35: the chrome collapses to the two compact levels. Level 1
+     keeps the wordmark, the telemetry stat and the account menu; level 2 is
+     the single Filtros button, and the panel behind it carries the controls.
+     The whole wrap sticks to the top on the canvas itself — no glass — so
+     the list scrolls under it. */
+  .nb .topbar {
+    position: sticky; top: 8px; z-index: var(--oc-z-chrome);
+    gap: 8px; padding: 10px 12px; margin-bottom: 14px;
+  }
+  .nb .topbar-wrap {
+    position: sticky; top: 8px; z-index: var(--oc-z-chrome); margin-bottom: 14px;
+    /* opaque: the list scrolls under the levels, and a bright row title
+       bleeding through the bar reads as a bug, not as depth */
+    background: var(--nebula-void);
+  }
+  .nb .topbar-l1 { position: static; gap: 8px; padding: 4px 0 2px; margin-bottom: 0; }
+  .nb .topbar-l2 { position: relative; padding-bottom: 6px; }
+  .nb .topbar .btn-ghost { padding: 6px 10px; font-size: 11px; }
+  /* the one button level 2 keeps for the filters that left it; the panel
+     hangs off the level, which sits inside the sticky wrap */
+  .nb .filters-btn { display: inline-flex; }
+  /* On a phone the remaining controls keep the Control anatomy (32px drawn)
+     and the A1 utility grows their hit area to 44px without moving the box. */
+  .nb .menu-backdrop { display: block; position: fixed; inset: 0; z-index: var(--oc-z-backdrop); }
+  /* the panel behind the button: same controls, same order, one per row */
+  .nb .topbar-more { display: none; }
+  .nb .topbar-more.open {
+    display: flex; flex-direction: column; align-items: stretch; gap: 8px;
+    position: absolute; top: calc(100% + 8px); left: 0; right: 0; z-index: var(--oc-z-menu);
+    padding: 12px; border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-panel);
+    /* opaque: the list scrolls under the bar, and a bright row title bleeding
+       through the panel reads as a bug, not as depth */
+    background: var(--nebula-panel-solid);
+  }
+  /* in the panel every row owns its width, so nothing in it has to shrink,
+     and every row keeps the 44px tap floor (ux-v2 checklist) */
+  .nb .topbar-more .crumb { align-self: stretch; }
+  .nb .topbar-more .pf-label { max-width: none; }
+  .nb .topbar-more .btn-ghost { display: flex; align-items: center; width: 100%; text-align: left; }
+  .nb .topbar-more .mission-filter { max-width: none; }
+  .nb .topbar-more .mf-label { max-width: none; }
+  .nb .topbar-more .filter-chip { display: flex; width: 100%; max-width: none; }
+  .nb .topbar-more .filter-chip select { max-width: none; flex: 1; }
+  .nb .topbar-more .facet-filters, .nb .topbar-more .ff-trigger { width: 100%; }
+  .nb .topbar-more .ff-trigger { text-align: left; }
+  .nb .ff-panel {
+    position: fixed; top: auto; right: 0; bottom: 0; left: 0; z-index: var(--oc-z-sheet);
+    width: auto; max-width: none; max-height: min(80vh, 620px); overflow-y: auto;
+    padding: 16px 16px max(16px, env(safe-area-inset-bottom));
+    border-radius: var(--oc-radius-sheet) var(--oc-radius-sheet) 0 0;
+  }
+  .nb .ff-search-row { min-height: 44px; }
+  .nb .ff-search { min-height: 42px; }
+  .nb .ff-search-clear { width: 44px; height: 44px; }
+  .nb .topbar-more .filter-result { align-self: flex-start; }
+  /* the state chips are gone at this width — they folded into the account
+     menu at 1100px — so there is nothing left here to shrink */
+  .nb .crumb:has(> .project-filter) { gap: 2px; }
+  .nb .crumb select { max-width: 34vw; overflow: hidden; text-overflow: ellipsis; }
+  /* the project chip holds its one line; its panel takes the width it needs */
+  .nb .pf-label { max-width: 34vw; }
+  .nb .pf-panel { min-width: min(280px, calc(100vw - 32px)); }
+  .nb .filter-chip { max-width: 44vw; }
+  .nb .filter-chip select { max-width: 38vw; overflow: hidden; text-overflow: ellipsis; }
+  /* the mission chip keeps its one line; its panel takes the width it needs */
+  .nb .mission-filter { max-width: 44vw; }
+  .nb .mf-label { max-width: 34vw; }
+  .nb .mf-panel { min-width: min(280px, calc(100vw - 32px)); }
+
+  /* the columns step aside for the list; the cards they hold are the same */
+  .nb .board { display: none; }
+  .nb .board-mobile { display: block; }
+  .nb .col { min-height: 140px; }
+  .nb .board-mobile .col { min-height: 0; }
+
+  /* The column head, made into a control: same label, same count, now the
+     thing that switches which column is on screen. A pill, not a bare line,
+     because on a phone it has to look like something you press. The row is
+     explicit: the global `label` rule stacks its children in a column. */
+  .nb .ml-head {
+    display: flex; flex-direction: row; align-items: center;
+    gap: var(--nebula-space-2);
+    min-width: 0; margin-bottom: var(--nebula-space-3);
+    padding: 8px 14px;
+    border: 1px solid var(--nebula-glass-border); border-radius: var(--oc-radius-pill);
+    background: var(--oc-surface-subtle);
+    font-family: var(--nebula-font-label); font-size: 12px;
+    letter-spacing: var(--nebula-tracking-wide);
+    text-transform: uppercase; color: var(--nebula-text-secondary);
+  }
+  .nb .ml-status {
+    flex: 0 1 auto; min-width: 0;
+    appearance: none; background: transparent; border: 0; padding: 0;
+    color: inherit; font: inherit; letter-spacing: inherit;
+    text-transform: inherit; cursor: pointer;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .nb .ml-status:focus { outline: none; }
+  .nb .ml-caret { flex: none; font-size: 9px; color: var(--nebula-text-tertiary); }
+  /* the count leans on the far edge and never shrinks: the label may lose
+     characters to an ellipsis, the number may not lose a digit */
+  .nb .ml-head .count { flex: none; margin-left: auto; color: var(--nebula-text-tertiary); }
+
+  /* one line each, the ellipsis standing for the rest. AGB-73: the column's
+     mark leads that line instead of standing over it, because a phone spends
+     its height on the cards and not on the note saying there are none. */
+  .nb .empty-col {
+    flex-direction: row; justify-content: center; gap: 8px;
+    padding: 14px 10px;
+  }
+  .nb .empty-col > span {
+    min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .nb .empty-mark { align-self: center; }
+
+  /* ============================================================
+     ONE ROW PER CARD (AGB-64)
+     The card that came before this spent three lines and a separator on
+     every entry, so a phone showed five of them. A row shows what tells
+     cards apart and nothing else: a letter for the type, the short id, the
+     title with all the width that is left, and one number at the edge. The
+     rest of the card is one tap away, in the panel that has room for it.
+
+     Density is bought from padding, separators and font size, never from the
+     tap target: the row keeps its 44px, which is the whole reason it does not
+     go below that height.
+     ============================================================ */
+  .nb .board-mobile .col {
+    display: block;
+    border: 1px solid var(--nebula-glass-border);
+    border-radius: var(--oc-radius-tile);
+    background: rgb(var(--oc-white-rgb) / 0.02);
+    overflow: hidden;
+  }
+  .nb .ml-row {
+    display: flex; align-items: center; gap: 7px;
+    min-height: 44px; padding: 0 10px;
+    /* a hairline instead of a gap: the separation costs one pixel, not twelve */
+    border-bottom: 1px solid rgb(var(--oc-white-rgb) / 0.05);
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .nb .ml-row:last-child { border-bottom: 0; }
+  /* AGB-67: a hairline alone made every row look like the next one, so
+     finding where a card ended was counting, not scanning. The zebra is the
+     separation that costs no height at all: the row keeps its 44px and the
+     screen keeps the same number of cards. The divider goes up with it,
+     because on an OLED phone five percent of white on black is a rumour. */
+  .nb .ml-row { border-bottom-color: rgb(var(--oc-white-rgb) / 0.08); }
+  .nb .ml-row:nth-child(odd) { background: rgb(var(--oc-white-rgb) / 0.028); }
+  .nb .ml-row:active { background: rgb(var(--oc-white-rgb) / 0.07); }
+  .nb .ml-row.dim { opacity: 0.55; }
+  /* running: the pulse becomes an edge, which costs no width at all */
+  .nb .ml-row.exec { box-shadow: inset 2px 0 0 var(--oc-info); }
+  .nb .ml-row.picked { background: rgb(var(--oc-info-rgb) / 0.10); }
+  .nb .ml-row .card-pick { flex: none; width: 16px; height: 16px; margin: 0; }
+  /* the type in one character, coloured as its chip was */
+  .nb .ml-type {
+    flex: none; width: 11px; text-align: center;
+    font-family: var(--nebula-font-label); font-size: 11px;
+    font-weight: var(--nebula-weight-medium);
+    color: var(--nebula-text-tertiary);
+  }
+  .nb .ml-type.feature { color: var(--oc-info); }
+  .nb .ml-type.bug { color: var(--oc-danger); }
+  .nb .ml-type.rfc { color: var(--nebula-mist-glow); }
+  .nb .ml-row .cid {
+    flex: none;
+    font-family: var(--nebula-font-mono); font-size: 10px;
+    letter-spacing: 0.04em; color: var(--nebula-text-tertiary);
+  }
+  .nb .ml-row .cid-prefix {
+    color: var(--nebula-text-secondary); font-weight: var(--nebula-weight-medium);
+  }
+  /* the title takes everything left and gives up only at its own end */
+  .nb .ml-title {
+    flex: 1 1 auto; min-width: 0;
+    font-size: 13px; line-height: 1.25; color: var(--nebula-text-primary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  /* AGB-66: who ran it, in the width a glyph costs. The spelled name never
+     fit this row; the mark does, it is read faster than the word, and it
+     sits with the number because the right edge is where the run's own facts
+     live. A CLI with no mark spends a little more, and no more than that. */
+  .nb .ml-row .cli-mark { width: 14px; height: 14px; }
+  .nb .ml-row .cli-name { max-width: 54px; font-size: 9px; }
+  /* the review chip, reduced to the dot that still makes a person tap */
+  .nb .ml-flag {
+    flex: none; width: 6px; height: 6px; border-radius: var(--oc-radius-circle);
+    background: var(--oc-warn); box-shadow: var(--oc-glow-pip);
+  }
+  /* the one number, on the edge, never shrinking a digit */
+  .nb .ml-num {
+    flex: none;
+    font-family: var(--nebula-font-mono); font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    color: var(--nebula-text-secondary);
+  }
+  .nb .ml-num.tel-tokens, .nb .ml-num.tel-duration { color: var(--nebula-text-tertiary); }
+
+  /* ============================================================
+     AGB-72: below this breakpoint the detail is a sheet, not a panel.
+
+     AGB-67 made the surface opaque but left it floating: a card centred
+     over the list, so a strip of the board stayed at both edges and the
+     overlay still faded in, which for a fifth of a second put the list's
+     text and the card's text on the screen at the same time. A phone has
+     no room for a window. The detail takes the whole viewport, edge to
+     edge, and it is opaque from the very first frame: the overlay stops
+     fading and simply is the sheet's floor, while what moves is the panel
+     itself, a short slide over a surface that was never see-through.
+     ============================================================ */
+  .nb .ov {
+    padding: 0;
+    background: var(--nebula-panel-solid);
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    /* no opacity here: a fade over readable text is the bug itself */
+    animation: none;
+    align-items: stretch;
+    overflow: hidden;
+    overscroll-behavior: contain;
+  }
+  .nb .detail {
+    width: 100%; max-width: none; height: 100%;
+    border: 0; border-radius: 0; box-shadow: none;
+    background: var(--nebula-panel-solid);
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    /* the sheet carries its own scroll, so nothing scrolls behind it */
+    overflow-y: auto; overscroll-behavior: contain;
+    animation: nb-sheet-in .22s cubic-bezier(.2,.8,.2,1);
+  }
+  /* the drawn corners belong to a card; a sheet has the screen's own */
+  .nb .detail.nebula-corners::before { content: none; }
+  .nb .bulk-bar { max-width: calc(100vw - 20px); flex-wrap: wrap; row-gap: 8px; }
+
+  /* ============================================================
+     AGB-68: the panel, laid out for the width it actually gets.
+
+     The two-column grid was written for 700px and kept splitting 358 in
+     half, which pushed the harness off the right edge. Here every pair
+     stacks, the panel spends its padding on the text instead of on its
+     margins, and everything a thumb has to hit is at least 44px: the close
+     button, the buttons that decide the card, and the copy chips.
+     ============================================================ */
+  .nb .detail {
+    padding:
+      calc(20px + env(safe-area-inset-top, 0px))
+      calc(16px + env(safe-area-inset-right, 0px))
+      calc(28px + env(safe-area-inset-bottom, 0px))
+      calc(16px + env(safe-area-inset-left, 0px));
+  }
+  .nb .d-grid { grid-template-columns: 1fr; gap: var(--nebula-space-3) 0; }
+  .nb .detail h3 { font-size: 18px; }
+  /* AGB-72: the sheet scrolls under the way out, so the way out stays put.
+     It sits on the sheet's own colour because the text passes beneath it. */
+  .nb .d-close {
+    position: fixed; z-index: var(--oc-z-content);
+    top: calc(12px + env(safe-area-inset-top, 0px));
+    right: calc(12px + env(safe-area-inset-right, 0px));
+    width: 44px; height: 44px;
+    font-size: 15px;
+    background: var(--nebula-panel-solid);
+  }
+  .nb .d-head, .nb .detail h3 { padding-right: 52px; }
+  /* stacked and full width, the deciding button last where the thumb is */
+  .nb .d-actions-row { flex-direction: column; align-items: stretch; }
+  .nb .d-btn-pri, .nb .d-btn-sec, .nb .d-btn-ghost {
+    text-align: center; margin-right: 0;
+  }
+  .nb .d-copy { min-height: 38px; display: inline-flex; align-items: center; }
+  /* the column switcher is a control a thumb hits, so it takes the floor */
+  .nb .ml-head { min-height: 44px; }
+  .nb .ml-row .card-pick { width: 20px; height: 20px; }
+}
+
+/* ---------- OCL-82 / OCL-124: one row of chrome once the bar collapses ----------
+   The two levels of §3 are a desktop idea. Where level 2 has already folded
+   into the Filtros button there is nothing left on it but that button, and
+   the board was spending a whole rung — plus the air around it — on one
+   control while the list below it lost the same height. Three bands for four
+   controls that fit on one is the waste this card was opened for.
+
+   So at the collapsed widths the two levels stop being boxes: both go
+   `display: contents`, their controls become items of the wrap, and the wrap
+   is the single row. Order is stated here because the DOM order is the
+   desktop's — wordmark, then the identity side, then the level that carries
+   Filtros — and on one line the reading is wordmark, Filtros, then the two
+   things that belong to the far edge. The rule under level 2 moves onto the
+   wrap with it: one line of chrome, one line under it.
+
+   The condition is exactly where `.filters-btn` shows, and not one pixel
+   wider: level 2 only folds below 768px, so the merged row starts there. */
+@media (max-width: 768px), (orientation: landscape) and (max-height: 500px) {
+  .nb .topbar-wrap {
+    display: flex; align-items: center; flex-wrap: nowrap;
+    gap: var(--nebula-space-2);
+    padding: var(--nebula-space-1) 0 10px;
+    border-bottom: 1px solid var(--nebula-glass-border);
+  }
+  /* the levels keep their names for the DOM and give up their boxes */
+  .nb .topbar-l1, .nb .topbar.topbar-l1, .nb .topbar-l2 { display: contents; }
+  /* one line means nothing on it may wrap into a second */
+  .nb .topbar-l1 > *, .nb .topbar-l2 > * { flex: none; }
+  /* the level's own rule and bottom air belong to the wrap now */
+  .nb .topbar-l2 { border-bottom: 0; }
+
+  /* wordmark, Filtros, then the far edge. The 8px here plus the row's 8px of
+     gap is the 16px the wordmark owes the first control (checklist 4), and it
+     is never spent, at any width on this ladder. */
+  .nb .topbar-l1 > .logo { order: 1; margin-right: var(--nebula-space-2); }
+  /* the split between the two groups is a margin, not an element: level 1's
+     spacer would still be charged a gap on each side of its zero width, and
+     at 320px that is 8px the row does not have. One auto margin does the same
+     job for free, whatever the right group happens to hold. */
+  .nb .topbar-l1 > .spacer { display: none; }
+  .nb .topbar-l2 > .filters-btn {
+    order: 2; display: inline-flex; margin-right: auto;
+  }
+  .nb .topbar-l1 > .state-chip { order: 3; }
+  .nb .topbar-l1 > .board-total-wrap { order: 4; }
+  .nb .topbar-l1 > .account-menu { order: 5; }
+  /* closed it is display:none; open it is the panel, and it hangs off the
+     wrap now that the level it used to hang off has no box of its own */
+  .nb .topbar-l2 > .topbar-more { order: 6; }
+}
+
+/* The shrink ladder for the merged row, in the order this card sets: the stat
+   gives up its label first, then its figure walks down the type ramp, then
+   the Filtros control drops its word — never its funnel, its count or its
+   accessible name — and the wordmark yields last and only a little. Every
+   reading the row gives up is still one tap away in the stat's popover. The
+   16px between wordmark and first control is never spent (checklist 4). */
+@media (max-width: 640px) {
+  /* "Custo" goes; the labelled reading stays in the popover (§4) */
+  .nb .topbar-wrap .bt-label { display: none; }
+  .nb .topbar-wrap .board-total { padding-left: 10px; }
+}
+@media (max-width: 470px) {
+  /* the figure steps from the display size to the body step of the ramp; it
+     is still the only thing on the row set in the data face at full strength */
+  .nb .topbar-wrap .board-total .bt-lead { font-size: 13px; }
+}
+@media (max-width: 400px) {
+  /* the word goes, the funnel and the count stay: the button is still named
+     for a screen reader by its aria-label, and the badge is the count the
+     card asked to keep beside the wordmark */
+  .nb .topbar-wrap .filters-btn > span:not(.badge) { display: none; }
+  .nb .topbar-wrap .filters-btn { padding-left: 10px; padding-right: 10px; }
+  /* the mark gives up two pixels of height, not its place on the row */
+  .nb .topbar-l1 > .logo svg { height: 14px; }
+}
+@media (max-width: 350px) {
+  /* the last rung, for the 320px screens: the figure takes the data step of
+     the ramp and every control trims its padding. Below this there is nothing
+     left to give that is not a control somebody needs. */
+  .nb .topbar-wrap .board-total .bt-lead { font-size: 11px; }
+  .nb .topbar-wrap .board-total { padding-left: 6px; }
+  .nb .topbar-wrap .filters-btn { padding-left: 6px; padding-right: 6px; gap: 4px; }
+  .nb .topbar-l1 > .logo svg { height: 13px; }
+}
+
+/* ============================================================
+   AUTH (login + setup): the first screen an instance ever shows
+
+   The tokens file has said "login/setup depois" since it was written, and
+   until now those two screens ran on the legacy globals.css: a lighter
+   background than the void, a different radius, sans-serif captions, no
+   atmosphere and no glass. A person met one product on the way in and a
+   different one the moment they were through the door.
+
+   Nothing here is new: it is the panel, the field, the mono caption and the
+   white pill the wizard already uses, applied to the two screens that were
+   left out. Same content, same fields, same order.
+   ============================================================ */
+.nb-auth .stage { min-height: calc(100vh - 88px); }
+.nb-auth .auth-card {
+  width: 420px; max-width: 100%;
+  padding: 30px 32px 28px;
+  text-align: left;
+}
+.nb-auth .brand {
+  font-family: var(--nebula-font-mono); font-size: 10px;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--nebula-text-tertiary);
+  margin: 0 0 22px;
+}
+.nb-auth h1 {
+  font-size: 26px; font-weight: var(--nebula-weight-medium);
+  letter-spacing: -.015em; margin: 0 0 8px;
+  text-shadow: var(--nebula-glow-text);
+}
+.nb-auth .sub {
+  font-size: 13px; line-height: 1.5; color: var(--nebula-text-secondary);
+  margin: 0 0 24px;
+}
+/* the legacy globals.css styles every <form> as a panel; inside the glass
+   card the form is just the stack of fields it always was */
+.nb-auth form {
+  display: flex; flex-direction: column; gap: 0;
+  background: none; border: 0; border-radius: 0; padding: 0;
+}
+.nb-auth .field:last-of-type { margin-bottom: 4px; }
+.nb-auth .btn-next {
+  width: 100%; margin-top: 14px;
+}
+/* An error belongs beside the thing that failed, not at the bottom of the
+   screen, and it keeps its own line so the button never shifts under a
+   thumb already travelling towards it. */
+.nb-auth .auth-err {
+  display: flex; align-items: flex-start; gap: 8px;
+  margin: 12px 0 0; padding: 10px 12px;
+  border: 1px solid rgb(var(--oc-danger-rgb) / .3); border-radius: var(--oc-radius-box);
+  background: rgb(var(--oc-danger-rgb) / .06);
+  color: var(--oc-danger); font-size: 12.5px; line-height: 1.45;
+}
+.nb-auth .auth-err::before {
+  content: "!"; flex: none;
+  width: 16px; height: 16px; margin-top: 1px;
+  border: 1px solid rgb(var(--oc-danger-rgb) / .5); border-radius: var(--oc-radius-circle);
+  font-family: var(--nebula-font-label); font-size: 10px; line-height: 14px;
+  text-align: center;
+}
+/* The rule a field has to satisfy, said under the field, before the submit
+   goes dead on it. Quiet while unmet, quieter once met: it is guidance, not
+   an error, until somebody actually contradicts it. */
+.nb-auth .auth-rule {
+  margin: 6px 0 0;
+  font-family: var(--nebula-font-label); font-size: 10px;
+  letter-spacing: .04em; color: var(--nebula-text-tertiary);
+}
+.nb-auth .auth-rule.ok { color: rgb(var(--oc-ok-rgb) / .8); }
+.nb-auth .auth-rule.bad { color: var(--oc-danger); }
+
+.nb-auth .foot {
+  margin: 18px 0 0;
+  font-family: var(--nebula-font-label); font-size: 9.5px;
+  letter-spacing: .03em; line-height: 1.6;
+  color: var(--nebula-text-tertiary);
+}
+
+/* ============================================================
+   NARROW WINDOWS: insights, settings, the wizard and auth
+
+   The phone block above answers for the board. These four screens never got
+   an answer at all: they inherited .nb's padding and nothing else, so a
+   five-column table was clipped rather than scrolled, two of the seven
+   settings tabs sat past the right edge with no way to reach them, and the
+   wizard footer printed "configure later" on top of its own primary button.
+
+   Same rules the board earned: one line per piece of information, density
+   instead of decoration, and a target a thumb can hit.
+   ============================================================ */
+@media (max-width: 768px), (orientation: landscape) and (max-height: 500px) {
+  /* the crumb of a page that is not the board: one line, ellipsis, and the
+     back link keeps the far edge whatever the workspace is called */
+  .nb .page > .topbar .crumb {
+    flex: 1 1 auto; min-width: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .nb .page > .topbar .btn-ghost { flex: none; margin-left: auto; }
+
+  .nb h1 { font-size: 21px; }
+  .nb .page-sub { font-size: 12px; margin-bottom: 16px; }
+
+  /* ---------- settings ---------- */
+  /* the strip scrolls under the thumb; the fade says there is more of it */
+  .nb .settabs {
+    gap: 18px; margin-bottom: 18px; padding-right: 30px;
+    /* the fade is painted on the strip itself so it travels with the scroll
+       container instead of sitting over the pane below */
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 28px), transparent);
+    mask-image: linear-gradient(to right, black calc(100% - 28px), transparent);
+  }
+  .nb .settabs button { scroll-snap-align: start; }
+  .nb .tabs {
+    padding-right: 26px;
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
+    mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
+  }
+
+  /* the money and policy tables stopped scrolling sideways at 940: below that
+     each row is a block, so there is no minimum width left to enforce */
+
+  /* a token is three facts and one action: on a phone they stop fighting for
+     one row. The revoke button keeps the far edge and its full target. */
+  .nb .tok { flex-wrap: wrap; gap: 2px 12px; padding: 10px 14px; }
+  .nb .tok .meta { flex: 1 1 100%; }
+  .nb .tok .val { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .nb .btn-rev { flex: none; padding: 5px 16px; }
+
+  /* the generate row is a column: a 320px input in a 358px screen leaves no
+     room for the two buttons beside it */
+  .nb .gen-row { flex-wrap: wrap; }
+  .nb .gen-row .input { flex: 1 1 100%; max-width: none !important; }
+  .nb .gen-row .btn-new { flex: 1 1 auto; }
+  .nb .save-row .btn-new { }
+
+  /* the suggestion chip becomes the row it always wanted to be, which is
+     what buys its button the full target without inflating the desktop */
+  .nb .seen-row { flex-direction: column; align-items: stretch; }
+  .nb .seen-chip { justify-content: space-between; padding: 8px 8px 8px 14px; }
+  .nb .seen-row > .btn-new { }
+
+  /* the executors grid: three cards across a phone is three cards nobody can
+     read the name of */
+  .nb .exec-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .nb .exec.on .models { max-height: 180px; }
+  .nb .exec-add.on .models { max-height: 220px; }
+
+  /* ---------- wizard ---------- */
+  .nb .wizard { --wiz-pad: 20px; max-width: 100%; padding-top: 22px; }
+  /* on a phone .nb pays 16px top and 48px bottom */
+  .nb-center .stage { min-height: calc(100vh - 64px); padding: 12px 0; }
+  .nb .steps-ind { gap: 14px; margin-bottom: 28px; font-size: 10px; }
+  /* the fixed floor was there to stop the footer jumping between steps; on a
+     phone it only manufactures dead space above a footer that is already at
+     the bottom of a scrolling page */
+  .nb .wstep { min-height: 0; }
+  .nb .wstep h2 { font-size: 21px; }
+  .nb .grid2 { grid-template-columns: 1fr; gap: 0; }
+  /* the caption in the corner needs its corner kept clear */
+  .nb .conn { padding-bottom: 26px; }
+  .nb .conn .l2 { overflow-wrap: anywhere; }
+  .nb .wbtns { flex-wrap: wrap; row-gap: 10px; }
+
+  /* ---------- auth ---------- */
+  .nb-auth .auth-card { padding: 24px 20px 22px; }
+  .nb-auth h1 { font-size: 22px; }
+  .nb-auth .stage { min-height: calc(100vh - 64px); }
+}
+
+/* Checkbox and radio rows are controls, not paragraphs: the whole row is the
+   target, at every width, and the box itself carries the system's accent. */
+.nb .upd-toggle { padding: 4px 0; }
+.nb .upd-toggle input { width: 16px; height: 16px; margin-top: 2px; }
+.nb .upd-toggle input:focus-visible { outline: none; box-shadow: var(--nebula-focus-ring-offset); border-radius: var(--oc-radius-control-sm); }
+
+/* Every link that reads as an action gets the same ring as the buttons. */
+.nb .btn-ghost:focus-visible,
+.nb .reveal:focus-visible,
+.nb .ins-filter a:focus-visible { outline: none; box-shadow: var(--nebula-focus-ring-offset); border-radius: var(--oc-radius-pill); }
+
+/* The one screen with no chrome to escape by: at 320 the wizard panel gives
+   up the last of its side padding rather than the width of its inputs. */
+@media (max-width: 380px) {
+  .nb .wizard { --wiz-pad: 14px; }
+  .nb .exec-grid { grid-template-columns: 1fr; }
+  .nb .settabs { gap: 14px; }
+}
+
+/* ============================================================
+   AGB-76: the wizard and the auth screens use the space they are given
+
+   These three screens were laid out for a panel and never for a page. On a
+   1440 desktop the wizard stood as a 760px column with three hundred pixels
+   of empty glass under every short step, and login met a new instance with a
+   420px card floating in the middle of nothing. Meanwhile their own contents
+   were the cramped part: a lone prefix field with half a row to itself, model
+   chips clipped by a fixed max-height, and a 9.5px line of mono running the
+   full width of the panel with no leading under it.
+
+   Nothing here is a new idea: same panel, same field, same mono caption, same
+   white pill. What changes is where the room goes. Prose keeps a reading
+   measure, the wide screen gets a second column that carries meaning, and the
+   air that was pooling at the bottom of a panel is spent between the things
+   that needed it.
+   ============================================================ */
+
+/* ---------- wizard: the rail beside the step ---------- */
+/* Single column below the two-column width. The gap under the landmarks was
+   44px and put the question of the step almost a hundred pixels below the top
+   of the panel, which is space no one asked for on any screen. */
+.nb .steps-ind { margin-bottom: 30px; }
+.nb .wiz-steps { min-width: 0; }
+
+/* The three fields of the first step are one row, so the prefix stops being
+   an orphan with half a line to itself. It is four characters wide and it is
+   sized for four characters. */
+@media (min-width: 769px) {
+  .nb .wiz-fields {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 168px;
+    align-items: start;
+  }
+}
+
+@media (min-width: 1120px) {
+  .nb .wizard { --wiz-pad: 44px; width: 1060px; }
+  .nb .wiz-body {
+    display: grid;
+    grid-template-columns: 216px minmax(0, 1fr);
+    gap: 52px;
+    align-items: start;
+  }
+  /* the landmarks become a rail: one under the next, each on the line that
+     says where the person is, with the state carried by the edge beside it */
+  .nb .wiz-body .steps-ind {
+    flex-direction: column;
+    gap: 0;
+    margin: 4px 0 0;
+    position: sticky; top: 34px;
+  }
+  .nb .wiz-body .steps-ind li {
+    padding: 9px 0 9px 14px;
+    border-left: 1px solid rgb(var(--oc-white-rgb) / 0.08);
+    white-space: normal; overflow: visible;
+    transition: opacity .3s, color .3s, border-color .3s;
+  }
+  .nb .wiz-body .steps-ind li.cur { border-left-color: var(--nebula-mist-glow); }
+  .nb .wiz-body .steps-ind li.done { border-left-color: rgb(var(--oc-ok-rgb) / .55); }
+  /* A question set at 26px across 700px is a headline nobody reads as one
+     line; it is given the measure a headline is read at, and the sentence
+     under it the measure a sentence is read at. */
+  .nb .wstep h2 { max-width: 26ch; }
+  .nb .wstep .sub { max-width: 62ch; }
+  /* a floor so the footer does not jump between steps, and no more than a
+     floor: the rest of the panel belongs to whatever the step has to say */
+  .nb .wstep { min-height: 300px; }
+  /* the convention line is prose in mono, and it reads at a measure too */
+  .nb .preview { max-width: 80ch; }
+}
+
+/* The chips of a checked CLI were clipped by a fixed 90px: the last row of
+   models, and the field that adds one, were cut in half by the box that was
+   supposed to reveal them. The cap is now high enough to hold what is there,
+   and it is still a cap, so the open and closed states still animate. */
+.nb .wizard .exec.on .models { max-height: 260px; }
+.nb .wizard .exec-add.on .models { max-height: 300px; }
+
+/* ---------- wizard: the notes under the terminal blocks ---------- */
+/* 9.5px of mono with no leading, run across the full width of the panel, was
+   the least readable text in the product. It gets a line height and a measure
+   and stops being a wall. */
+.nb .tok-note { line-height: 1.6; max-width: 78ch; }
+
+/* The code and the sentence that says what to do with it, side by side. */
+.nb .pair-head {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: 10px 22px; margin-bottom: 14px;
+}
+.nb .pair-head .pair-code { margin: 0; }
+.nb .pair-head .pair-hint {
+  flex: 1 1 280px; min-width: 0; margin: 0; max-width: 52ch;
+}
+
+/* The waiting card laid its caption over its own second line with an absolute
+   corner. Two columns instead: the state on the left, the caption on the
+   right, and neither can ever reach the other. */
+.nb .conn {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 16px;
+  padding: 14px 16px;
+}
+.nb .conn .l1, .nb .conn .l2 { grid-column: 1; }
+.nb .conn .cap {
+  position: static;
+  grid-column: 2; grid-row: 1 / span 2;
+  align-self: center; text-align: right;
+}
+
+/* ---------- auth: the first screen an instance ever shows ---------- */
+/* Below the two-column width nothing changes: one card, centred, as before. */
+.nb-auth .auth-shell {
+  display: flex; justify-content: center;
+  width: 100%;
+}
+.nb-auth .auth-aside { display: none; }
+
+/* Wide enough for a second column, the void beside the card becomes the one
+   thing a person needs on the way in: what this is, and the three facts that
+   are the whole reason it is self-hosted. The card keeps its 420px, because
+   a form does not get better by getting wider. */
+@media (min-width: 1000px) {
+  .nb-auth .auth-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 420px;
+    gap: 84px;
+    align-items: center;
+    width: min(1000px, 100%);
+  }
+  .nb-auth .auth-aside { display: block; }
+  /* the aside says it once, in full: the card's own strip would repeat it */
+  .nb-auth .auth-card .brand { display: none; }
+  .nb-auth .auth-card { padding-top: 34px; }
+}
+
+.nb-auth .auth-mark {
+  margin: 0 0 22px;
+  font-size: 15px;
+  font-weight: var(--nebula-weight-medium);
+  letter-spacing: var(--nebula-tracking-tight);
+  text-shadow: var(--nebula-glow-text);
+}
+.nb-auth .auth-mark span { color: var(--nebula-mist); }
+.nb-auth .auth-lead {
+  margin: 0 0 28px;
+  max-width: 20ch;
+  font-size: 30px; line-height: 1.24;
+  font-weight: var(--nebula-weight-light);
+  letter-spacing: var(--nebula-tracking-tight);
+  color: var(--nebula-text-primary);
+}
+.nb-auth .auth-facts {
+  margin: 0; padding: 0; list-style: none;
+  display: flex; flex-direction: column; gap: 11px;
+  font-family: var(--nebula-font-label); font-size: 11px;
+  letter-spacing: .04em; line-height: 1.5;
+  color: var(--nebula-text-tertiary);
+}
+.nb-auth .auth-facts li { display: flex; align-items: flex-start; gap: 11px; }
+.nb-auth .auth-facts li::before {
+  content: ""; flex: none;
+  /* centred on the first line of its own item, whatever that line wraps to */
+  width: 4px; height: 4px; margin-top: 6px; border-radius: var(--oc-radius-circle);
+  background: var(--nebula-mist); opacity: .75;
+}
+
+/* One rhythm down the form: label to field, field to field, and the rule a
+   field carries reading as part of that field instead of crowding the label
+   of the next one. */
+.nb-auth .field { margin-bottom: 16px; }
+.nb-auth .field label { margin-bottom: 6px; }
+.nb-auth .auth-rule { margin-top: 7px; line-height: 1.5; }
+.nb-auth .btn-next { margin-top: 20px; }
+.nb-auth .foot { margin-top: 22px; }
+
+/* ---------- AGB-76: the glyphs from the shared set, and the room they need ----------
+   Every one of these was a character inside a label: a chevron the font drew
+   at its own weight, a tick that was a full stop away from being a comma. The
+   set draws them at one weight and one optical size, in the colour of the text
+   they sit beside. All that is left here is the gap between the glyph and the
+   word, which is the one thing a label knows and an icon does not. */
+.nb .copy { display: inline-flex; align-items: center; gap: 6px; }
+.nb .btn-back, .nb .btn-next { gap: 7px; }
+.nb-auth .auth-rule { display: flex; align-items: center; gap: 6px; }
+
+/* ---------- OCL-102: the plugin offer, and the manual path under it ---------- */
+/* The block is the same in onboarding step three and in the MCP tokens tab,
+   so its rules live once here and neither surface owns them. */
+.nb .plug { margin-bottom: 22px; }
+.nb .plug-lead {
+  font-size: 12.5px; line-height: 1.6; max-width: 74ch;
+  color: var(--nebula-text-secondary); margin: 0 0 14px;
+}
+.nb .plug-name { max-width: 420px; }
+/* The command before a code exists: same block, same width, dimmed, so the
+   shape of what is coming is already on screen and the copy button is not
+   offering six bullet points. */
+.nb .cmd.ghost { color: var(--nebula-text-tertiary); }
+.nb .plug-actions {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: 10px 16px; margin-top: 12px;
+}
+.nb .plug-state {
+  font-family: var(--nebula-font-label); font-size: 10.5px; letter-spacing: .04em;
+  line-height: 1.5; color: var(--nebula-text-tertiary);
+}
+.nb .plug-state b { color: var(--nebula-text-primary); font-weight: 500; }
+.nb .plug .tok-note { margin-top: 10px; }
+
+/* The manual MCP entry is still here, and it is still correct; it is just no
+   longer the first thing offered, because it brings the access and none of the
+   skill, hooks or commands the plugin carries. */
+.nb .alt-path {
+  border-top: 1px solid var(--nebula-glass-border);
+  padding-top: 14px; margin-bottom: 18px;
+}
+.nb .alt-path summary {
+  width: max-content; cursor: pointer; color: var(--nebula-text-secondary);
+  font-family: var(--nebula-font-label); font-size: 11px; letter-spacing: .05em;
+  min-height: 34px; display: flex; align-items: center;
+}
+.nb .alt-path summary:hover { color: var(--nebula-text-primary); }
+.nb .alt-path summary:focus-visible {
+  outline: none; border-radius: var(--oc-radius-chip);
+  box-shadow: var(--oc-focus-ring-inset);
+}
+
+/* ============================================================
+   SKELETON — loading placeholders for board, modal, insights
+   and settings. Uses only the --oc-* surface tokens so the
+   shimmer stays inside the greyscale ramp and never flashes
+   brighter than the content it replaces.
+   ============================================================ */
+
+.nb .sk {
+  background: var(--oc-surface-subtle);
+  border-radius: var(--oc-radius-chip);
+  pointer-events: none;
+  user-select: none;
+}
+
+.nb .sk-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.nb .sk-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(var(--oc-white-rgb) / 0.045) 40%,
+    rgb(var(--oc-white-rgb) / 0.075) 50%,
+    rgb(var(--oc-white-rgb) / 0.045) 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  animation: sk-shimmer 1.6s var(--oc-ease-atmosphere) infinite;
+}
+@keyframes sk-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nb .sk-shimmer::after {
+    animation: none;
+    background: none;
+  }
+}
+
+.nb .sk-line {
+  height: 1em;
+  width: 100%;
+}
+.nb .sk-line.short { width: 45%; }
+.nb .sk-line.medium { width: 65%; }
+.nb .sk-line.long { width: 85%; }
+
+.nb .sk-text {
+  height: 0.85em;
+  margin: 0.35em 0;
+}
+
+.nb .sk-circle {
+  border-radius: var(--oc-radius-circle);
+  flex: none;
+}
+
+.nb .sk-card {
+  background: var(--nebula-glass-bg);
+  border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--nebula-glass-radius);
+  padding: 6px 10px;
+}
+
+/* ---------- board skeleton ---------- */
+.nb .sk-board {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--nebula-space-4);
+}
+.nb .sk-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nebula-space-3);
+  min-height: 300px;
+}
+.nb .sk-col-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--nebula-space-2);
+  padding: 2px 6px 10px;
+}
+.nb .sk-col-head .sk-line {
+  width: 80px;
+  height: 11px;
+}
+.nb .sk-col-head .sk-circle {
+  width: 14px;
+  height: 14px;
+}
+.nb .sk-col-head .sk-count {
+  width: 24px;
+  height: 11px;
+  margin-left: auto;
+}
+.nb .sk-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nebula-space-1);
+}
+.nb .sk-card-body .sk-id-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nebula-space-1);
+}
+.nb .sk-card-body .sk-id-row .sk-line {
+  width: 64px;
+  height: 10px;
+}
+.nb .sk-card-body .sk-title {
+  height: 12px;
+  margin: 1px 0;
+}
+.nb .sk-card-body .sk-title.short { width: 70%; }
+.nb .sk-card-body .sk-foot {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  padding-top: 3px;
+  border-top: 1px solid var(--nebula-plan-divider);
+}
+.nb .sk-card-body .sk-foot .sk-line {
+  height: 10px;
+}
+.nb .sk-card-body .sk-foot .sk-line:nth-child(1) { width: 46px; }
+.nb .sk-card-body .sk-foot .sk-line:nth-child(2) { width: 86px; }
+.nb .sk-card-body .sk-foot .sk-line:nth-child(3) { width: 52px; margin-left: auto; }
+
+/* ---------- detail / modal skeleton ---------- */
+.nb .sk-detail {
+  width: 700px;
+  max-width: 96vw;
+  padding: 24px;
+  background: var(--oc-modal-bg);
+  position: relative;
+}
+.nb .sk-detail-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  row-gap: 6px;
+  padding-right: 44px;
+  gap: var(--nebula-space-2);
+  margin-bottom: var(--nebula-space-2);
+}
+.nb .sk-detail-head .sk-line {
+  height: 11px;
+}
+.nb .sk-detail-head .sk-id { width: 64px; }
+.nb .sk-detail-head .sk-location { width: 180px; }
+.nb .sk-detail-head .sk-tag { width: 56px; border-radius: var(--oc-radius-pill); }
+.nb .sk-detail-head .sk-status { width: 74px; border-radius: var(--oc-radius-pill); }
+.nb .sk-detail h3 {
+  font-size: 20px;
+  height: 1.1em;
+  width: 82%;
+  margin-bottom: var(--nebula-space-4);
+  padding-right: 44px;
+}
+.nb .sk-detail-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: var(--nebula-space-6);
+}
+.nb .sk-detail-main,
+.nb .sk-detail-rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nebula-space-2);
+}
+.nb .sk-detail-sec {
+  border-top: 1px solid var(--nebula-plan-divider);
+  padding: var(--nebula-space-3) 0;
+}
+.nb .sk-detail-sec .sk-label {
+  width: 90px;
+  height: 10px;
+  margin-bottom: 8px;
+}
+.nb .sk-detail-sec .sk-text { margin: 0.45em 0; }
+.nb .sk-detail-sec .sk-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 8px 0;
+}
+.nb .sk-detail-sec .sk-check .sk-circle {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+}
+.nb .sk-detail-sec .sk-check .sk-line { height: 10px; }
+.nb .sk-detail-sec .sk-check .sk-line:nth-child(2) { width: 78%; }
+.nb .sk-detail-sec .sk-check .sk-line:nth-child(3) { width: 52%; }
+.nb .sk-detail-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: var(--nebula-space-4);
+  padding-top: var(--nebula-space-3);
+  border-top: 1px solid var(--nebula-plan-divider);
+}
+.nb .sk-detail-actions .sk-btn {
+  width: 96px;
+  height: 32px;
+  border-radius: var(--oc-radius-control);
+}
+
+/* ---------- insights skeleton ---------- */
+.nb .sk-ins-page {
+  max-width: 1320px;
+}
+.nb .sk-ins-topbar {
+  margin-bottom: var(--nebula-space-4);
+}
+.nb .sk-ins-topbar-l1 {
+  display: flex;
+  align-items: center;
+  gap: var(--nebula-space-4);
+  padding: 10px 0;
+}
+.nb .sk-ins-topbar-l1 .sk-line:nth-child(1) { width: 120px; height: 15px; }
+.nb .sk-ins-topbar-l1 .sk-line:nth-child(2) { width: 110px; height: 13px; margin-left: auto; }
+.nb .sk-ins-topbar-l2 {
+  display: flex;
+  align-items: center;
+  gap: var(--nebula-space-3);
+  padding: 0 0 12px;
+  border-bottom: 1px solid var(--nebula-glass-border);
+}
+.nb .sk-ins-topbar-l2 .sk-line { width: 160px; height: 12px; }
+.nb .sk-ins-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: var(--nebula-space-4);
+}
+.nb .sk-ins-head .sk-line:nth-child(1) { width: 120px; height: 24px; }
+.nb .sk-ins-head .sk-line:nth-child(2) { width: 320px; height: 12px; }
+
+.nb .sk-ins-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: var(--nebula-space-4);
+  margin-bottom: var(--nebula-space-4);
+}
+.nb .sk-ins-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: var(--nebula-glass-bg);
+  border: 1px solid var(--nebula-glass-border);
+  min-height: 96px;
+}
+.nb .sk-ins-tile .sk-line:nth-child(1) { width: 70px; height: 10px; }
+.nb .sk-ins-tile .sk-line:nth-child(2) { width: 96px; height: 24px; margin-top: auto; }
+.nb .sk-ins-tile .sk-line:nth-child(3) { width: 120px; height: 10px; }
+
+.nb .sk-ins-subtotals {
+  display: flex;
+  gap: 18px;
+  margin: -8px 0 var(--nebula-space-4);
+  padding: 9px 12px;
+  border-radius: 9px;
+}
+.nb .sk-ins-subtotals .sk-line { width: 180px; height: 10px; }
+
+.nb .sk-ins-charts {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: var(--nebula-space-4);
+  margin-bottom: var(--nebula-space-4);
+}
+.nb .sk-ins-panel {
+  padding: 16px 18px 14px;
+  border-radius: 12px;
+  background: var(--nebula-glass-bg);
+  border: 1px solid var(--nebula-glass-border);
+  min-height: 180px;
+}
+.nb .sk-ins-panel .sk-line { height: 11px; }
+.nb .sk-ins-panel .sk-line:nth-child(1) { width: 90px; margin-bottom: 12px; }
+.nb .sk-ins-panel .sk-bar {
+  height: clamp(80px, 8vw, 120px);
+  border-radius: var(--oc-radius-chip) var(--oc-radius-chip) 2px 2px;
+  margin-top: auto;
+}
+
+.nb .sk-ins-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--nebula-space-4);
+  margin-bottom: var(--nebula-space-4);
+}
+.nb .sk-ins-grid .sk-ins-panel { min-height: 220px; }
+.nb .sk-ins-grid .sk-table-row {
+  display: grid;
+  grid-template-columns: 1fr 80px 80px 70px;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--nebula-plan-divider);
+}
+.nb .sk-ins-grid .sk-table-row .sk-line { height: 10px; }
+
+/* ---------- settings skeleton ---------- */
+.nb .sk-settings-head {
+  margin-bottom: 20px;
+}
+.nb .sk-settings-head .sk-line:nth-child(1) { width: 160px; height: 24px; }
+.nb .sk-settings-head .sk-line:nth-child(2) { width: 360px; height: 12px; margin-top: 6px; }
+
+.nb .sk-settabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 22px;
+  padding-bottom: 0;
+  border-bottom: 1px solid var(--nebula-plan-divider);
+}
+.nb .sk-settabs .sk-tab {
+  width: 80px;
+  height: 32px;
+  border-radius: var(--oc-radius-chip);
+  margin-bottom: -1px;
+}
+.nb .sk-settabs .sk-tab.on {
+  background: var(--oc-surface-hover);
+}
+
+.nb .sk-set-card {
+  background: var(--nebula-plan-bg);
+  border: 1px solid var(--nebula-glass-border);
+  border-radius: var(--oc-radius-card);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.nb .sk-set-card .sk-line { height: 11px; margin: 6px 0; }
+.nb .sk-set-card .sk-line:nth-child(1) { width: 90px; }
+.nb .sk-set-card .sk-line:nth-child(2) { width: 70%; }
+.nb .sk-set-card .sk-line:nth-child(3) { width: 45%; }
+
+.nb .sk-set-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0 4px;
+}
+.nb .sk-set-table th,
+.nb .sk-set-table td {
+  padding: 10px 8px;
+  text-align: left;
+}
+.nb .sk-set-table th .sk-line { width: 70%; height: 10px; }
+.nb .sk-set-table td .sk-line { height: 10px; }
+.nb .sk-set-table tr { border-bottom: 1px solid var(--nebula-plan-divider); }
+
+/* ---------- responsive skeleton ---------- */
+@media (max-width: 1200px) {
+  .nb .sk-board { grid-template-columns: repeat(5, minmax(220px, 1fr)); overflow-x: auto; }
+}
+@media (max-width: 768px) {
+  .nb .sk-detail { width: 100%; max-width: 100%; min-height: 100vh; border-radius: 0; }
+  .nb .sk-detail-grid { grid-template-columns: 1fr; }
+  .nb .sk-ins-charts { grid-template-columns: 1fr; }
+  .nb .sk-ins-grid { grid-template-columns: 1fr; }
+}
+.nb .alt-path[open] summary { color: var(--nebula-text-primary); margin-bottom: 10px; }

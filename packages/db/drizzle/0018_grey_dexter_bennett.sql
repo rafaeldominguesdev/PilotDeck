@@ -1,0 +1,1 @@
+ALTER TABLE "workspace" DROP COLUMN "update_check_enabled";

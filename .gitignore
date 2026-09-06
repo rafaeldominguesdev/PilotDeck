@@ -1,0 +1,50 @@
+.superpowers/
+
+# dependencies
+node_modules/
+.pnpm-store/
+package-lock.json
+npm-shrinkwrap.json
+
+# next.js
+.next/
+out/
+.turbo/
+
+# build
+dist/
+*.tsbuildinfo
+
+# env — never commit secrets
+.env
+.env.local
+.env.*.local
+
+# test / coverage
+coverage/
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# os / editor
+.DS_Store
+.idea/
+.vscode/
+
+# local tool caches (not part of the product)
+.codex/
+.grok/
+.overclock-app/
+.claude/
+
+# drizzle journal is committed; kit cache is not
+packages/db/drizzle/*.sql.bak
+.internal/
+deploy/.env
+.worktrees/
+
+# python bytecode (docs/design/logo-variants/tools)
+__pycache__/
+*.pyc

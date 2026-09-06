@@ -1,0 +1,101 @@
+import { eq, sql } from "drizzle-orm";
+import type { PgColumn, PgTable } from "drizzle-orm/pg-core";
+import type { McpDatabase } from "../mcp/types";
+
+/**
+ * The shape every attempt-budget table shares: a scope string as primary key,
+ * a count, and the window it started counting in. First written for pairing
+ * codes (`pairing_failure`); login attempts (`login_failure`) reuse the exact
+ * same accounting instead of growing a second copy of it.
+ */
+type BudgetTable = PgTable & {
+  id: PgColumn;
+  count: PgColumn;
+  windowStartedAt: PgColumn;
+};
+
+/** What `db.insert(table)` needs to expose for the chain below, independent of which concrete table it is. */
+type UntypedInsert = {
+  values(row: Record<string, unknown>): {
+    onConflictDoUpdate(opts: {
+      target: PgColumn;
+      set: Record<string, unknown>;
+    }): {
+      returning(columns: Record<string, PgColumn>): UntypedInsertResult;
+    };
+  };
+};
+
+/** A drizzle query: awaits to rows, and `.toSQL()` inspects it unexecuted (see `pairing.integration.test.ts`). */
+type UntypedInsertResult = Promise<Array<{ count: number }>> & {
+  toSQL(): { sql: string; params: unknown[] };
+};
+
+/**
+ * Charges one attempt to `scope` and reports the count it landed on, in a
+ * single statement so a burst of concurrent callers cannot all read the same
+ * count and write back the same increment — see `pairing.ts` for the full
+ * argument. The window resets on its own once `windowMs` has passed since it
+ * started, so a caller need not run any cleanup job.
+ *
+ * The two timestamps are sent as explicit `::timestamptz` casts, not as
+ * `Date` values, because a value interpolated into `sql` reaches the driver
+ * as whatever it already was; postgres-js refuses a bare `Date` there (see
+ * OCL-109, and `pairing.integration.test.ts` for the regression this once
+ * caused).
+ */
+/**
+ * `T` varies per caller (`pairingFailure`, `loginFailure`, ...) but drizzle's
+ * `onConflictDoUpdate`/`returning` generics do not narrow cleanly through a
+ * type parameter that only promises the three columns above, so the chain
+ * below is built loosely and the result cast back to the shape every one of
+ * these tables actually returns. Each concrete table still gets full type
+ * checking at its own call site (`db.insert(pairingFailure)` etc. elsewhere
+ * in the codebase); this function is the one place that trades that away for
+ * sharing the statement itself.
+ */
+export function spendBudgetStatement<T extends BudgetTable>(
+  db: McpDatabase,
+  table: T,
+  scope: string,
+  now: Date,
+  windowMs: number,
+) {
+  const windowFloor = new Date(now.getTime() - windowMs);
+  const floorParam = sql`${windowFloor.toISOString()}::timestamptz`;
+  const nowParam = sql`${now.toISOString()}::timestamptz`;
+
+  return (db.insert(table) as UntypedInsert)
+    .values({ id: scope, count: 1, windowStartedAt: now })
+    .onConflictDoUpdate({
+      target: table.id,
+      set: {
+        count: sql`case when ${table.windowStartedAt} < ${floorParam}
+          then 1 else ${table.count} + 1 end`,
+        windowStartedAt: sql`case when ${table.windowStartedAt} < ${floorParam}
+          then ${nowParam} else ${table.windowStartedAt} end`,
+      },
+    })
+    .returning({ count: table.count }) as UntypedInsertResult;
+}
+
+/** Spends one attempt and says whether `scope` is still inside its budget. */
+export async function spendBudget<T extends BudgetTable>(
+  db: McpDatabase,
+  table: T,
+  scope: string,
+  maxAttempts: number,
+  windowMs: number,
+): Promise<boolean> {
+  const [row] = await spendBudgetStatement(db, table, scope, new Date(), windowMs);
+  return (row?.count ?? 1) <= maxAttempts;
+}
+
+/** A success clears the budget: nobody there was guessing. */
+export async function clearBudget<T extends BudgetTable>(
+  db: McpDatabase,
+  table: T,
+  scope: string,
+): Promise<void> {
+  await db.delete(table).where(eq(table.id, scope));
+}

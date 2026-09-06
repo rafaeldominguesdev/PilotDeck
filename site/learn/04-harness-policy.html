@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>04 · The harness policy · Learn PilotDeck</title>
+<meta name="description" content="Declare the CLIs and models you own, map each activity type to one, and let the board recommend the right executor on every card instead of guessing.">
+<meta property="og:title" content="The harness policy · Learn PilotDeck">
+<meta property="og:description" content="Activity type to CLI, model and effort. Agents read it over MCP; every card is born with a harness.">
+<meta property="og:locale" content="en_US">
+<link rel="alternate" hreflang="en" href="04-harness-policy.html">
+<link rel="alternate" hreflang="pt-BR" href="../br/learn/04-politica-de-harness.html">
+<link rel="alternate" hreflang="x-default" href="04-harness-policy.html">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23D1D9EB' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23D1D9EB'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="learn.css">
+</head>
+<body>
+
+<div class="atmo" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-mist" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-grain" aria-hidden="true"></div>
+<div class="atmo-overlay atmo-vignette" aria-hidden="true"></div>
+
+<nav class="nav">
+  <a class="wordmark" href="../index.html">over<span>click</span></a>
+  <div class="links">
+    <a href="../index.html#loop">The loop</a>
+    <a href="../index.html#features">Features</a>
+    <a href="index.html" class="on">Learn</a>
+  </div>
+  <div class="spacer"></div>
+  <div class="lang" aria-label="Language">
+    <a href="04-harness-policy.html" class="on" hreflang="en" lang="en" aria-current="true">EN</a>
+    <span aria-hidden="true">·</span>
+    <a href="../br/learn/04-politica-de-harness.html" hreflang="pt-BR" lang="pt-BR">PT</a>
+  </div>
+  <a class="btn btn-ghost btn-sm" href="https://github.com/rafaeldominguesdev/pilotdeck" rel="noopener">GitHub</a>
+</nav>
+
+<header class="course-head wrap">
+  <div class="col-read">
+    <p class="eyebrow">chapter 04 of 08 · <b>harness policy</b></p>
+    <h1>Decide the model once, not per card</h1>
+    <p class="lede">
+      A harness is the pair the work runs on: <b>which CLI, which model, at what effort</b>.
+      The policy maps activity types to harnesses, so a bug does not quietly consume your
+      most expensive model and an architecture decision does not land on your cheapest one.
+    </p>
+  </div>
+</header>
+
+<main class="chapter wrap">
+  <div class="col-read">
+
+    <section>
+      <div class="sec-index">01 · executors first</div>
+      <h2>The board only recommends what you own</h2>
+      <p>
+        <b>Settings › Executors</b> is the list of CLIs your team has, each with the models
+        you are entitled to run. A model that is not checked here cannot appear in a policy
+        line or on a card. This is deliberate: a recommendation you cannot execute is worse
+        than none.
+      </p>
+      <p>
+        The grid also learns. When an agent claims or delivers with a CLI and model pair the
+        config does not list, the board records the pair and offers it in Settings as a
+        one-click suggestion under <b>seen in real connections</b>. You confirm; the board
+        never adds it behind your back.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">02 · the table</div>
+      <h2>Activity type to harness</h2>
+      <p>
+        <b>Settings › Harness policy</b> is one line per activity type. A sane starting
+        point, which you should then bend to your own costs:
+      </p>
+      <table class="table">
+        <thead>
+          <tr><th>Activity</th><th>Harness</th><th>Reasoning</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>bug</b></td><td>mid model · medium effort</td><td>A localized fix with a repro. The card already says where it hurts.</td></tr>
+          <tr><td><b>feature / UI</b></td><td>mid model · medium effort</td><td>Most product work. Raise the effort for a screen with real interaction design.</td></tr>
+          <tr><td><b>rfc</b></td><td>top model · high effort</td><td>The deliverable is a decision. Being wrong here costs weeks of code.</td></tr>
+          <tr><td><b>architecture</b></td><td>top model · high effort</td><td>Same reason, with more of the codebase in play.</td></tr>
+          <tr><td><b>mechanical / report</b></td><td>cheap model · low effort</td><td>Renames, sweeps, exports. Judgment is not what this needs.</td></tr>
+        </tbody>
+      </table>
+      <p>
+        Every line records who wrote it last and when, whether that was a human in Settings
+        or an orchestrator over MCP. When the numbers in chapter 7 tell you a type is
+        overpaying, this table is the single place you change it.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">03 · what agents see</div>
+      <h2>The policy is readable over MCP</h2>
+      <p>
+        Agents do not have to be told the policy: they read it. <code>harness_list</code>
+        returns the whole table plus the configured executors and the board's price list,
+        so an orchestrator can weigh capability against cost <b>before</b> it picks who runs
+        a card. <code>harness_recommend</code> answers the narrow question for one activity
+        type.
+      </p>
+      <div class="say">
+        <span class="who">say this to your agent</span>
+        what is the harness policy on this board, and what would it recommend for an rfc?
+      </div>
+      <p>
+        When a card is created, the recommendation is already on it. The form pre-fills it,
+        and you can override it per card when you know something the policy does not.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-index">04 · divergence</div>
+      <h2>When the executor is not the planned one</h2>
+      <p>
+        Reality intervenes: the planned CLI is missing on that machine, or a cheaper agent
+        is already idle. A claim with a different harness is allowed, and the board says so
+        out loud. <code>task_claim</code> answers with a <code>harness_divergence</code>
+        warning naming planned versus actual, and the card's <b>execution trace</b> records
+        an executor swap entry.
+      </p>
+      <p>
+        Nothing is blocked, and nothing is hidden. At review time you can see that the card
+        planned for a top model ran on a mid one, which is often the explanation for a
+        result that feels thin.
+      </p>
+      <div class="note">
+        <b>Orchestrators:</b> when a planned executor never boots, post a
+        <code>spawn_failure</code> note through <code>task_update</code>. It lands as a
+        typed timeline entry with the planned harness attached, so a card that sat still for
+        an hour has a reason on it instead of a mystery.
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-index">05 · writing the policy from an agent</div>
+      <h2>Only with a manage token</h2>
+      <p>
+        <code>harness_set</code> writes one policy line and <code>executors_update</code>
+        edits the executor list. Both need a token with the <b>manage</b> flag, because a
+        worker token that can rewrite policy can promote itself between two claims. The
+        write is validated against your executors: a model nobody owns is rejected with a
+        message naming what to fix.
+      </p>
+      <div class="say">
+        <span class="who">say this to your orchestrator</span>
+        mechanical chores are running on the top model. set the mechanical policy line to
+        the cheapest model we have configured, at low effort.
+      </div>
+    </section>
+
+    <div class="checklist">
+      <h2>Chapter checklist</h2>
+      <ul>
+        <li>Settings › Executors lists only CLIs and models you actually have</li>
+        <li>Every activity type has a policy line, and you can explain each choice</li>
+        <li>New cards are born with a harness already filled in</li>
+        <li>Your agent can answer what the policy is without you pasting it</li>
+        <li>Worker tokens cannot write policy; only a manage token can</li>
+        <li>Executor swaps and spawn failures show up in the card's execution trace</li>
+      </ul>
+    </div>
+
+    <div class="pager">
+      <a href="03-card-as-contract.html">
+        <span class="dir">← previous</span>
+        <span class="title">03 · Write a card as a contract</span>
+      </a>
+      <a class="next" href="05-review.html">
+        <span class="dir">next →</span>
+        <span class="title">05 · The review discipline</span>
+      </a>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot-grid">
+    <span class="wordmark">over<span>click</span></span>
+    <div class="foot-links">
+      <a href="../index.html">Home</a>
+      <a href="index.html">Course index</a>
+      <a href="https://github.com/rafaeldominguesdev/pilotdeck" rel="noopener">GitHub</a>
+      <a href="https://github.com/rafaeldominguesdev/pilotdeck/blob/main/LICENSE" rel="noopener">MIT License</a>
+    </div>
+    <div class="spacer"></div>
+    <span class="foot-moto">your board · your server · your data</span>
+  </div>
+</footer>
+
+<script src="learn.js"></script>
+</body>
+</html>

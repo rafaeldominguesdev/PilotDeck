@@ -1,0 +1,439 @@
+#!/usr/bin/env node
+/**
+ * The one-line guard for the top bar.
+ *
+ * The rule the board is held to: no label in the top bar ever breaks across
+ * two lines. A control that runs out of room shrinks, truncates with an
+ * ellipsis while the title keeps the full reading, or moves behind the phone
+ * menu. It never wraps.
+ *
+ * OCL-82 added the second rule, one rung up from the first: where the bar has
+ * collapsed behind the Filtros button, the whole chrome is ONE row. The line
+ * rule above holds per control, so a bar could pass it while spending a rung
+ * on the wordmark and another on the single button left beside it — which is
+ * exactly what the board did on a phone. So the guard counts the bands the
+ * visible controls sit on, and where the Filtros button is on screen it
+ * requires exactly one. The wordmark counts even though it is drawn rather
+ * than typed: it is one of the controls the row has to hold.
+ *
+ * A phone-sized check alone does not hold that rule: the regression this
+ * script was written for showed up at 1440, where there is the most room, and
+ * a 390 check was green the whole time. So the guard sweeps a list of widths
+ * and measures the rendered text itself, not the CSS.
+ *
+ * How it measures: it walks the controls the bar lays out, and for each one it
+ * takes a Range over every text node under it and counts the line boxes the
+ * browser actually painted (getClientRects, grouped by their top edge). Two
+ * boxes means two lines, which is the failure. Counting per control and not
+ * per text node is what catches a label that breaks between its own pieces,
+ * the way the crumb broke between the workspace name and the project. It also
+ * reports a bar whose content is wider than the bar, since a control pushed
+ * past the edge is a control nobody can reach.
+ *
+ * Usage:
+ *   node scripts/topbar-one-line.mjs
+ *   node scripts/topbar-one-line.mjs --url http://localhost:3000/home --shots ./out
+ *
+ * Environment:
+ *   BOARD_URL     page to measure (default http://localhost:3000/home)
+ *   BOARD_COOKIE  value of the ab_session cookie, for a board behind login
+ *   CHROME_BIN    path to a Chrome or Chromium binary
+ *   WIDTHS        comma separated widths (default 1440,1280,1024,768,390,320)
+ *   VERBOSE       print the width every control ended up with, and the width
+ *                 it wanted, which is how you see what yielded and by how much
+ *
+ * Exit code is 0 when every width holds the rule and 1 when any width breaks
+ * it, so this runs as a check in CI as easily as by hand.
+ */
+
+import { spawn } from "node:child_process";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+
+const DEFAULT_WIDTHS = [1440, 1280, 1024, 768, 390, 320];
+const HEIGHT = 900;
+
+const CHROME_CANDIDATES = [
+  process.env.CHROME_BIN,
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "/Applications/Chromium.app/Contents/MacOS/Chromium",
+  "/usr/bin/google-chrome",
+  "/usr/bin/chromium",
+  "/usr/bin/chromium-browser",
+];
+
+function parseArgs(argv) {
+  const args = { shots: null };
+  for (let i = 0; i < argv.length; i += 1) {
+    if (argv[i] === "--url") args.url = argv[++i];
+    else if (argv[i] === "--shots") args.shots = argv[++i];
+    else if (argv[i] === "--widths") args.widths = argv[++i];
+  }
+  return args;
+}
+
+function findChrome() {
+  for (const candidate of CHROME_CANDIDATES) {
+    if (candidate && fs.existsSync(candidate)) return candidate;
+  }
+  throw new Error(
+    "No Chrome found. Set CHROME_BIN to a Chrome or Chromium binary.",
+  );
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Chrome writes the port it actually took into its profile directory. */
+async function readPort(profile) {
+  const file = path.join(profile, "DevToolsActivePort");
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    if (fs.existsSync(file)) {
+      const [port] = fs.readFileSync(file, "utf8").split("\n");
+      if (port) return Number(port);
+    }
+    await sleep(100);
+  }
+  throw new Error("Chrome never reported its debugging port.");
+}
+
+/**
+ * A CDP client small enough to carry no dependency: Node has had a WebSocket
+ * global since 22.4, and the protocol is one JSON message per call.
+ */
+function connect(wsUrl) {
+  const socket = new WebSocket(wsUrl);
+  const pending = new Map();
+  let nextId = 0;
+
+  const open = new Promise((resolve, reject) => {
+    socket.addEventListener("open", () => resolve(), { once: true });
+    socket.addEventListener("error", () => reject(new Error("CDP socket failed")), {
+      once: true,
+    });
+  });
+
+  socket.addEventListener("message", (event) => {
+    const message = JSON.parse(event.data);
+    const waiting = pending.get(message.id);
+    if (!waiting) return;
+    pending.delete(message.id);
+    if (message.error) waiting.reject(new Error(message.error.message));
+    else waiting.resolve(message.result);
+  });
+
+  return {
+    ready: open,
+    send(method, params = {}, sessionId) {
+      const id = (nextId += 1);
+      return new Promise((resolve, reject) => {
+        pending.set(id, { resolve, reject });
+        socket.send(JSON.stringify({ id, method, params, sessionId }));
+      });
+    },
+    close() {
+      socket.close();
+    },
+  };
+}
+
+/**
+ * Runs in the page. Counts the line boxes under every label in the bar.
+ * Kept as one string because it crosses into the browser as source.
+ */
+const MEASURE = `(() => {
+  // OCL-35: the board bar is two levels inside .topbar-wrap; the other
+  // screens keep a bare .topbar. Measure whichever this page has.
+  const bar = document.querySelector(".topbar-wrap") || document.querySelector(".topbar");
+  if (!bar) return { error: "no .topbar on this page" };
+
+  const where = (el) => {
+    const parts = [];
+    for (let node = el; node && node !== bar; node = node.parentElement) {
+      const cls = (node.className || "").toString().trim().split(/\\s+/)[0];
+      parts.unshift(cls ? node.tagName.toLowerCase() + "." + cls : node.tagName.toLowerCase());
+    }
+    return "." + bar.className.split(/\\s+/)[0] + (parts.length ? " " + parts.join(" ") : "");
+  };
+
+  // The controls each level lays out. .topbar-more is display:contents on
+  // the desktop and a stacked panel on the phone; either way its children
+  // are the controls, and the wrapper itself is never one line by design.
+  const levels = bar.classList.contains("topbar-wrap") ? Array.from(bar.children) : [bar];
+  const controls = [];
+  for (const level of levels) {
+    for (const child of level.children) {
+      if (child.classList.contains("topbar-more")) controls.push(...child.children);
+      else controls.push(child);
+    }
+  }
+
+  // A line is a band of vertical overlap, not a shared top edge: a chip that
+  // sets a 19px figure beside a 10px caption aligns them on one baseline and
+  // their tops differ by design. Boxes that overlap vertically are the same
+  // line; a box that clears the band below it is a second line. The same
+  // counting answers both questions the guard asks — how many lines a label
+  // took, and how many rows the bar itself took.
+  const bands = (boxes) => {
+    boxes.sort((a, b) => a.top - b.top);
+    let lines = 0;
+    let bandBottom = -Infinity;
+    for (const box of boxes) {
+      if (box.top >= bandBottom) {
+        lines += 1;
+        bandBottom = box.bottom;
+      } else if (box.bottom > bandBottom) {
+        bandBottom = box.bottom;
+      }
+    }
+    return lines;
+  };
+
+  const offenders = [];
+  const measured = [];
+  // OCL-82: the rows the chrome itself spends. Collected before the text walk,
+  // because a control with no text of its own — the wordmark, which is drawn —
+  // still occupies a row.
+  const chromeBoxes = [];
+  for (const control of controls) {
+    const style = getComputedStyle(control);
+    if (style.display === "none" || style.visibility === "hidden") continue;
+
+    const own = control.getBoundingClientRect();
+    if (own.width > 0 && own.height > 0) {
+      chromeBoxes.push({ top: own.top, bottom: own.bottom });
+    }
+
+    const boxes = [];
+    const pieces = [];
+    const walker = document.createTreeWalker(control, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const text = (node.nodeValue || "").replace(/\\s+/g, " ").trim();
+      if (!text) continue;
+      const parent = node.parentElement;
+      if (!parent) continue;
+      const parentStyle = getComputedStyle(parent);
+      if (parentStyle.display === "none" || parentStyle.visibility === "hidden") continue;
+
+      const range = document.createRange();
+      range.selectNodeContents(node);
+      const rects = Array.from(range.getClientRects()).filter(
+        (r) => r.width > 0 && r.height > 0,
+      );
+      if (!rects.length) continue;
+      pieces.push(text);
+      for (const rect of rects) boxes.push({ top: rect.top, bottom: rect.bottom });
+    }
+    if (!pieces.length) continue;
+
+    const entry = {
+      text: pieces.join(" "),
+      lines: bands(boxes),
+      width: Math.round(control.getBoundingClientRect().width),
+      natural: control.scrollWidth,
+      where: where(control),
+    };
+    measured.push(entry);
+    if (entry.lines > 1) offenders.push(entry);
+  }
+
+  return {
+    offenders,
+    labels: measured.length,
+    measured,
+    rows: bands(chromeBoxes),
+    barWidth: Math.round(bar.clientWidth),
+    contentWidth: Math.round(bar.scrollWidth),
+    overflow: Math.max(0, Math.round(bar.scrollWidth - bar.clientWidth)),
+    menuVisible: (() => {
+      const btn = bar.querySelector(".filters-btn");
+      return Boolean(btn && getComputedStyle(btn).display !== "none");
+    })(),
+  };
+})()`;
+
+const OPEN_MENU = `(() => {
+  const btn = document.querySelector(".filters-btn");
+  if (!btn || getComputedStyle(btn).display === "none") return false;
+  if (btn.getAttribute("aria-expanded") !== "true") btn.click();
+  return true;
+})()`;
+
+const CLOSE_MENU = `(() => {
+  const btn = document.querySelector(".filters-btn");
+  if (btn && btn.getAttribute("aria-expanded") === "true") btn.click();
+  return true;
+})()`;
+
+async function evaluate(cdp, session, expression) {
+  const result = await cdp.send(
+    "Runtime.evaluate",
+    { expression, returnByValue: true, awaitPromise: true },
+    session,
+  );
+  if (result.exceptionDetails) {
+    throw new Error(result.exceptionDetails.text || "evaluate failed");
+  }
+  return result.result.value;
+}
+
+async function main() {
+  const args = parseArgs(process.argv.slice(2));
+  const url = args.url || process.env.BOARD_URL || "http://localhost:3000/home";
+  const widths = (args.widths || process.env.WIDTHS || "")
+    .split(",")
+    .map((value) => Number(value.trim()))
+    .filter((value) => Number.isFinite(value) && value > 0);
+  const sweep = widths.length ? widths : DEFAULT_WIDTHS;
+  const cookie = process.env.BOARD_COOKIE || "";
+  if (args.shots) fs.mkdirSync(args.shots, { recursive: true });
+
+  const profile = fs.mkdtempSync(path.join(os.tmpdir(), "topbar-guard-"));
+  const chrome = spawn(
+    findChrome(),
+    [
+      "--headless=new",
+      "--remote-debugging-port=0",
+      `--user-data-dir=${profile}`,
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--disable-gpu",
+      "--hide-scrollbars",
+      "--force-device-scale-factor=1",
+      "about:blank",
+    ],
+    { stdio: "ignore" },
+  );
+
+  let cdp;
+  let failed = false;
+  try {
+    const port = await readPort(profile);
+    const version = await fetch(`http://127.0.0.1:${port}/json/version`).then((r) =>
+      r.json(),
+    );
+    cdp = connect(version.webSocketDebuggerUrl);
+    await cdp.ready;
+
+    const { targetId } = await cdp.send("Target.createTarget", {
+      url: "about:blank",
+    });
+    const { sessionId } = await cdp.send("Target.attachToTarget", {
+      targetId,
+      flatten: true,
+    });
+    await cdp.send("Page.enable", {}, sessionId);
+    await cdp.send("Runtime.enable", {}, sessionId);
+    await cdp.send("Network.enable", {}, sessionId);
+    if (cookie) {
+      const target = new URL(url);
+      await cdp.send(
+        "Network.setCookie",
+        {
+          name: "ab_session",
+          value: cookie,
+          domain: target.hostname,
+          path: "/",
+        },
+        sessionId,
+      );
+    }
+
+    console.log(`one-line guard on ${url}`);
+    for (const width of sweep) {
+      await cdp.send(
+        "Emulation.setDeviceMetricsOverride",
+        { width, height: HEIGHT, deviceScaleFactor: 1, mobile: width < 700 },
+        sessionId,
+      );
+      await cdp.send("Page.navigate", { url }, sessionId);
+      // The bar is server rendered; this settles hydration and web fonts.
+      await sleep(1200);
+      await evaluate(cdp, sessionId, CLOSE_MENU);
+
+      const closed = await evaluate(cdp, sessionId, MEASURE);
+      if (closed.error) throw new Error(`${width}px: ${closed.error}`);
+
+      const rows = [{ state: "bar", ...closed }];
+      if (closed.menuVisible) {
+        await evaluate(cdp, sessionId, OPEN_MENU);
+        await sleep(250);
+        rows.push({ state: "menu open", ...(await evaluate(cdp, sessionId, MEASURE)) });
+      }
+
+      for (const row of rows) {
+        const label = `${width}px (${row.state})`;
+        if (row.offenders.length) {
+          failed = true;
+          console.log(
+            `  FAIL ${label}: ${row.offenders.length} of ${row.labels} labels wrap`,
+          );
+          for (const item of row.offenders) {
+            console.log(
+              `        ${item.lines} lines  "${item.text}"  at ${item.where}`,
+            );
+          }
+        } else {
+          console.log(`  ok   ${label}: ${row.labels} labels, one line each`);
+        }
+        // OCL-82: collapsed means the Filtros button is on screen, which is
+        // where the two levels merge. The closed bar is what a person sees on
+        // a phone before they touch anything, so that is what owes one row.
+        if (row.state === "bar" && row.menuVisible) {
+          if (row.rows === 1) {
+            console.log(`  ok   ${label}: one row of chrome`);
+          } else {
+            failed = true;
+            console.log(
+              `  FAIL ${label}: the collapsed bar spends ${row.rows} rows of chrome, and it may spend one`,
+            );
+          }
+        }
+        if (process.env.VERBOSE) {
+          for (const item of row.measured) {
+            console.log(`        ${String(item.width).padStart(5)}px of ${String(item.natural).padEnd(5)} ${item.where}  "${item.text}"`);
+          }
+        }
+        if (row.overflow > 1) {
+          failed = true;
+          console.log(
+            `  FAIL ${label}: the bar overflows by ${row.overflow}px (${row.contentWidth} in ${row.barWidth})`,
+          );
+        }
+      }
+
+      if (args.shots) {
+        await evaluate(cdp, sessionId, CLOSE_MENU);
+        await sleep(150);
+        const shot = await cdp.send(
+          "Page.captureScreenshot",
+          { format: "png", captureBeyondViewport: false },
+          sessionId,
+        );
+        const file = path.join(args.shots, `topbar-${width}.png`);
+        fs.writeFileSync(file, Buffer.from(shot.data, "base64"));
+        console.log(`       shot ${file}`);
+      }
+    }
+  } finally {
+    if (cdp) cdp.close();
+    chrome.kill();
+    // Chrome is still flushing its profile as it dies, so the first rmdir can
+    // lose the race. Retrying keeps a passing run from failing on cleanup.
+    await sleep(300);
+    fs.rmSync(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
+  }
+
+  if (failed) {
+    console.log("\nthe one-line rule is broken. See the widths marked FAIL.");
+    process.exit(1);
+  }
+  console.log("\nevery width holds the one-line rule.");
+}
+
+main().catch((error) => {
+  console.error(error.message);
+  process.exit(2);
+});

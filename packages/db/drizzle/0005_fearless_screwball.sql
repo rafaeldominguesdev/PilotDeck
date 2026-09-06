@@ -1,0 +1,1 @@
+ALTER TABLE "workspace" ADD COLUMN "update_check_enabled" boolean DEFAULT false NOT NULL;

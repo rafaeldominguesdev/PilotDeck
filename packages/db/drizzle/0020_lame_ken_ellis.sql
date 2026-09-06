@@ -1,0 +1,1 @@
+ALTER TABLE "task" ADD COLUMN "previous_short_ids" jsonb DEFAULT '[]'::jsonb NOT NULL;

@@ -1,0 +1,542 @@
+/* Insights page. Own file so the shared nebula.css stays untouched. */
+
+/* ---------- the page: one rhythm, one measure ----------
+   AGB-76. The page was capped at the 1020px the settings screens use, so on a
+   1440 desktop it sat in the middle of 400px of void while its own tables
+   truncated every card title. Data wants the width; prose does not. The page
+   grows to 1320 and every line of running text is capped at a reading
+   measure, so nothing is stretched to fill the room the tables asked for.
+
+   One rhythm for the whole page: the gap inside a grid and the gap between
+   two sections are the same number, and that number grows once at the width
+   where the page stops being a column and starts being a layout. */
+.nb .ins-page {
+  --ins-rhythm: var(--nebula-space-4);
+  --ins-measure: 68ch;
+  max-width: 1320px;
+}
+/* The chrome speaks the same language as the board: two flat levels on the
+   canvas, one 1px line under the second. No floating glass panel. */
+.nb .ins-topbar-wrap {
+  position: relative;
+  z-index: var(--oc-z-chrome);
+  margin-bottom: var(--ins-rhythm);
+}
+.nb .ins-topbar-l1 {
+  display: flex; align-items: center; gap: var(--nebula-space-4);
+  padding: 10px 0;
+}
+.nb .ins-topbar-l1 .spacer { flex: 1; }
+.nb .ins-topbar-l2 {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: var(--nebula-space-3);
+  padding: 0 0 12px;
+  border-bottom: 1px solid var(--nebula-glass-border);
+}
+/* The heading block is one group with one gap, so the filter line can appear
+   and disappear without any margin having to be corrected against another. */
+.nb .ins-head {
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 6px;
+  margin-bottom: var(--ins-rhythm);
+}
+.nb .ins-head > h1,
+.nb .ins-head > .page-sub,
+.nb .ins-head > .ins-filter { margin: 0; }
+/* Running text keeps a reading measure whatever the page is worth. */
+.nb .ins-head > .page-sub { max-width: var(--ins-measure); line-height: 1.55; }
+.nb .ins-head > .ins-filter { max-width: var(--ins-measure); }
+
+@media (min-width: 1100px) {
+  .nb .ins-page { --ins-rhythm: var(--nebula-space-6); }
+}
+
+/* ---------- totals: the four numbers everything else breaks down from ---------- */
+.nb .ins-tiles {
+  display: grid;
+  /* auto-fit, not repeat(4): with the money layer off there are three tiles,
+     and a fixed four-column grid gave the row a hole where the fourth would
+     have been. The tiles now share whatever width there is. */
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: var(--ins-rhythm, var(--nebula-space-4));
+  margin-bottom: var(--ins-rhythm, var(--nebula-space-4));
+}
+.nb .ins-subtotals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: calc(var(--ins-rhythm, var(--nebula-space-4)) * -0.55) 0 var(--ins-rhythm, var(--nebula-space-4));
+  padding: 9px 12px;
+  border-radius: 9px;
+  font-family: var(--nebula-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  color: var(--nebula-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+.nb .ins-tile {
+  display: flex; flex-direction: column;
+  padding: 16px 18px; border-radius: 12px;
+}
+/* A total is the largest thing on the page and it was set at the same 24px on
+   a phone and on a 1440 desktop. It follows the room it is given, up to the
+   point where a bigger figure stops helping anyone read it. */
+@media (min-width: 1100px) {
+  .nb .ins-tile { padding: 18px 20px; }
+  .nb .ins-tile .ins-num { font-size: 28px; }
+  /* with the page this wide the note beside a caption fits whole, and a
+     caption truncated at 46% of a 1288px panel was truncated for nothing */
+  .nb .ins-cap .ins-cap-note { max-width: 62%; }
+}
+/* the notes sit at the foot of the tile, so four tiles of different note
+   lengths still show their four figures on one line */
+.nb .ins-tile .ins-note:first-of-type { margin-top: auto; padding-top: 6px; }
+.nb .ins-tile .ins-lbl {
+  font-family: var(--nebula-font-label);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--nebula-text-tertiary);
+  margin-bottom: 8px;
+}
+.nb .ins-tile .ins-num {
+  font-size: 24px;
+  font-weight: var(--nebula-weight-medium);
+  letter-spacing: var(--nebula-tracking-tight);
+  text-shadow: var(--nebula-glow-text);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.nb .ins-tile .ins-note {
+  margin-top: 6px;
+  font-family: var(--nebula-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  color: var(--nebula-text-tertiary);
+}
+
+/* ---------- panels: one glass card per section, cap on top ---------- */
+.nb .ins-panel { padding: 16px 18px 14px; border-radius: 12px; }
+.nb .ins-cap {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--nebula-space-3);
+  margin-bottom: 12px;
+  font-family: var(--nebula-font-label);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--nebula-text-tertiary);
+}
+.nb .ins-cap > span:first-child {
+  flex: 1 1 auto; min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* the note yields the room before the caption does, and never takes more
+   than its share of the line */
+.nb .ins-cap .ins-cap-note { flex: 0 1 auto; min-width: 0; max-width: 46%; }
+.nb .ins-cap-note {
+  text-transform: none;
+  letter-spacing: 0.03em;
+  font-size: 10px;
+  color: var(--nebula-text-tertiary);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- the visual layer: trend + share of cost ---------- */
+.nb .ins-charts {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: var(--ins-rhythm, var(--nebula-space-4));
+  margin-bottom: var(--ins-rhythm, var(--nebula-space-4));
+  align-items: stretch;
+}
+.nb .ins-panel-trend { display: flex; flex-direction: column; }
+.nb .ins-trend { display: flex; flex-direction: column; flex: 1; justify-content: flex-end; }
+.nb .ins-trend-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: 5px;
+  flex: 1;
+  /* the plot answers the width it was given: on a wide page a 120px band of
+     bars under a panel that is 600px across reads as an afterthought */
+  min-height: clamp(120px, 11vw, 168px);
+}
+.nb .ins-trend-col {
+  /* with few data points bars stay narrow and aligned; with many they share
+     the width without ever becoming slabs that overpower the panel. */
+  flex: 0 0 clamp(18px, calc((100% - (var(--ins-points, 1) - 1) * 5px) / var(--ins-points, 1)), 48px);
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+.nb .ins-bar {
+  width: 100%;
+  min-height: 3px;
+  border-radius: 3px 3px 1px 1px;
+  background: var(--nebula-text-tertiary);
+  transition: filter 0.15s;
+}
+.nb .ins-trend-col:hover .ins-bar { filter: brightness(1.35); }
+.nb .ins-bar-zero {
+  width: 100%;
+  height: 1px;
+  background: rgb(var(--oc-white-rgb) / 0.08);
+}
+.nb .ins-trend-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: var(--nebula-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: var(--nebula-text-tertiary);
+}
+
+.nb .ins-share-row {
+  display: grid;
+  grid-template-columns: minmax(90px, 150px) 1fr 88px 40px;
+  gap: 10px;
+  align-items: center;
+  padding: 5px 0;
+}
+.nb .ins-share-name {
+  font-family: var(--nebula-font-mono);
+  font-size: 11px;
+  color: var(--nebula-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nb .ins-share-track {
+  height: 6px;
+  border-radius: var(--oc-radius-pill);
+  background: var(--oc-divider);
+  overflow: hidden;
+}
+.nb .ins-share-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--oc-radius-pill);
+  background: linear-gradient(90deg, var(--nebula-mist), var(--nebula-mist-glow));
+}
+.nb .ins-share-val {
+  font-family: var(--nebula-font-mono);
+  font-size: 11px;
+  color: var(--nebula-text-primary);
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.nb .ins-share-pct {
+  font-family: var(--nebula-font-mono);
+  font-size: 10px;
+  color: var(--nebula-text-tertiary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- breakdown grid, then the per-card table full width ---------- */
+.nb .ins-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--ins-rhythm, var(--nebula-space-4));
+  align-items: start;
+  margin-bottom: var(--ins-rhythm, var(--nebula-space-4));
+}
+
+/* ---------- tables: fixed layout, names never wrap, numbers align ---------- */
+.nb .ins-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  /* the `local` covers sit on the content and slide away with it; the
+     `scroll` shadows stay on the box. Together they show an edge shadow only
+     on the side there is still table to reach. */
+  background:
+    linear-gradient(to right, var(--nebula-glass-bg) 40%, rgb(var(--oc-surface-2-rgb) / 0)) left center / 20px 100% no-repeat local,
+    linear-gradient(to left, var(--nebula-glass-bg) 40%, rgb(var(--oc-surface-2-rgb) / 0)) right center / 20px 100% no-repeat local,
+    linear-gradient(to right, rgb(var(--oc-black-rgb) / 0.45), rgb(var(--oc-black-rgb) / 0)) left center / 14px 100% no-repeat scroll,
+    linear-gradient(to left, rgb(var(--oc-black-rgb) / 0.45), rgb(var(--oc-black-rgb) / 0)) right center / 14px 100% no-repeat scroll;
+}
+.nb .ins-scroll,
+.nb .set-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--oc-white-rgb) / 0.2) transparent;
+}
+.nb .ins-scroll::-webkit-scrollbar,
+.nb .set-scroll::-webkit-scrollbar { height: 6px; }
+.nb .ins-scroll::-webkit-scrollbar-thumb,
+.nb .set-scroll::-webkit-scrollbar-thumb {
+  background: rgb(var(--oc-white-rgb) / 0.2); border-radius: var(--oc-radius-pill);
+}
+.nb .ins-scroll::-webkit-scrollbar-track,
+.nb .set-scroll::-webkit-scrollbar-track { background: transparent; }
+.nb .ins-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  min-width: 430px;
+}
+.nb .ins-table-slim { min-width: 0; }
+.nb .ins-table-cards { min-width: 820px; }
+.nb .ins-col-cost { width: 100px; }
+.nb .ins-col-tokens { width: 96px; }
+.nb .ins-col-time { width: 92px; }
+.nb .ins-col-attempts { width: 68px; }
+.nb .ins-col-mission { width: 130px; }
+.nb .ins-col-model { width: 150px; }
+.nb .ins-col-source { width: 110px; }
+.nb .ins-col-deliveries { width: 88px; }
+.nb .ins-col-rate { width: 64px; }
+.nb .ins-table th {
+  font-family: var(--nebula-font-label);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--nebula-text-tertiary);
+  text-align: left;
+  padding: 0 12px 10px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nb .ins-table th:last-child,
+.nb .ins-table td:last-child { padding-right: 0; }
+.nb .ins-table td {
+  padding: 8px 12px 8px 0;
+  border-top: 1px solid var(--nebula-plan-divider);
+  vertical-align: middle;
+  font-size: 12.5px;
+}
+.nb .ins-table .num { text-align: right; }
+.nb .ins-table td.num {
+  font-family: var(--nebula-font-mono);
+  font-size: 11.5px;
+  color: var(--nebula-text-secondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.nb .ins-table td.num b {
+  color: var(--nebula-text-primary);
+  font-weight: var(--nebula-weight-medium);
+}
+.nb .ins-table tbody tr:hover td { background: rgb(var(--oc-white-rgb) / 0.028); }
+
+/* A name cell: one line, ellipsis, full text on the title attribute. */
+.nb .ins-name {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: var(--nebula-weight-medium);
+}
+.nb .ins-group-line {
+  display: block;
+  margin-top: 2px;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--nebula-text-tertiary);
+}
+.nb .ins-mono {
+  font-family: var(--nebula-font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--nebula-text-secondary);
+}
+.nb .ins-cardcell {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.nb .ins-cid {
+  font-family: var(--nebula-font-mono);
+  font-size: 10.5px;
+  color: var(--nebula-mist-light);
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+.nb .ins-card-title {
+  font-weight: var(--nebula-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* The qualifier marker on a value, and the footnote it points to. */
+.nb .ins-mark {
+  margin-left: 4px;
+  font-size: 10px;
+  color: var(--nebula-text-tertiary);
+  cursor: help;
+}
+/* A visible key for the symbols used in every table: the reader never has to
+   leave the panel to know what ⌀, !, +, ≈, 0 and ○ mean. */
+.nb .ins-legend {
+  margin: 12px 0 0;
+  font-family: var(--nebula-font-label);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+  color: var(--nebula-text-tertiary);
+}
+/* The footnote is where every qualifier on the table above is spelled out. As
+   one run-on paragraph it grew to the full width of the page and became the
+   least readable text on it. One qualifier per line, at a measure, is the same
+   information a person can actually find their way through. */
+.nb .ins-foot {
+  margin: 12px 0 0;
+  max-width: 96ch;
+  font-family: var(--nebula-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  line-height: 1.7;
+  color: var(--nebula-text-tertiary);
+}
+.nb .ins-foot-item {
+  display: block;
+  margin: 0 0 3px;
+}
+.nb .ins-foot-item:last-child { margin-bottom: 0; }
+
+.nb .ins-sort { padding: 0; }
+.nb .ins-sort button {
+  appearance: none; background: none; border: 0;
+  width: 100%; padding: 0 12px 10px 0;
+  font: inherit; letter-spacing: inherit; text-transform: inherit;
+  color: inherit; text-align: right;
+  cursor: pointer; user-select: none; white-space: nowrap;
+  transition: color 0.15s;
+}
+.nb .ins-sort:last-child button { padding-right: 0; }
+.nb .ins-sort button:hover { color: var(--nebula-text-secondary); }
+.nb .ins-sort.on button { color: var(--nebula-mist-glow); }
+.nb .ins-sort button:focus-visible {
+  outline: none; box-shadow: var(--nebula-focus-ring); border-radius: 4px;
+}
+
+.nb .ins-dim { color: var(--nebula-text-tertiary); }
+
+/* The empty state, designed rather than defaulted: a headline that names the
+   state, one line that says what fills it, and the single action that leads
+   there. Nothing on this page exists until a card is delivered, so the way to
+   deliver one is the only thing worth putting in front of a person here. */
+.nb .ins-empty {
+  display: flex; flex-direction: column; align-items: flex-start;
+  padding: 30px 32px;
+  border-radius: 12px;
+  max-width: 560px;
+}
+.nb .ins-empty-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: var(--nebula-weight-medium);
+  letter-spacing: var(--nebula-tracking-tight);
+  color: var(--nebula-text-primary);
+}
+.nb .ins-empty-body {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--nebula-text-secondary);
+}
+.nb .ins-empty-cta {
+  display: inline-flex; align-items: center;
+  margin-top: 18px; padding: 7px 18px;
+}
+
+/* The filter the board handed over, named so the numbers are not read as
+   the whole workspace, with one link back to counting everything. */
+.nb .ins-filter {
+  margin: -6px 0 18px;
+  font-family: var(--nebula-font-mono); font-size: 11px;
+  letter-spacing: 0.04em; color: var(--nebula-text-secondary);
+}
+.nb .ins-filter b { color: var(--nebula-text-primary); font-weight: var(--nebula-weight-medium); }
+/* The way back to counting everything is a link, so it is underlined: two
+   mono words in the same colour, one of them clickable, is not an affordance. */
+.nb .ins-filter a {
+  margin-left: 8px; color: var(--nebula-text-secondary);
+  text-decoration: underline; text-underline-offset: 3px;
+  text-decoration-color: rgb(var(--oc-white-rgb) / 0.28);
+}
+.nb .ins-filter a:hover {
+  color: var(--nebula-text-primary);
+  text-decoration-color: currentColor;
+}
+
+/* ---------- narrow windows: stack, tiles halve, tables scroll in-card ---------- */
+@media (max-width: 900px) {
+  .nb .ins-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nb .ins-charts { grid-template-columns: 1fr; }
+  .nb .ins-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  /* Names keep ~110px; what does not fit scrolls inside the card. */
+  .nb .ins-table { min-width: 500px; }
+  .nb .ins-share-row {
+    grid-template-columns: minmax(70px, 110px) 1fr 76px 36px;
+    gap: 8px;
+  }
+  /* Two tiles per row rather than one. Four figures stacked one per screen
+     is decoration; the phone gets the same four numbers in a quarter of the
+     scroll, and the figure gives up the size the width cannot pay for. The
+     figure never wraps and never clips: it is the tile. */
+  .nb .ins-tiles { gap: 10px; }
+  .nb .ins-tile { padding: 12px 13px; }
+  .nb .ins-tile .ins-lbl { margin-bottom: 6px; }
+  .nb .ins-tile .ins-num { font-size: 19px; }
+  .nb .ins-tile .ins-note { font-size: 9.5px; }
+  .nb .ins-panel { padding: 14px 14px 12px; }
+  .nb .ins-cap { flex-direction: column; align-items: stretch; gap: 3px; }
+  .nb .ins-cap .ins-cap-note { max-width: 100%; text-align: left; }
+  .nb .ins-empty { padding: 22px 18px; }
+}
+/* Under this the two columns stop being two readable numbers and start being
+   two truncated ones, so the row gives up and stacks. */
+@media (max-width: 344px) {
+  .nb .ins-tiles { grid-template-columns: minmax(0, 1fr); }
+  .nb .ins-tile .ins-num { font-size: 22px; }
+}
+
+/* ---------- AGB-76: icons from the shared set beside the words that need one ---------- */
+/* Back to the board, and the way out of a filter: the glyph carries the
+   direction, the word carries the meaning, and the gap is all the CSS it takes. */
+.nb .ins-back,
+.nb .ins-empty-cta { display: inline-flex; align-items: center; gap: 7px; }
+.nb .ins-filter a {
+  display: inline-flex; align-items: center; gap: 5px;
+  vertical-align: -1px;
+}
+/* The empty state opens on the glyph for nothing here, quiet enough to be a
+   mark and not a picture. */
+.nb .ins-empty-icon { color: var(--nebula-text-tertiary); margin-bottom: 14px; }
+/* A sortable header keeps its right edge; the arrow travels with the label. */
+.nb .ins-sort button {
+  display: inline-flex; align-items: center; justify-content: flex-end; gap: 5px;
+}
+.nb .ins-sort.on button .ins-sort-arrow { color: var(--nebula-mist-glow); }
+
+/* OCL-141: the projects and the active missions of one organization, read as
+   the list they are. It declares no type of its own — the panel around it
+   already set the voice — only the rhythm between the lines. */
+.nb .org-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+  color: var(--nebula-text-secondary);
+}

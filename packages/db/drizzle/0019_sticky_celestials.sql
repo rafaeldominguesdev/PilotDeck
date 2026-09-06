@@ -1,0 +1,1 @@
+ALTER TABLE "user" ALTER COLUMN "board_mission_id" SET DATA TYPE text;

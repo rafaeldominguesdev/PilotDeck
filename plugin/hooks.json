@@ -1,0 +1,52 @@
+{
+  "pilotdeck": {
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "./hooks/antigravity.sh pre-invocation",
+        "timeout": 20
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "call_mcp_tool",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./hooks/antigravity.sh pre-tool",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "run_command|write_to_file|replace_file_content|edit_notebook",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./hooks/antigravity.sh pre-tool",
+            "timeout": 20
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "call_mcp_tool",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./hooks/antigravity.sh post-tool",
+            "timeout": 20
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "./hooks/antigravity.sh stop",
+        "timeout": 20
+      }
+    ]
+  }
+}
