@@ -2,7 +2,7 @@
   "name": "pilotdeck",
   "version": "0.3.16",
   "description": "Run the complete PilotDeck card workflow from Kimi Code.",
-  "homepage": "https://github.com/rafaeldominguesdev/pilotdeck",
+  "homepage": "https://github.com/rafaeldominguesdev/PilotDeck",
   "license": "MIT",
   "keywords": ["pilotdeck", "task-board", "mcp"],
   "author": {
@@ -53,6 +53,6 @@
     "shortDescription": "Claim, execute, and deliver PilotDeck cards",
     "longDescription": "The PilotDeck board workflow as a plugin: the canonical PILOTDECK.md rules, the board MCP server, claim/deliver guards, and the /pilotdeck slash commands. Point it at your own PilotDeck instance.",
     "developerName": "PilotDeck",
-    "websiteURL": "https://github.com/rafaeldominguesdev/pilotdeck"
+    "websiteURL": "https://github.com/rafaeldominguesdev/PilotDeck"
   }
 }

@@ -10,7 +10,7 @@ Use GitHub's private vulnerability reporting instead — it is enabled for this
 repository:
 
 1. Go to the **Security** tab → **Report a vulnerability**
-   (or open `https://github.com/rafaeldominguesdev/pilotdeck/security/advisories/new`).
+   (or open `https://github.com/rafaeldominguesdev/PilotDeck/security/advisories/new`).
 2. Describe what you found: where it lives, how reachable it is in practice, and
    a proof of concept if you have one. A patch with tests is welcome but never
    required.

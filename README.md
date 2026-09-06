@@ -46,7 +46,7 @@ opcional, desligada por padrão.
 ## Quickstart
 
 ```bash
-git clone https://github.com/rafaeldominguesdev/pilotdeck && cd pilotdeck
+git clone https://github.com/rafaeldominguesdev/PilotDeck && cd PilotDeck
 export AUTH_SECRET="$(openssl rand -base64 32)"
 docker compose up --build
 ```

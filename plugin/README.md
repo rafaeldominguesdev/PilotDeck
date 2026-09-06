@@ -1,6 +1,6 @@
 # pilotdeck
 
-Claim, execute, and deliver [PilotDeck](https://github.com/rafaeldominguesdev/pilotdeck) cards from
+Claim, execute, and deliver [PilotDeck](https://github.com/rafaeldominguesdev/PilotDeck) cards from
 your CLI. PilotDeck is an MIT-licensed, self-hosted task board for hybrid human + AI-agent
 teams: humans write the contract and validate, agents claim the card, do the work, and
 report back with evidence and per-model telemetry.
@@ -39,7 +39,7 @@ Verify with `grok plugin details pilotdeck` and `grok inspect` — the latter li
 
 The board's instance serves an installer that detects which CLIs you have and drives each
 one's *native* plugin manager (Claude Code, Codex, Grok, Kimi). See the repository
-[README](https://github.com/rafaeldominguesdev/pilotdeck).
+[README](https://github.com/rafaeldominguesdev/PilotDeck).
 
 ## What it ships
 
@@ -90,4 +90,4 @@ PowerShell.
 
 ## License
 
-[MIT](https://github.com/rafaeldominguesdev/pilotdeck/blob/main/LICENSE).
+[MIT](https://github.com/rafaeldominguesdev/PilotDeck/blob/main/LICENSE).

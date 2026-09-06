@@ -264,9 +264,9 @@ The entry to submit, once the owner decides to publish:
   "tier": "curated",
   "displayName": "PilotDeck",
   "description": "Claim, execute, and deliver PilotDeck cards from Kimi Code.",
-  "homepage": "https://github.com/rafaeldominguesdev/pilotdeck",
+  "homepage": "https://github.com/rafaeldominguesdev/PilotDeck",
   "keywords": ["pilotdeck", "task-board", "mcp", "workflow"],
-  "source": "https://github.com/rafaeldominguesdev/pilotdeck"
+  "source": "https://github.com/rafaeldominguesdev/PilotDeck"
 }
 ```
 
@@ -282,7 +282,7 @@ path, not the AGENTS.md fallback.
 `agy plugin install <dir>` copies the directory into
 `~/.gemini/config/plugins/<name>/` and ingests `skills/`, `commands/`,
 `mcp_config.json`, `hooks.json`, and `rules/`. A GitHub subpath works too:
-`agy plugin install https://github.com/rafaeldominguesdev/pilotdeck/tree/main/plugin`
+`agy plugin install https://github.com/rafaeldominguesdev/PilotDeck/tree/main/plugin`
 clones and installs the same package. `agy plugin validate <dir>` reports what
 each component contributed and is the cheapest pre-flight check.
 
