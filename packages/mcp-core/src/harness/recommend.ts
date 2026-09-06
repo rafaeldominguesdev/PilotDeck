@@ -364,6 +364,11 @@ export const DEFAULT_MODEL_CATALOG: readonly ModelInfo[] = [
     aliases: ["haiku", "claude-haiku", "claude-haiku-4-5", "haiku-4"],
   },
   {
+    id: "astra-6",
+    tier: "top",
+    aliases: ["astra", "gpt-astra-6"],
+  },
+  {
     id: "gpt-5.6-sol",
     tier: "mid",
     aliases: ["sol", "gpt-5-6-sol"],

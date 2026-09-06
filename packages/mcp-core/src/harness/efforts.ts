@@ -57,7 +57,9 @@ const GROK_REASONING: EffortCatalogSpec = {
 
 const MODEL_EFFORTS: Record<string, EffortCatalogSpec> = {
   // Codex's GPT-5.6 CLI family exposes the six levels below. The older
-  // families stop at xhigh in the public model guidance.
+  // families stop at xhigh in the public model guidance. astra-6 is OpenAI's
+  // newer frontier model on the same CLI and exposes the same six levels.
+  "astra-6": CODEX_56,
   "gpt-5-6-sol": CODEX_56,
   "gpt-reserve": CODEX_56,
   "gpt-5-6-terra": CODEX_56,
@@ -103,6 +105,7 @@ const MODEL_ALIASES: Record<string, string> = {
   haiku: "haiku-4-5",
   k3: "k3",
   "gpt-5-6": "gpt-5-6-sol",
+  astra: "astra-6",
 };
 
 function normalize(value: string): string {

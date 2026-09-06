@@ -18,6 +18,7 @@ export const EXECUTOR_CATALOG: readonly ExecutorDef[] = [
     id: "codex",
     label: "Codex",
     models: [
+      "astra-6",
       "gpt-reserve",
       "gpt-5.6-sol",
       "gpt-5.6-terra",
