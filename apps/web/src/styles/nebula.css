@@ -866,10 +866,10 @@ body:has(.nb) { display: block; padding: 0; background: var(--nebula-void); }
   color: var(--nebula-text-tertiary); font-family: var(--nebula-font-sans);
   font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
 }
-/* Three siblings form one group: equal columns, never an orphan stretched on
+/* Two siblings form one group: equal columns, never an orphan stretched on
    a second line. Each option follows the Control anatomy (32px, 8px radius,
    13px UI face) so the picker reads as part of the same control family. */
-.nb .am-theme-opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.nb .am-theme-opts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
 @media (pointer: coarse) {
   .nb .am-theme-opts { gap: var(--oc-space-2); }
 }
