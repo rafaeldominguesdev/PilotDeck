@@ -26,13 +26,13 @@ import { BRAND_ART } from "./__generated__/brandArt";
 export function Wordmark({
   label,
   current = false,
-  size = 16,
+  size = 24,
 }: {
   /** Accessible name, which has to say where the link goes. */
   label: string;
   /** True on the board itself, where the link is already where it leads. */
   current?: boolean;
-  /** Rendered height in px, ascender to baseline. Width follows the ratio. */
+  /** Rendered font size in px. Width follows the text. */
   size?: number;
 }) {
   const { trailOpacity } = BRAND_ART.wordmark;
