@@ -203,6 +203,11 @@ export function SettingsClient({
     setTab(id);
     setErr(null);
     setMsg(null);
+    // AGB-9: keep the chosen tab fully in view — on a narrow strip the tab
+    // you just picked could otherwise stay clipped at the edge.
+    document
+      .getElementById(`settab-${id}`)
+      ?.scrollIntoView({ block: "nearest", inline: "nearest" });
   }
 
   // AGB-8: a tablist that ignores the arrow keys breaks the keyboard and
