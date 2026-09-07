@@ -2149,7 +2149,7 @@ body:has(.nb) { display: block; padding: 0; background: var(--nebula-void); }
    The fade on the trailing edge is what says there is more to the right. */
 .nb .settabs {
   position: relative;
-  display: flex; gap: 12px;
+  display: flex; gap: 10px;
   margin-bottom: 22px; padding-bottom: 0; padding-right: 28px;
   border-bottom: 1px solid var(--nebula-plan-divider);
   overflow-x: auto; overflow-y: hidden;
@@ -2165,7 +2165,7 @@ body:has(.nb) { display: block; padding: 0; background: var(--nebula-void); }
   flex: none;
   appearance: none; background: none; border: 0;
   font-family: var(--nebula-font-label); font-size: 11px;
-  letter-spacing: .08em; text-transform: uppercase;
+  letter-spacing: .04em; text-transform: uppercase;
   color: var(--nebula-text-tertiary);
   /* the target is the whole tab; the A1 utility grows it on a phone */
   padding: 0 0 9px; border-bottom: 1px solid transparent; margin-bottom: -1px;
