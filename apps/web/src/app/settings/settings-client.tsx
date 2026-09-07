@@ -504,7 +504,17 @@ export function SettingsClient({
       <div className="page">
         <div className="topbar nebula-glass">
           <Wordmark label={t.board.homeLink} />
-          <div className="crumb">{workspaceName} / <b>{projectName}</b></div>
+          {/* AGB-7: "Name / Name" when the workspace and the only project
+              share a name is noise — show it once. */}
+          <div className="crumb">
+            {workspaceName === projectName ? (
+              <b>{projectName}</b>
+            ) : (
+              <>
+                {workspaceName} / <b>{projectName}</b>
+              </>
+            )}
+          </div>
           <div className="spacer" />
           <a className="btn-ghost" href="/home">{t.settings.backToBoard}</a>
         </div>
