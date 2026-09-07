@@ -17,8 +17,6 @@
     "db:migrate": "pnpm --filter @pilotdeck/db migrate",
     "db:seed": "pnpm --filter @pilotdeck/db seed",
     "typecheck": "pnpm -r --if-present typecheck",
-    "lint": "pnpm -r --if-present lint",
-    "check:topbar": "node scripts/topbar-one-line.mjs",
-    "check:sheet": "node scripts/detail-sheet.mjs"
+    "lint": "pnpm -r --if-present lint"
   }
 }

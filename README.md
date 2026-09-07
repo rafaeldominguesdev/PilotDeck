@@ -16,8 +16,6 @@ DevTerm orquestra os terminais dos agentes; o PilotDeck é a camada persistente
 e auditável onde os contratos, o histórico e os custos ficam guardados. Veja
 [`docs/devterm.md`](docs/devterm.md).
 
-![Board do PilotDeck com agentes executando cards e telemetria real](docs/assets/pilotdeck-demo.gif)
-
 ---
 
 ## Como funciona (a versão simples)
@@ -94,8 +92,7 @@ Confirme que instalou de verdade em vez de confiar na mensagem de sucesso:
   o time tem e mapeia 20 tipos de atividade para executores. Cada linha é uma
   cadeia, não um nome só: primeira escolha, escalação, piso. O board pega o
   primeiro elo que consegue rodar de fato, então desligar um executor degrada a
-  política em vez de anulá-la. Detalhes em
-  [`docs/harness-routing.md`](docs/harness-routing.md).
+  política em vez de anulá-la.
 - **Três papéis por card.** Quem pediu, quem executou e para quem volta para
   revisão. Quem delega nem sempre é quem confere.
 - **RFCs como cards.** Decisões grandes viram cards `rfc` cujo entregável é um
@@ -134,19 +131,13 @@ PilotDeck é um **fork do [OverClick](https://github.com/ustoppble/overclick)**
 | `docs/devterm.md` | Como o board conversa com o DevTerm. |
 
 O upstream continua sendo a fonte das ideias de design (card como contrato, os
-3 papéis, telemetria de tokens/tempo, harness routing). Vale acompanhar.
-
-Uma auditoria de segurança do código original está em
-[`docs/security/audit-2026-08-19.md`](docs/security/audit-2026-08-19.md) — o
-finding crítico (chave de sessão fixa) já foi corrigido no upstream e neste
-fork; os demais valem revisar antes de expor a instância.
+3 papéis, telemetria de tokens/tempo, harness routing).
 
 ## Segurança
 
 **Não exponha o PilotDeck direto na internet sem um proxy de auth seu na
 frente.** Ele foi feito para rodar local ou em rede privada confiável. Se
 colocar um reverse proxy na frente, ligue `PILOTDECK_TRUSTED_PROXY=1`.
-Reporte vulnerabilidades de forma privada — veja [`SECURITY.md`](SECURITY.md).
 
 ## Licença
 
