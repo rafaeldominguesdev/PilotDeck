@@ -28,7 +28,18 @@ NODE="$(command -v node)"
 NEXT="$REPO/apps/web/node_modules/.bin/next"
 LOG="$HOME/Library/Logs/pilotdeck-board.log"
 PIDFILE="$HOME/Library/Caches/pilotdeck-board.pid"
+SECRET_FILE="$HOME/.config/pilotdeck/auth_secret"
 DB="${DATABASE_URL:-postgres://pilotdeck:pilotdeck@localhost:5432/pilotdeck}"
+
+# AUTH_SECRET: use $AUTH_SECRET if set (and remember it), else the saved file.
+# This is what lets a GUI (the DevTerm board button) call `start` with no env.
+if [ -n "${AUTH_SECRET:-}" ]; then
+  mkdir -p "$(dirname "$SECRET_FILE")"
+  printf '%s' "$AUTH_SECRET" > "$SECRET_FILE"
+  chmod 600 "$SECRET_FILE"
+elif [ -f "$SECRET_FILE" ]; then
+  AUTH_SECRET="$(cat "$SECRET_FILE")"
+fi
 
 board_up()   { curl -fsS -o /dev/null "http://127.0.0.1:3000/home" 2>/dev/null; }
 board_pid()  { lsof -ti tcp:3000 2>/dev/null | head -1; }
