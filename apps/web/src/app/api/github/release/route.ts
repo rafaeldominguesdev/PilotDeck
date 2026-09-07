@@ -1,5 +1,6 @@
 import { project } from "@pilotdeck/db";
 import { db } from "../../../../lib/db";
+import { hasValidGitHubSignature } from "../../../../lib/github-webhook";
 import { applyProjectRelease } from "../../../../lib/project-context-refresh";
 
 export const runtime = "nodejs";
@@ -29,12 +30,21 @@ function sameRepo(left: string | null, right: string): boolean {
 
 /** Receives GitHub's release.published webhook for every configured project. */
 export async function POST(request: Request): Promise<Response> {
+  const rawBody = await request.text();
+  if (!process.env.GITHUB_WEBHOOK_SECRET) {
+    console.warn("GITHUB_WEBHOOK_SECRET não configurada; webhook GitHub rejeitado.");
+    return Response.json({ error: "webhook signature verification is not configured" }, { status: 401 });
+  }
+  if (!hasValidGitHubSignature(rawBody, request.headers.get("x-hub-signature-256"))) {
+    return Response.json({ error: "invalid webhook signature" }, { status: 401 });
+  }
+
   const event = request.headers.get("x-github-event");
   if (event && event !== "release") {
     return Response.json({ ignored: true });
   }
 
-  const body = (await request.json().catch(() => null)) as ReleaseWebhookBody | null;
+  const body = JSON.parse(rawBody) as ReleaseWebhookBody;
   const repository = asText(body?.repository?.full_name);
   const release = body?.release;
   const tagName = asText(release?.tag_name);

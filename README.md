@@ -63,6 +63,10 @@ bash run.sh
 O `AUTH_SECRET` é obrigatório e tem que ser **o mesmo em todo restart** (ele
 assina as sessões). O compose para com erro se ele faltar.
 
+Para habilitar o webhook de releases do GitHub, configure também
+`GITHUB_WEBHOOK_SECRET` com o mesmo segredo definido no webhook. Chamadas sem
+esse segredo ou com assinatura inválida são rejeitadas.
+
 Abra `http://localhost:3000`, crie a conta admin local (e-mail + senha,
 guardados no seu Postgres, usados só para login) e siga o onboarding de 3
 passos: projeto, executores, conectar o agente. Passo a passo completo:
