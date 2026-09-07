@@ -2,7 +2,7 @@
 
 import type { AutoUpdateRecord, UpdateMode } from "@pilotdeck/db";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { saveClaimTimeoutAction } from "../../actions/claims";
 import { saveCardapioAction, type CardapioInput } from "../../actions/cardapio";
 import { addSeenExecutorAction, saveExecutorsAction } from "../../actions/executors";
@@ -182,6 +182,7 @@ export function SettingsClient({
   const dateLocale = lang === "pt-BR" ? "pt-BR" : "en-US";
   const router = useRouter();
   const [tab, setTab] = useState<string>(initialTab);
+  const [tabHydrated, setTabHydrated] = useState(false);
   const [pending, start] = useTransition();
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -198,6 +199,25 @@ export function SettingsClient({
     { id: "language", label: t.settings.tabLanguage },
     { id: "updates", label: t.updates.tabUpdates },
   ];
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem("pilotdeck:ui:settings-tab");
+      if (stored && tabs.some((item) => item.id === stored)) setTab(stored);
+    } catch {
+      // Keep the server-selected tab when localStorage is unavailable.
+    }
+    setTabHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!tabHydrated) return;
+    try {
+      window.localStorage.setItem("pilotdeck:ui:settings-tab", tab);
+    } catch {
+      // Tab persistence is best effort.
+    }
+  }, [tab, tabHydrated]);
 
   function selectTab(id: string) {
     setTab(id);

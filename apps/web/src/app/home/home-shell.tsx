@@ -245,6 +245,7 @@ export function HomeShell({
   // one button. On the desktop the panel never opens because the button is
   // hidden and the wrapper is transparent to the bar.
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
   const visible = useMemo(
     () => searchBoardCards(filterBoardCards(cards, filter), debouncedSearchQuery),
     [cards, filter, debouncedSearchQuery],
@@ -327,6 +328,35 @@ export function HomeShell({
     searchQuery.trim().length > 0;
 
   useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem("pilotdeck:ui:home");
+      if (stored) {
+        const value = JSON.parse(stored) as {
+          filter?: BoardFilter;
+          searchQuery?: string;
+        };
+        if (value.filter) setFilter(value.filter);
+        if (typeof value.searchQuery === "string") setSearchQuery(value.searchQuery);
+      }
+    } catch {
+      // A blocked or malformed localStorage value leaves the first-visit defaults.
+    }
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      window.localStorage.setItem(
+        "pilotdeck:ui:home",
+        JSON.stringify({ filter, searchQuery }),
+      );
+    } catch {
+      // Persistence is best effort and never blocks the board.
+    }
+  }, [filter, hydrated, searchQuery]);
+
+  useEffect(() => {
     const timer = window.setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
     }, 150);
@@ -370,6 +400,8 @@ export function HomeShell({
       priorities: [],
     });
   }
+
+  if (!hydrated) return null;
 
   return (
     <>
