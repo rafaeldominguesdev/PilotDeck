@@ -2150,10 +2150,15 @@ body:has(.nb) { display: block; padding: 0; background: var(--nebula-void); }
 .nb .settabs {
   position: relative;
   display: flex; gap: 12px;
-  margin-bottom: 22px; padding-bottom: 0;
+  margin-bottom: 22px; padding-bottom: 0; padding-right: 28px;
   border-bottom: 1px solid var(--nebula-plan-divider);
   overflow-x: auto; overflow-y: hidden;
   scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  /* AGB-4: the fade says the strip scrolls, at every width — not only on a
+     phone. It rides on the strip so it travels with the scroll and clears
+     once there is nothing more to the right. */
+  -webkit-mask-image: linear-gradient(to right, black calc(100% - 26px), transparent);
+  mask-image: linear-gradient(to right, black calc(100% - 26px), transparent);
 }
 .nb .settabs::-webkit-scrollbar { display: none; }
 .nb .settabs button {
@@ -3068,13 +3073,10 @@ body:has(.nb) { display: block; padding: 0; background: var(--nebula-void); }
   .nb .page-sub { font-size: 12px; margin-bottom: 16px; }
 
   /* ---------- settings ---------- */
-  /* the strip scrolls under the thumb; the fade says there is more of it */
+  /* the strip scrolls under the thumb; a touch more room on a phone. The fade
+     itself now lives on the base rule (AGB-4). */
   .nb .settabs {
     gap: 18px; margin-bottom: 18px; padding-right: 30px;
-    /* the fade is painted on the strip itself so it travels with the scroll
-       container instead of sitting over the pane below */
-    -webkit-mask-image: linear-gradient(to right, black calc(100% - 28px), transparent);
-    mask-image: linear-gradient(to right, black calc(100% - 28px), transparent);
   }
   .nb .settabs button { scroll-snap-align: start; }
   .nb .tabs {
