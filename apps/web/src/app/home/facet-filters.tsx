@@ -200,7 +200,7 @@ export function FacetFilters({
               className="ff-search"
               type="search"
               value={query}
-              placeholder={t.board.searchCards}
+              placeholder={`${t.board.searchCards} · /`}
               aria-label={t.board.searchCards}
               onChange={(event) => onQueryChange(event.target.value)}
             />
