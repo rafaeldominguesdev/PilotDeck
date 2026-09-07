@@ -27,6 +27,7 @@ export function TrendChart({
       <div
         className="ins-trend-bars"
         role="img"
+        aria-describedby="ins-trend-data"
         aria-label={metric === "cost" ? t.trendCostTitle : t.trendTokensTitle}
         style={{ "--ins-points": points.length } as React.CSSProperties}
       >
@@ -54,6 +55,25 @@ export function TrendChart({
         <span>{first.label}</span>
         <span>{last.label}</span>
       </div>
+      <table id="ins-trend-data" className="sr-only">
+        <caption>{metric === "cost" ? t.trendCostTitle : t.trendTokensTitle}</caption>
+        <thead>
+          <tr>
+            <th scope="col">{t.lang === "pt-BR" ? "Data" : "Date"}</th>
+            <th scope="col">{metric === "cost" ? "Valor" : "Tokens"}</th>
+            <th scope="col">{t.lang === "pt-BR" ? "Tentativas" : "Attempts"}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {points.map((point) => (
+            <tr key={point.dayKey}>
+              <th scope="row">{point.label}</th>
+              <td>{fmt(trendValue(point, metric))}</td>
+              <td>{point.attempts}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
