@@ -141,9 +141,13 @@ function BulkMissionBar({
 function AccountMenu({
   running,
   t,
+  canSignOut,
 }: {
   running: number;
   t: Dict;
+  /** false on an open instance: there is no login to come back from, so a
+   *  "sair" that lands you straight back in would just be a lie. */
+  canSignOut: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement | null>(null);
@@ -201,12 +205,14 @@ function AccountMenu({
             <Icon name="settings" label={null} size={14} />
             {t.board.settings}
           </a>
-          <form action={logoutAction}>
-            <button className="am-opt" role="menuitem" type="submit">
-              <Icon name="logout" label={null} size={14} />
-              {t.board.logout}
-            </button>
-          </form>
+          {canSignOut ? (
+            <form action={logoutAction}>
+              <button className="am-opt" role="menuitem" type="submit">
+                <Icon name="logout" label={null} size={14} />
+                {t.board.logout}
+              </button>
+            </form>
+          ) : null}
         </div>
       ) : null}
     </div>
@@ -222,6 +228,7 @@ export function HomeShell({
   cards,
   initialFilter,
   initialTotals,
+  canSignOut,
 }: {
   lang: string;
   organizations: BoardOrganizationOption[];
@@ -232,6 +239,8 @@ export function HomeShell({
   initialFilter: BoardFilter;
   /** What the initial filter consumed, already aggregated on the server. */
   initialTotals: BoardTotals;
+  /** false when this instance has no login to sign back in with. */
+  canSignOut: boolean;
 }) {
   const router = useRouter();
   const t = dict(lang);
@@ -424,7 +433,7 @@ export function HomeShell({
           {/* The figure that justifies the board stays readable at a glance;
               the reading of it moved into the popover it opens. */}
           <BoardTotal totals={totals} filter={filter} t={t} />
-          <AccountMenu running={running} t={t} />
+          <AccountMenu running={running} t={t} canSignOut={canSignOut} />
         </div>
         <div className="topbar-l2">
           {/* On the desktop the wrapper is transparent to the level, the

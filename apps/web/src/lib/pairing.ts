@@ -250,6 +250,40 @@ export async function exchangePairingCode(
   return result;
 }
 
+/**
+ * A token with no code, for an open instance (see `local-session`).
+ *
+ * The six digits exist to prove a human is standing at the board when an
+ * agent asks for a bearer. An open instance has already decided that whoever
+ * reaches it is that human, so asking for the code would collect a ceremony
+ * and no proof.
+ *
+ * The token can manage the workspace: what asks for it is an orchestrator
+ * that registers its own executors and creates its project on first run, and
+ * a token that cannot do those turns the first connection into a list of
+ * things that silently did not happen.
+ */
+export async function mintOpenToken(
+  db: McpDatabase,
+  workspaceId: string,
+  desired: string,
+): Promise<{ token: string; label: string }> {
+  const secret = generateTokenSecret();
+  const label = await freeTokenLabel(db, workspaceId, desired.trim() || "local agent");
+  const [token] = await db
+    .insert(mcpToken)
+    .values({
+      workspaceId,
+      label,
+      hash: hashToken(secret),
+      tokenPrefix: secret.slice(0, 12),
+      canManage: true,
+    })
+    .returning({ id: mcpToken.id });
+  if (!token) throw new Error("failed to create token on an open instance");
+  return { token: secret, label };
+}
+
 /** Wizard polling: paired once the code was exchanged. */
 export async function pairingStatus(
   db: McpDatabase,

@@ -1,72 +1,44 @@
 import { user } from "@pilotdeck/db/schema";
 import { eq } from "drizzle-orm";
-import { cookies, headers } from "next/headers";
 import { detectDeployMode } from "./deploy-mode";
 import { db } from "./db";
 import type { SessionPayload } from "./session";
 
 /**
- * A board running on the operator's own machine, for the operator alone, is
- * asked to prove who it is on every page load — and the answer is always the
- * same one person. That login is friction with nothing behind it, so this
- * turns it off, under conditions narrow enough that turning it off cannot
- * quietly become "this board has no login".
+ * Open instance: no login screen, and no pairing code either.
  *
- * All four have to hold:
+ * A board somebody started on their own machine, for themselves, asks who
+ * they are on every page load and asks an agent for six digits before it can
+ * read a card — and on that machine both answers were never in doubt. This
+ * turns the two off together, because turning off only one of them leaves the
+ * friction and keeps none of the protection.
  *
- * - the operator asked for it (`PILOTDECK_NO_LOGIN=1`);
- * - the instance is not the hosted deployment;
- * - the browser reached it over loopback, so exposing the port later does not
- *   hand the board to whoever finds it — the flag alone is not the fence;
- * - the instance has exactly one active user, so there is no question of
- *   which identity the visitor gets. Zero users still goes through /setup,
- *   which is where the first admin and the workspace come from; two or more
- *   is a board with people in it, and picking one of them silently would be
- *   the kind of guess that ends up in somebody else's audit trail.
+ * What it costs is not subtle, and is the whole reason it is a switch and not
+ * the default: `next start` listens on 0.0.0.0, so with this on, **anyone who
+ * can reach the port is signed in as the owner** — same wifi, same office,
+ * same tunnel. The board still refuses it in the one place where that is
+ * somebody else's data: a hosted deployment ignores this flag entirely.
  *
- * MCP tokens are untouched: agents keep authenticating with their bearer.
+ * A board with people in it should never have this on.
  */
-export const NO_LOGIN_ENV = "PILOTDECK_NO_LOGIN";
+export const OPEN_ENV = "PILOTDECK_OPEN";
 
-/**
- * Set by `clearSession`: this browser signed out on purpose and does not want
- * the shortcut back until it logs in. Without it, "sair" would be a button
- * that does nothing on a no-login instance.
- */
-export const NO_LOCAL_SESSION_COOKIE = "ab_no_local";
-
-/**
- * Whether the request came from the machine the board runs on. The `host`
- * header is what the browser was pointed at, so a LAN address or a domain
- * never reads as loopback even when the flag is on.
- */
-export function hostIsLoopback(host: string | null | undefined): boolean {
-  if (!host) return false;
-  const name = host.trim().toLowerCase();
-  // drop the port, and the brackets an IPv6 host carries
-  const bare = name.startsWith("[")
-    ? name.slice(1, name.indexOf("]"))
-    : (name.split(":")[0] ?? "");
-  return bare === "localhost" || bare === "127.0.0.1" || bare === "::1";
+/** Whether this instance was told to skip login and pairing. */
+export function isOpenInstance(): boolean {
+  if (process.env[OPEN_ENV]?.trim() !== "1") return false;
+  // The hosted deployment holds other people's boards; the switch stops here.
+  return detectDeployMode() !== "hosted";
 }
 
-export function noLoginRequested(): boolean {
-  return process.env[NO_LOGIN_ENV]?.trim() === "1";
-}
-
-/** The single local user, when every condition above holds. Otherwise null. */
+/**
+ * The owner of an open instance: the first active user. Null when the board
+ * has no user yet — that still goes through /setup, which is where the first
+ * account and the workspace come from, and it happens exactly once.
+ */
 export async function localSession(): Promise<SessionPayload | null> {
-  if (!noLoginRequested()) return null;
-  if (detectDeployMode() === "hosted") return null;
+  if (!isOpenInstance()) return null;
 
-  const store = await headers();
-  if (!hostIsLoopback(store.get("host"))) return null;
-
-  const jar = await cookies();
-  if (jar.get(NO_LOCAL_SESSION_COOKIE)) return null;
-
-  // limit(2) on purpose: one row is the answer, two is the refusal.
-  const users = await db()
+  const rows = await db()
     .select({
       id: user.id,
       email: user.email,
@@ -75,15 +47,14 @@ export async function localSession(): Promise<SessionPayload | null> {
     })
     .from(user)
     .where(eq(user.active, true))
-    .limit(2);
+    .limit(1);
 
-  if (users.length !== 1) return null;
-  const only = users[0];
-  if (!only) return null;
+  const owner = rows[0];
+  if (!owner) return null;
 
   return {
-    userId: only.id,
-    email: only.email,
-    sessionVersion: only.sessionVersion,
+    userId: owner.id,
+    email: owner.email,
+    sessionVersion: owner.sessionVersion,
   };
 }

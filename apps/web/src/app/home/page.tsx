@@ -26,6 +26,7 @@ import {
 } from "../../lib/board-filter";
 import { loadBoardTotals } from "../../lib/board-totals-query";
 import { getSession } from "../../lib/cookies";
+import { isOpenInstance } from "../../lib/local-session";
 import { db } from "../../lib/db";
 import {
   approx,
@@ -776,6 +777,7 @@ export default async function HomePage() {
         cards={cards}
         initialFilter={initialFilter}
         initialTotals={initialTotals}
+        canSignOut={!isOpenInstance()}
       />
 
       <div className="nebula-glass-fade viewport-fade" aria-hidden="true" />

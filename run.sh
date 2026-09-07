@@ -5,14 +5,24 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+# .env is what .env.example tells you to write, so read it here too — but only
+# for what the shell did not already export, so `FOO=x bash run.sh` still wins.
+if [ -f .env ]; then
+  while IFS='=' read -r chave valor; do
+    case "$chave" in ''|\#*) continue;; esac
+    [ -n "${!chave:-}" ] || export "$chave=$valor"
+  done < .env
+fi
+
 export DATABASE_URL="${DATABASE_URL:-postgres://pilotdeck:pilotdeck@localhost:5432/pilotdeck}"
 export NEXT_TELEMETRY_DISABLED=1
-# A board you started on your own machine, for yourself, does not ask you to
-# log in: with a single user and a request that came over loopback, the login
-# is friction with nothing behind it. It still applies to nobody else — a
-# browser reaching this port from another machine gets the login screen as
-# usual. Set PILOTDECK_NO_LOGIN=0 to keep it on here too.
-export PILOTDECK_NO_LOGIN="${PILOTDECK_NO_LOGIN:-1}"
+# Open instance: no login screen and no 6-digit pairing code. This is a board
+# for one person on their own machine, and both were ceremony there.
+#
+# It is not free: `next start` listens on 0.0.0.0, so while this is on, ANYONE
+# who can reach this port is signed in as you — same wifi, same tunnel. Put
+# people on this board, or expose it, and set PILOTDECK_OPEN=0.
+export PILOTDECK_OPEN="${PILOTDECK_OPEN:-1}"
 : "${AUTH_SECRET:?set AUTH_SECRET (a stable 32+ char string) before running}"
 
 command -v pg_isready >/dev/null && pg_isready -q -h localhost -p 5432 \

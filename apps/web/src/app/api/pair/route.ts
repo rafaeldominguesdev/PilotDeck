@@ -1,5 +1,7 @@
 import { db } from "../../../lib/db";
-import { exchangePairingCode } from "../../../lib/pairing";
+import { ensureWorkspace } from "../../../lib/instance";
+import { isOpenInstance } from "../../../lib/local-session";
+import { exchangePairingCode, mintOpenToken } from "../../../lib/pairing";
 
 export const dynamic = "force-dynamic";
 
@@ -45,9 +47,24 @@ function guessOrigin(request: Request): string | null {
  */
 export async function POST(request: Request): Promise<Response> {
   const body = (await request.json().catch(() => null)) as
-    | { code?: unknown }
+    | { code?: unknown; label?: unknown }
     | null;
   const code = typeof body?.code === "string" ? body.code.trim() : "";
+  const label = typeof body?.label === "string" ? body.label : "";
+
+  // Open instance: no code to ask for, because there is nobody else to tell
+  // apart from the owner. See `local-session`.
+  if (isOpenInstance()) {
+    const workspace = await ensureWorkspace();
+    const minted = await mintOpenToken(db(), workspace.id, label || "local agent");
+    return Response.json({
+      token: minted.token,
+      label: minted.label,
+      url: "/mcp",
+      connect:
+        "Use the token as an Authorization: Bearer header on the /mcp endpoint of this host.",
+    });
+  }
 
   const result = await exchangePairingCode(db(), code, guessOrigin(request));
   if (!result.ok) {
