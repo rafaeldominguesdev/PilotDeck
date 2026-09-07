@@ -262,21 +262,6 @@ function EmptyState({ status, t }: { status: ColumnStatus; t: Dict }) {
   );
 }
 
-function Telemetry({ text }: { text: string }) {
-  // highlighted numbers, as in the mockup (bold on duration and cost)
-  const parts = text.split(" · ");
-  return (
-    <span className="telemetry">
-      {parts.map((p, i) => (
-        <span key={i}>
-          {i > 0 ? " · " : ""}
-          {p.includes("tok") ? p : <b>{p}</b>}
-        </span>
-      ))}
-    </span>
-  );
-}
-
 /**
  * The dense line, one value per span so the layout can pick what to elide when
  * the column is narrow. Each segment carries its own separator, which keeps

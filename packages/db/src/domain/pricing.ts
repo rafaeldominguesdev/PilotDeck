@@ -140,7 +140,6 @@ const at =
     seededAt,
   });
 
-const p0 = at(MODEL_PRICES_SEEDED_AT);
 const p1 = at(MODEL_PRICES_FAMILIES_SEEDED_AT);
 const p2 = at(MODEL_PRICES_INVENTORY_SEEDED_AT);
 const p3 = at(MODEL_PRICES_CACHE_WRITE_SEEDED_AT);

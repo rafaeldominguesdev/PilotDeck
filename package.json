@@ -17,6 +17,10 @@
     "db:migrate": "pnpm --filter @pilotdeck/db migrate",
     "db:seed": "pnpm --filter @pilotdeck/db seed",
     "typecheck": "pnpm -r --if-present typecheck",
-    "lint": "pnpm -r --if-present lint"
+    "lint": "biome lint --only=correctness/noUnusedVariables --only=correctness/noUnusedImports .",
+    "format": "biome format --write apps packages package.json biome.json"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.12"
   }
 }

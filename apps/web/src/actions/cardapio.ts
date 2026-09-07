@@ -1,7 +1,6 @@
 "use server";
 
 import { cardapioEntry } from "@pilotdeck/db";
-import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getSession } from "../lib/cookies";
 import { db } from "../lib/db";
