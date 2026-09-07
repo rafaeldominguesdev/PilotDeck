@@ -52,9 +52,13 @@ case "${1:-}" in
 </plist>
 EOF
     chmod 600 "$PLIST"
+    # free :3000 first — a stray `next start` from a shell would keep the
+    # service crash-looping on a bind it can never win.
+    lsof -ti tcp:3000 2>/dev/null | xargs -r kill 2>/dev/null || true
+    sleep 1
     launchctl unload "$PLIST" 2>/dev/null || true
     launchctl load "$PLIST"
-    sleep 4
+    sleep 5
     curl -fsS -o /dev/null "http://127.0.0.1:3000/home" \
       && echo "up: http://127.0.0.1:3000  (logs: $LOG)" \
       || { echo "did not come up — check $LOG"; exit 1; }
