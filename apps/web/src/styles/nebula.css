@@ -2164,6 +2164,9 @@ body:has(.nb) { display: block; padding: 0; background: var(--nebula-void); }
 .nb .settabs button {
   flex: none;
   appearance: none; background: none; border: 0;
+  /* globals.css rounds every <button> 8px; on a text tab whose only edge is
+     the bottom border that curled the underline into a smile (AGB-10). */
+  border-radius: 0;
   font-family: var(--nebula-font-label); font-size: 11px;
   letter-spacing: .04em; text-transform: uppercase;
   color: var(--nebula-text-tertiary);
@@ -2183,10 +2186,14 @@ body:has(.nb) { display: block; padding: 0; background: var(--nebula-void); }
   margin-bottom: -2px;
 }
 .nb .settabs button:focus-visible {
-  outline: none; border-radius: var(--oc-radius-chip);
-  /* inset: the strip clips its vertical overflow so the underline can meet
-     the divider, and an outset ring would be sliced into an arc */
-  box-shadow: var(--oc-focus-ring-inset);
+  /* AGB-10: a rounded inset ring on a strip that clips its own vertical
+     overflow rendered as a smile under the tab. Focus reuses the tab's own
+     language instead — brightest text and the 2px underline, square. */
+  outline: none; border-radius: 0;
+  color: var(--nebula-text-primary);
+  border-bottom-width: 2px;
+  border-bottom-color: var(--nebula-text-primary);
+  margin-bottom: -2px;
 }
 .nb .tabpane { display: none; animation: nb-step-in .2s ease-out; }
 .nb .tabpane.active { display: block; }
