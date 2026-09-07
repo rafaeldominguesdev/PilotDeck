@@ -500,12 +500,11 @@ export function HomeShell({
                 {t.board.clearFilters}
               </button>
             ) : null}
-            {/* ux-v2 §3: "Mover para missão" appears only with cards
-                selected, right-aligned — an impossible action with nothing
-                picked has no reason to sit on the bar (OCL-86). The trigger
-                for entering picking mode is a separate concern outside this
-                card's scope; `selected` is the real precondition. */}
-            {selected.length > 0 ? (
+            {/* The same compact control enters picking mode, then becomes the
+                action for the selected cards. Keeping it beside the result
+                count makes the existing bulk flow discoverable without a new
+                toolbar. */}
+            {visible.length > 0 ? (
               <button
                 className={`btn-ghost move-btn${picking ? " on" : ""}`}
                 type="button"
