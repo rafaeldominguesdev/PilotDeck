@@ -208,13 +208,6 @@ const en = {
      * live behind it (OCL-20).
      */
     accountMenu: "Account and navigation",
-    /** The theme selector inside that menu (OCL-56). */
-    theme: "Theme",
-    /**
-     * Theme names are names, so they do not translate: devterm is the fork's
-     * own skin and overclock is the product's palette.
-     */
-    themeName: { devterm: "DevTerm", overclock: "Overclock" },
     running: (n: number) => `${n} in progress`,
     noAgentRunning: "no agent running",
     minAgo: (m: number) => `${m} min ago`,
@@ -822,8 +815,6 @@ const ptBR: Dict = {
       `${counts.aberto} abertos · ${counts.em_execucao} fazendo · ${counts.feito} prontos · ${counts.validado} validado`,
     missionProgressPercent: (pct: number) => `${pct}% concluído`,
     accountMenu: "Conta e navegação",
-    theme: "Tema",
-    themeName: { devterm: "DevTerm", overclock: "Overclock" },
     running: (n: number) => `${n} em execução`,
     noAgentRunning: "nenhum agente rodando",
     minAgo: (m: number) => `há ${m} min`,

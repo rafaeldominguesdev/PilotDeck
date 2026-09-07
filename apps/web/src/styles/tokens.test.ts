@@ -3,7 +3,13 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { COMPONENT_SHEETS, LEGACY_LOCAL_TOKEN_SHEETS } from "./audited-sheets";
-import { DEFAULT_THEME, THEMES, type Theme } from "../lib/theme";
+
+// The board ships one theme now: devterm, on :root. This file still enforces
+// the token contract (no component colour of its own; the theme declares
+// every token a component uses; the theme file is values only).
+type Theme = "devterm";
+const THEMES = ["devterm"] as const;
+const DEFAULT_THEME: Theme = "devterm";
 
 /**
  * The token contract, enforced (OCL-56).
@@ -24,7 +30,6 @@ const read = (path: string) => readFileSync(join(here, path), "utf8");
 
 const THEME_FILES: Record<Theme, string> = {
   devterm: read("themes/devterm.css"),
-  overclock: read("themes/overclock.css"),
 };
 
 /** Comments hold examples and old values; only real CSS is under test. */

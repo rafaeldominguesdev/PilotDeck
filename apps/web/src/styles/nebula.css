@@ -18,7 +18,6 @@
    ============================================================ */
 
 @import "./themes/devterm.css";
-@import "./themes/overclock.css";
 
 /* ============================================================
    The `--nebula-*` contract, now a view over the theme.
@@ -850,50 +849,6 @@ body:has(.nb) { display: block; padding: 0; background: var(--nebula-void); }
 .nb .am-state { display: none; }
 .nb .am-state .sc-label { flex: 1; min-width: 0; }
 .nb .am-state .dot { flex: none; }
-
-/* ---------- the theme selector (OCL-56) ----------
-   Three answers, so they sit side by side under one label instead of behind
-   a second menu. The row follows the menu's own anatomy: the option is the
-   same 8px-radius control every trigger on this board is, and the chosen
-   one is marked the way a chosen filter is marked — border and text, never
-   a colour of its own. */
-.nb .am-theme {
-  display: flex; flex-direction: column; gap: 8px;
-  margin-top: 4px; padding: 8px;
-  border-top: 1px solid var(--nebula-glass-border);
-}
-.nb .am-theme-lbl {
-  color: var(--nebula-text-tertiary); font-family: var(--nebula-font-sans);
-  font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
-}
-/* Two siblings form one group: equal columns, never an orphan stretched on
-   a second line. Each option follows the Control anatomy (32px, 8px radius,
-   13px UI face) so the picker reads as part of the same control family. */
-.nb .am-theme-opts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
-@media (pointer: coarse) {
-  .nb .am-theme-opts { gap: var(--oc-space-2); }
-}
-.nb .am-theme-opt {
-  display: flex; align-items: center; justify-content: center;
-  min-height: 32px; padding: 0 8px;
-  border: 1px solid var(--nebula-glass-border);
-  border-radius: var(--oc-radius-control);
-  background: transparent; color: var(--nebula-text-secondary);
-  font-family: var(--nebula-font-sans); font-size: 13px; font-weight: 500;
-  letter-spacing: 0; text-align: center; cursor: pointer;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  transition: color var(--oc-duration-micro) var(--nebula-ease-atmosphere),
-    border-color var(--oc-duration-micro) var(--nebula-ease-atmosphere);
-}
-.nb .am-theme-opt:hover {
-  color: var(--nebula-text-primary); border-color: var(--oc-border-hover);
-  background: var(--oc-surface-hover);
-}
-.nb .am-theme-opt.on {
-  color: var(--nebula-text-primary); border-color: var(--oc-border-strong);
-  background: var(--oc-surface-hover);
-}
-.nb .am-theme-opt:focus-visible { outline: none; box-shadow: var(--nebula-focus-ring-offset); }
 
 /* ---------- the one-line rule on the bar (AGB-71) ----------
    The rule the phone block already stated, now stated where it always
