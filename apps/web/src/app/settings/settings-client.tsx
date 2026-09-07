@@ -199,6 +199,34 @@ export function SettingsClient({
     { id: "updates", label: t.updates.tabUpdates },
   ];
 
+  function selectTab(id: string) {
+    setTab(id);
+    setErr(null);
+    setMsg(null);
+  }
+
+  // AGB-8: a tablist that ignores the arrow keys breaks the keyboard and
+  // screen-reader contract. Left/Right step through the tabs, Home/End jump
+  // to the ends; selection follows focus, as it does for a simple tablist.
+  function onTabsKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    const keys = ["ArrowLeft", "ArrowRight", "Home", "End"];
+    if (!keys.includes(e.key)) return;
+    e.preventDefault();
+    const i = tabs.findIndex((tb) => tb.id === tab);
+    const next =
+      e.key === "Home"
+        ? 0
+        : e.key === "End"
+          ? tabs.length - 1
+          : e.key === "ArrowRight"
+            ? (i + 1) % tabs.length
+            : (i - 1 + tabs.length) % tabs.length;
+    const id = tabs[next]?.id;
+    if (!id) return;
+    selectTab(id);
+    document.getElementById(`settab-${id}`)?.focus();
+  }
+
   // ---- update mode (off by default: no outbound request at all)
   const [updMode, setUpdMode] = useState<UpdateMode>(updateMode);
   const saveUpd = () =>
@@ -522,17 +550,23 @@ export function SettingsClient({
         <h1>{t.settings.title}</h1>
         <p className="page-sub">{t.settings.sub}</p>
 
-        <div className="settabs" role="tablist" aria-label={t.settings.title}>
+        <div
+          className="settabs"
+          role="tablist"
+          aria-label={t.settings.title}
+          onKeyDown={onTabsKeyDown}
+        >
           {tabs.map((tb) => (
             <button
               key={tb.id}
               type="button"
               role="tab"
               id={`settab-${tb.id}`}
+              tabIndex={tab === tb.id ? 0 : -1}
               aria-selected={tab === tb.id}
               aria-controls={`setpane-${tb.id}`}
               className={tab === tb.id ? "on" : ""}
-              onClick={() => { setTab(tb.id); setErr(null); setMsg(null); }}
+              onClick={() => selectTab(tb.id)}
             >
               {tb.label}
             </button>
