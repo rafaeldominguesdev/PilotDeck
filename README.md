@@ -43,15 +43,25 @@ opcional, desligada por padrão.
 
 ## Quickstart
 
+Com Docker:
+
 ```bash
 git clone https://github.com/rafaeldominguesdev/PilotDeck && cd PilotDeck
 export AUTH_SECRET="$(openssl rand -base64 32)"
 docker compose up --build
 ```
 
-O `AUTH_SECRET` é obrigatório e tem que ser único por instalação — o compose
-para com erro se ele faltar. Guarde o valor gerado no ambiente protegido do
-seu deploy para que os restarts usem a mesma chave.
+Sem Docker (Postgres local via Homebrew):
+
+```bash
+brew services start postgresql@16
+createdb pilotdeck && createuser pilotdeck    # senha: pilotdeck
+export AUTH_SECRET="$(openssl rand -base64 32)"   # fixe este valor
+bash run.sh
+```
+
+O `AUTH_SECRET` é obrigatório e tem que ser **o mesmo em todo restart** (ele
+assina as sessões). O compose para com erro se ele faltar.
 
 Abra `http://localhost:3000`, crie a conta admin local (e-mail + senha,
 guardados no seu Postgres, usados só para login) e siga o onboarding de 3
