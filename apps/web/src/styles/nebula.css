@@ -2173,7 +2173,15 @@ body:has(.nb) { display: block; padding: 0; background: var(--nebula-void); }
   transition: color .15s, border-color .15s;
 }
 .nb .settabs button:hover { color: var(--nebula-text-secondary); }
-.nb .settabs button.on { color: var(--nebula-mist-glow); border-bottom-color: var(--nebula-mist-glow); }
+/* AGB-6: the active tab takes the brightest text colour (like .nb .tabs
+   does) so it reads even when the accent is a low-contrast grey, and a
+   2px underline instead of 1px so the selection is unmistakable. */
+.nb .settabs button.on {
+  color: var(--nebula-text-primary);
+  border-bottom-width: 2px;
+  border-bottom-color: var(--nebula-mist-glow);
+  margin-bottom: -2px;
+}
 .nb .settabs button:focus-visible {
   outline: none; border-radius: var(--oc-radius-chip);
   /* inset: the strip clips its vertical overflow so the underline can meet
