@@ -364,11 +364,11 @@ const en = {
     tabExecutors: "Executors",
     tabOrganizations: "Organizations",
     tabProjects: "Projects",
-    tabPolicy: "Harness policy",
+    tabPolicy: "Harness",
     tabTokens: "MCP tokens",
-    tabClaims: "Claim timeout",
+    tabClaims: "Timeout",
     tabLanguage: "Language",
-    tabPrices: "Cost (optional)",
+    tabPrices: "Cost",
     organizationsSub:
       "A business inside this instance. Projects and missions are filed under one, and the briefing below is read by every agent working anywhere in it, above the project's own.",
     organizationNew: "New organization",
@@ -441,7 +441,7 @@ const en = {
     priceMissingRanNote:
       "Their runs are counted apart everywhere instead of at zero: an unpriced model is not free work. Fill a price in and every total that includes them stops being short.",
     priceFillAll: "+ Add all of them",
-    tabRecipes: "Usage recipes",
+    tabRecipes: "Recipes",
     recipesSub:
       "How each CLI measures the run it just did. The recipe for the CLI that claims a card is appended to its briefing, so a transcript format changing is fixed here, once, instead of in every agent's head.",
     recipeInstructions: "What the agent reads",
@@ -969,11 +969,11 @@ const ptBR: Dict = {
     tabExecutors: "Executores",
     tabOrganizations: "Organizações",
     tabProjects: "Projetos",
-    tabPolicy: "Política de harness",
+    tabPolicy: "Harness",
     tabTokens: "Tokens MCP",
-    tabClaims: "Timeout de claim",
+    tabClaims: "Timeout",
     tabLanguage: "Idioma",
-    tabPrices: "Custo (opcional)",
+    tabPrices: "Custo",
     organizationsSub:
       "Um negócio dentro desta instância. Projetos e missões ficam sob um deles, e o briefing abaixo é lido por todo agente que trabalha em qualquer ponto dele, antes do contexto do projeto.",
     organizationNew: "Nova organização",
@@ -1046,7 +1046,7 @@ const ptBR: Dict = {
     priceMissingRanNote:
       "As execuções deles são contadas à parte em todo lugar, nunca como zero: modelo sem preço não é trabalho de graça. Preencha o preço e todo total que os inclui deixa de ficar curto.",
     priceFillAll: "+ Adicionar todos",
-    tabRecipes: "Receitas de uso",
+    tabRecipes: "Receitas",
     recipesSub:
       "Como cada CLI mede a execução que acabou de fazer. A receita do CLI que pega o card entra no briefing dele, então uma mudança de formato do transcript se conserta aqui, uma vez, em vez de na cabeça de cada agente.",
     recipeInstructions: "O que o agente lê",
@@ -1147,7 +1147,7 @@ const ptBR: Dict = {
     research: { label: "Pesquisa", hint: "ler a pilha inteira, ou explicar em português claro" },
   },
   updates: {
-    tabUpdates: "Atualizações",
+    tabUpdates: "Atualizar",
     checkLabel: "Conferir novas versões no GitHub Releases",
     checkNote:
       "Desligado é o padrão e não faz nenhuma requisição para fora. Os outros dois fazem uma única requisição a api.github.com para ler a tag e as notas da última release, a cada uma hora. Nada sobre você ou sua instância é enviado, nunca.",
