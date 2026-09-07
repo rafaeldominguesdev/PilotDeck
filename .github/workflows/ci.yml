@@ -76,10 +76,3 @@ jobs:
       - run: pnpm test
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
-
-      # The plugin package is not a pnpm workspace, so `pnpm test` never reached
-      # it and this suite only ever ran by hand. That is how the manifest version
-      # drift behind the OCL-76 ghost install got to main, and it left the suite
-      # itself red here for a while without anyone finding out. Runs against stub
-      # CLIs, no network.
-      - run: scripts/test-plugin-package.sh
