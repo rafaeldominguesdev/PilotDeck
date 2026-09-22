@@ -11,10 +11,9 @@ servidor MCP.
 > Seu board. Seu servidor. Seus dados. Nada sai da sua instância: sem
 > analytics, sem tracking, sem verificação de e-mail, sem phone-home.
 
-É um **companheiro do [DevTerm](https://github.com/rafaeldominguesdev)**: o
-DevTerm orquestra os terminais dos agentes; o PilotDeck é a camada persistente
-e auditável onde os contratos, o histórico e os custos ficam guardados. Veja
-[`docs/devterm.md`](docs/devterm.md).
+Funciona bem junto de qualquer orquestrador de terminais/agentes que você já
+use: o PilotDeck é a camada persistente e auditável onde os contratos, o
+histórico e os custos ficam guardados.
 
 ---
 
@@ -46,7 +45,7 @@ opcional, desligada por padrão.
 Com Docker:
 
 ```bash
-git clone https://github.com/rafaeldominguesdev/PilotDeck && cd PilotDeck
+git clone https://github.com/rafaeldominguesdev/pilotdeck && cd pilotdeck
 export AUTH_SECRET="$(openssl rand -base64 32)"
 docker compose up --build
 ```
